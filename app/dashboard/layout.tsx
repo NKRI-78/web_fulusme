@@ -28,6 +28,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   const [userData, setUserData] = useState<AuthDataResponse | null>(null);
 
   const [transactionCount, setTransactionCount] = useState<number>(0);
+  const [portfolioCount, setPortfolioCount] = useState<number>(0);
 
   //* init state
   useEffect(() => {
@@ -63,7 +64,24 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
             setTransactionCount(0);
           }
         };
+        const getPortfolioCount = async () => {
+          try {
+            const res = await axios.get(
+              `${API_BACKEND}/api/v1/dashboard/investor`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+              }
+            );
+            const portfolios: any[] = res.data.data.portfolio;
+            setPortfolioCount(portfolios.length);
+          } catch (error) {
+            setPortfolioCount(0);
+          }
+        };
         getTransactionCount();
+        getPortfolioCount();
       }
     }
   }, []);
@@ -132,6 +150,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
             title="Portfolio"
             icon={PieChart}
             setActive={(p) => p === pathname}
+            badgeCount={portfolioCount}
           />
           <SidebarMenuItem
             expand={expand}
@@ -163,7 +182,7 @@ const Sidebar: React.FC<{
       className={clsx(
         "fixed top-0 pt-28 left-0 h-screen z-60 bg-white text-gray-900 shadow-xl flex flex-col transition-all duration-300",
         "hidden md:flex",
-        expand ? "md:w-60" : "md:w-20"
+        expand ? "md:w-44 lg:w-60" : "md:w-20"
       )}
     >
       {children}
@@ -179,7 +198,7 @@ const DashboardContent: React.FC<{
     <div
       className={clsx(
         "min-h-screen w-full pt-28 px-4 transition-all duration-300",
-        expand ? "md:ml-64" : "md:ml-24"
+        expand ? "md:ml-48 lg:ml-64" : "md:ml-24"
       )}
     >
       {children}

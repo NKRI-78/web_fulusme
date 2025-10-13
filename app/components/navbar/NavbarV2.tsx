@@ -196,7 +196,7 @@ const NavbarV2: React.FC = () => {
               <div className="flex items-center gap-4">
                 {userData.role !== "user" ? (
                   <Link href={"/profile"}>
-                    <div className="flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
+                    <div className="hidden md:flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
                       <p className="text-white text-sm">{profile?.fullname}</p>
                       <Image
                         src={getAvatar()}
@@ -209,7 +209,7 @@ const NavbarV2: React.FC = () => {
                   </Link>
                 ) : (
                   <Link href={"/dashboard/main"}>
-                    <div className="flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500 cursor-pointer">
+                    <div className="hidden md:flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500 cursor-pointer">
                       <p className="text-white text-sm">{profile?.fullname}</p>
                     </div>
                   </Link>
@@ -277,7 +277,7 @@ const NavbarV2: React.FC = () => {
                     </div>
                   )} */}
 
-                  <li onClick={toggleMenu}>
+                  {/* <li onClick={toggleMenu}>
                     <Link
                       href="/"
                       className={
@@ -288,7 +288,7 @@ const NavbarV2: React.FC = () => {
                     >
                       Beranda
                     </Link>
-                  </li>
+                  </li> */}
 
                   <li onClick={toggleMenu}>
                     <Link
@@ -329,11 +329,21 @@ const NavbarV2: React.FC = () => {
                     </Link>
                   </li>
 
-                  <li className="md:hidden">
+                  {/* <li className="md:hidden">
                     <Link href={"/profile"}>
                       <p className="text-white">Halo, {profile?.fullname}</p>
                     </Link>
-                  </li>
+                  </li> */}
+                  <div className="w-fit flex md:hidden items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
+                    <p className="text-white text-sm">{profile?.fullname}</p>
+                    <Image
+                      src={getAvatar()}
+                      alt="Foto Profile"
+                      width={28}
+                      height={28}
+                      className="rounded-full object-cover w-[30px] h-[30px]"
+                    />
+                  </div>
 
                   <li
                     onClick={() => {
@@ -367,14 +377,14 @@ const NavbarV2: React.FC = () => {
               {/* MUNCUL KETIKA MD KEATAS (TAMPILAN DEKSTOP & TABLET) */}
               {/* TAMPILAN MENU DALAM BENTUK HORIZONTAL */}
               <ul className="hidden md:flex gap-4 items-center text-sm lg:text-base">
-                <li>
+                {/* <li>
                   <Link
                     href="/"
                     className={pathname == "/" ? "font-semibold" : ""}
                   >
                     Beranda
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     href="/informasi"
@@ -481,7 +491,7 @@ const NavbarV2: React.FC = () => {
 
                 {/* menu */}
                 <ul className="flex flex-col gap-6 text-white text-sm font-semibold pt-16">
-                  <li onClick={toggleMenu}>
+                  {/* <li onClick={toggleMenu}>
                     <Link
                       href="/"
                       className={
@@ -492,7 +502,7 @@ const NavbarV2: React.FC = () => {
                     >
                       Beranda
                     </Link>
-                  </li>
+                  </li> */}
                   <li onClick={toggleMenu}>
                     <Link
                       href="/informasi"

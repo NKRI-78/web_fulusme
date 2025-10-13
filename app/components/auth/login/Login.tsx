@@ -117,7 +117,6 @@ const Login: React.FC = () => {
   return (
     <div className="w-full h-screen bg-gray-100 px-8 sm:px-12 md:px-16 lg:px-20 py-14">
       <div className="w-full h-full bg-white rounded-md shadow-md shadow-gray-200 flex flex-col lg:flex-row">
-        {/* Bagian kiri */}
         <div
           className="
             w-full lg:w-[58%] relative lg:px-14 p-6 lg:py-12 
@@ -127,7 +126,7 @@ const Login: React.FC = () => {
             overflow-hidden
           "
         >
-          <div className="absolute inset-0 bg-black/25 backdrop-blur-sm z-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent backdrop-blur-sm z-0"></div>
 
           <div className="relative z-10 flex flex-col items-center lg:justify-between lg:items-start gap-y-2 h-full">
             <Image
@@ -150,7 +149,6 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* Bagian kanan (form login) */}
         <div
           className="
             w-full lg:w-[42%] flex items-center justify-center p-8
