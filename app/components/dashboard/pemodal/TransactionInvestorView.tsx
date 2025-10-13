@@ -156,7 +156,8 @@ export default function TransactionInvestorView() {
                       <td className="p-3 text-left">
                         <span
                           className={`px-2 py-1 text-xs rounded-full font-medium ${
-                            trx.payment_status === "REFUNDED"
+                            trx.payment_status === "REFUNDED" ||
+                            trx.payment_status === "EXPIRED"
                               ? "bg-red-100 text-red-700"
                               : trx.payment_status === "PENDING"
                               ? "bg-yellow-100 text-yellow-700"

@@ -17,11 +17,11 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({
     target_amount,
     user_paid_idr,
     project_paid_amount_idr,
-    recent_transactio,
+    recent_transactions,
   } = data;
 
-  const percentage = ((user_paid_idr / target_amount) * 100).toFixed(2);
-  const totalTransactions = recent_transactio?.length || 0;
+  const percentage = ((user_paid_idr / target_amount) * 100).toFixed(3);
+  const totalTransactions = recent_transactions?.length || 0;
 
   return (
     <div className="bg-white rounded-xl p-4 flex flex-col justify-between border border-[#13733b] hover:shadow-md transition">
