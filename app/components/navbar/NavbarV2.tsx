@@ -198,11 +198,12 @@ const NavbarV2: React.FC = () => {
                   <Link href={"/profile"}>
                     <div className="hidden md:flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
                       <p className="text-white text-sm">{profile?.fullname}</p>
-                      <Image
+                      <img
                         src={getAvatar()}
                         alt="Foto Profile"
                         width={28}
                         height={28}
+                        loading="lazy"
                         className="rounded-full object-cover w-[30px] h-[30px]"
                       />
                     </div>
@@ -329,18 +330,14 @@ const NavbarV2: React.FC = () => {
                     </Link>
                   </li>
 
-                  {/* <li className="md:hidden">
-                    <Link href={"/profile"}>
-                      <p className="text-white">Halo, {profile?.fullname}</p>
-                    </Link>
-                  </li> */}
                   <div className="w-fit flex md:hidden items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
                     <p className="text-white text-sm">{profile?.fullname}</p>
-                    <Image
+                    <img
                       src={getAvatar()}
                       alt="Foto Profile"
                       width={28}
                       height={28}
+                      loading="lazy"
                       className="rounded-full object-cover w-[30px] h-[30px]"
                     />
                   </div>

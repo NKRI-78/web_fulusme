@@ -20,7 +20,11 @@ export default function ProfilePemodalPerusahaan({
       <div className="bg-white rounded-2xl shadow-sm p-8 flex justify-center gap-8 border border-gray-100">
         {/* Foto Profil */}
         <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-blue-100 shadow-md">
-          <Image src={avatar} alt="Selfie" fill className="object-cover" />
+          <img
+            src={avatar}
+            alt="Selfie"
+            className="object-cover w-full h-full"
+          />
         </div>
 
         {/* Info Profil */}
