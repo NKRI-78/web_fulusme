@@ -51,6 +51,13 @@ const loadFormIndex = (isUpdate: boolean, form: string | null): number => {
   return 0;
 };
 
+const hasDirekturOrKomisaris = (formKey: string | null): boolean => {
+  if (!formKey) return false;
+  const isDirektur = formKey.includes("direktur");
+  const isKomisaris = formKey.includes("komisaris");
+  return isDirektur || isKomisaris;
+};
+
 export default function MultiStepFormWrapper() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -118,6 +125,9 @@ export default function MultiStepFormWrapper() {
     const isKTP = formKey?.endsWith("upload-ktp") ?? false;
     const isNPWP = formKey?.endsWith("upload-npwp") ?? false;
     const isSusunanManajemen = isKTP || isNPWP;
+    const formKeyResult = hasDirekturOrKomisaris(formKey)
+      ? "update-direktur-komisaris"
+      : formKey;
 
     const payload = {
       user_id: userProfile?.id ?? "-",
@@ -134,7 +144,7 @@ export default function MultiStepFormWrapper() {
     try {
       if (userCookie) {
         await axios.put(
-          `${API_BACKEND}/api/v1/document/update/${formKey}`,
+          `${API_BACKEND}/api/v1/document/update/${formKeyResult}`,
           payload,
           {
             headers: { Authorization: `Bearer ${userCookie.token}` },
