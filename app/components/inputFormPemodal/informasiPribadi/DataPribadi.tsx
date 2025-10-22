@@ -641,7 +641,8 @@ const ComponentDataPribadi: React.FC<Props> = ({
             <input
               type="text"
               name="nama"
-              value={formData.nama}
+              value={dataProfile.fullname}
+              disabled={syncNamaToPemilik}
               onChange={(e) => {
                 onChange(e);
 
@@ -655,7 +656,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                 }
               }}
               placeholder="Nama"
-              className="border p-2 w-full rounded mb-0 placeholder:text-sm"
+              className="border p-2 w-full rounded mb-0 placeholder:text-sm disabled:bg-gray-100"
             />
 
             {errors?.nama && (
@@ -1200,7 +1201,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
             type="text"
             name="namaPemilik"
             placeholder="Masukkan Nama Pemilik Rekening"
-            value={formData.namaPemilik}
+            value={dataProfile.fullname}
             onChange={onChange}
             disabled={syncNamaToPemilik}
             className="border rounded p-2 w-full mb-0 placeholder:text-sm disabled:bg-gray-100"
