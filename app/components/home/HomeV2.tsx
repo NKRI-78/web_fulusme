@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { setBadge } from "@/redux/slices/badgeSlice";
 import { Project } from "@/app/interfaces/project/IProject";
 import GridView from "../GridView";
+import { HelpButton, HelpButtonPosition } from "./HelpButton";
 
 const HomeV2: React.FC = () => {
   const dispatch = useDispatch();
@@ -621,7 +622,7 @@ const HomeV2: React.FC = () => {
         </div>
       </section>
 
-      <div className="fixed bottom-4 right-4 z-50">
+      {/* <div className="fixed bottom-4 right-4 z-50">
         <a
           href="https://wa.me/6283814333442"
           target="_blank"
@@ -631,7 +632,10 @@ const HomeV2: React.FC = () => {
           <img src="/images/wa.png" alt="WA" className="w-5 h-5 mr-2" />
           Butuh Bantuan?
         </a>
-      </div>
+      </div> */}
+      <HelpButtonPosition>
+        <HelpButton />
+      </HelpButtonPosition>
 
       <Modal
         isOpen={showOtpModal}
