@@ -231,13 +231,13 @@ const HomeV2: React.FC = () => {
                   <li className="flex gap-x-2 items-center">
                     <img className="w-6" src="/images/check.png" alt="Check" />
                     <span className="text-[#969696]">
-                      Berizin resmi dan diawasi OJK: Surat KEP-11/D.04/2025
+                      Berizin resmi dan diawasi OJK : Surat KEP-45/D.04/2022
                     </span>
                   </li>
                   <li className="flex gap-x-2 items-center">
                     <img className="w-6" src="/images/check.png" alt="Check" />
                     <span className="text-[#969696]">
-                      Bersertifikasi ISO 27009:2025
+                      Bersertifikasi ISO 27001 : 2013
                     </span>
                   </li>
                   <li className="flex gap-x-2 items-center">
@@ -383,7 +383,7 @@ const HomeV2: React.FC = () => {
         </div>
       </section>
 
-      <section className="text-black py-16 px-6 md:px-20">
+      <section className="text-black py-16 px-6 md:px-20" id="faq">
         <div className="text-center mb-10">
           <h2 className="relative text-2xl font-bold mb-2">FAQ</h2>
           <p className="relative text-sm text-gray-600">
@@ -451,6 +451,7 @@ const HomeV2: React.FC = () => {
           })}
         </div>
       </section>
+
       <section className="bg-white text-black px-6 md:px-20 py-16">
         <h2 className="text-2xl relative font-bold text-center mb-6">
           DISCLAIMER
@@ -621,6 +622,25 @@ const HomeV2: React.FC = () => {
           </div>
         </div>
       </section>
+      {/* <section className="bg-white text-black px-6 md:px-20 py-10">
+        <h2 className="text-2xl relative font-bold text-center mb-6">
+          DISCLAIMER
+        </h2>
+
+        <div className="h-[80vh] relative overflow-hidden p-2 border border-gray-300 rounded-lg space-y-4 text-justify text-sm leading-relaxed shadow-md">
+          <iframe
+            src="/document/disclaimer.html"
+            width="100%"
+            height="100%"
+            style={{
+              border: "none",
+              background: "white",
+              minHeight: "80vh",
+            }}
+            title="Disclaimer"
+          />
+        </div>
+      </section> */}
 
       {/* <div className="fixed bottom-4 right-4 z-50">
         <a
