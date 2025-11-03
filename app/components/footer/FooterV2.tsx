@@ -15,7 +15,7 @@ const Footer: React.FC = () => {
               </a>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <a href="/privacy-policy" className="hover:underline">
                 Kebijakan Privasi
               </a>
             </li>
@@ -133,27 +133,39 @@ const Footer: React.FC = () => {
               />
             </a>
           </div>
-          <div className="flex items-start justify-center space-x-6 mt-6 mb-4">
+          <div className="flex items-center justify-center space-x-6 mt-6 mb-4">
             <a
               href="https://www.youtube.com/@fulusme8159"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img src="/images/youtube.png" className="h-12" />
+              <img
+                src="/images/youtube.png"
+                alt="Youtube Fulusme"
+                className="h-11"
+              />
             </a>
             <a
               href="https://www.facebook.com/profile.php?id=61566054190488"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img src="/images/facebook.png" className="h-12" />
+              <img
+                src="/images/facebook.png"
+                alt="Youtube Facebook"
+                className="h-11"
+              />
             </a>
             <a
               href="https://www.instagram.com/fulusme/"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img src="/images/instagram.png" className="h-12" />
+              <img
+                src="/images/instagram.png"
+                alt="Youtube Instagram"
+                className="h-11"
+              />
             </a>
           </div>
         </div>

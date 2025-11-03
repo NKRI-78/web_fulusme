@@ -12,16 +12,15 @@ const TermsConditions: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-white flex flex-col items-center justify-start">
-      <h1 className="text-2xl font-bold text-[#10565C] pt-20 py-6">
+    <div className="w-full py-28 bg-white flex flex-col justify-center items-center gap-8">
+      <h1 className="text-2xl font-bold text-[#10565C]">
         Syarat dan Ketentuan
       </h1>
 
-      <div className="w-full max-w-4xl flex-1 rounded-lg overflow-hidden shadow-md border">
+      <div className="w-full max-w-4xl h-[500px] rounded-lg overflow-hidden shadow-md border">
         <iframe
           src="/document/syarat.html"
-          width="100%"
-          height="100%"
+          className="w-full h-full"
           style={{
             border: "none",
             background: "white",
