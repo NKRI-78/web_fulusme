@@ -75,7 +75,7 @@ const HomeV2: React.FC = () => {
       {
         question:
           "Apakah Fulusme merupakan bank atau perusahaan finansial lainnya?",
-        answer: `Fulusme bukanlah bank. Fulusme adalah platform yang Mempertemukan Pemodak dan Penerbit Secara Gotong Royong untuk mendanai proyek yang spesifik saja dan tidak ada proses penyimpanan uang seperti bank. Fulusme bisa dijadikan alternatif bisnis yang menguntungkan seperti layaknya pendanaan di pasar modal, karena selain aman, juga memiliki tingkat bagi hasil/bunga yang menarik dalam periode yang cepat/pendek 1- 24 bulan.`,
+        answer: `Fulusme bukanlah bank. Fulusme adalah platform yang Mempertemukan Pemodal dan Penerbit Secara Gotong Royong untuk mendanai proyek yang spesifik saja dan tidak ada proses penyimpanan uang seperti bank. Fulusme bisa dijadikan alternatif bisnis yang menguntungkan seperti layaknya pendanaan di pasar modal, karena selain aman, juga memiliki tingkat bagi hasil/bunga yang menarik dalam periode yang cepat/pendek 1- 24 bulan.`,
       },
       {
         question: "Jika bukan bank, apakah aman mendanai di Fulusme?",
@@ -88,7 +88,7 @@ const HomeV2: React.FC = () => {
       },
       {
         question: "Apakah ada denda jika terjadi keterlambatan pembayaran?",
-        answer: "YA, denda ajkan dikenakan sesuai ketentuan yang berlaku",
+        answer: "Ya, denda ajakan dikenakan sesuai ketentuan yang berlaku",
       },
       {
         question: "Apakah mungkin terjadi gagal bayar (default)?",
@@ -611,7 +611,7 @@ const HomeV2: React.FC = () => {
             bisnis yang anda investasikan tersebut.
           </p>
           <p>
-            FuLusmeTIDAK BERTANGGUNG JAWAB terhadap risiko kerugian dan gugatan
+            FuLusme TIDAK BERTANGGUNG JAWAB terhadap risiko kerugian dan gugatan
             hukum serta segala bentuk risiko lain yang timbul dikemudian hari
             atas hasil investasi bisnis yang anda tentukan sendiri saat ini.
             Beberapa risiko yang dapat terjadi saat Anda berinvestasi yaitu :
