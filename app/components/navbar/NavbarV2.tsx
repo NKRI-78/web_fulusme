@@ -42,9 +42,6 @@ const NavbarV2: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const user = getUser();
-
-  // const userData = user ? JSON.parse(user) : null;
   const [userData, setUserData] = useState<AuthDataResponse | null>(null);
 
   const [hydrated, setHydrated] = useState(false);
@@ -53,8 +50,13 @@ const NavbarV2: React.FC = () => {
     "register" | "otp" | "role" | "login" | null
   >(null);
   const [profile, setProfile] = useState<User | null>(null);
+  const [loadingUser, setLoadingUser] = useState(false);
 
   const closeModal = () => setStep(null);
+
+  // setLoadingUser(true);
+
+  const user = getUser();
 
   const badgeCount = useSelector((state: RootState) => state.badge.badgeCount);
 
@@ -107,6 +109,8 @@ const NavbarV2: React.FC = () => {
       setUserData(user);
     } catch (err) {
       console.error("Failed to parse user cookie", err);
+    } finally {
+      setLoadingUser(false);
     }
   }, []);
 
@@ -186,37 +190,45 @@ const NavbarV2: React.FC = () => {
         <NavLayout>
           <NavLogo sticky={isSticky} />
 
-          {hydrated && userData !== null ? (
-            //
-            // TAMPILAN NAV BAR KETIKA USER SUDAH LOGIN / REGISTER
-            //
+          {hydrated && loadingUser ? (
+            <div className="text-white">loading</div>
+          ) : (
             <>
-              {/* MUNCUL KETIKA MD KEATAS (TAMPILAN DEKSTOP & TABLET) */}
-              {/* NAMA & BUTTON NOTIFIKASI & BUTTON DRAWER */}
-              <div className="flex items-center gap-4">
-                {userData.role !== "user" ? (
-                  <Link href={"/profile"}>
-                    <div className="hidden md:flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
-                      <p className="text-white text-sm">{profile?.fullname}</p>
-                      <img
-                        src={getAvatar()}
-                        alt="Foto Profile"
-                        width={28}
-                        height={28}
-                        loading="lazy"
-                        className="rounded-full object-cover w-[30px] h-[30px]"
-                      />
-                    </div>
-                  </Link>
-                ) : (
-                  <Link href={"/dashboard/main"}>
-                    <div className="hidden md:flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500 cursor-pointer">
-                      <p className="text-white text-sm">{profile?.fullname}</p>
-                    </div>
-                  </Link>
-                )}
-                {/* hanya muncul ketika ia suah register tapi belum memilih role */}
-                {/* {userData && userData.role === "user" && step !== "role" && (
+              {hydrated && userData !== null ? (
+                //
+                // TAMPILAN NAV BAR KETIKA USER SUDAH LOGIN / REGISTER
+                //
+                <>
+                  {/* MUNCUL KETIKA MD KEATAS (TAMPILAN DEKSTOP & TABLET) */}
+                  {/* NAMA & BUTTON NOTIFIKASI & BUTTON DRAWER */}
+                  <div className="flex items-center gap-4">
+                    {userData.role !== "user" ? (
+                      <Link href={"/profile"}>
+                        <div className="hidden md:flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
+                          <p className="text-white text-sm">
+                            {profile?.fullname}
+                          </p>
+                          <img
+                            src={getAvatar()}
+                            alt="Foto Profile"
+                            width={28}
+                            height={28}
+                            loading="lazy"
+                            className="rounded-full object-cover w-[30px] h-[30px]"
+                          />
+                        </div>
+                      </Link>
+                    ) : (
+                      <Link href={"/dashboard/main"}>
+                        <div className="hidden md:flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500 cursor-pointer">
+                          <p className="text-white text-sm">
+                            {profile?.fullname}
+                          </p>
+                        </div>
+                      </Link>
+                    )}
+                    {/* hanya muncul ketika ia suah register tapi belum memilih role */}
+                    {/* {userData && userData.role === "user" && step !== "role" && (
                   <div className="hidden md:block">
                     <button
                       onClick={() => setStep("role")}
@@ -227,47 +239,47 @@ const NavbarV2: React.FC = () => {
                   </div>
                 )} */}
 
-                <NotifIcon
-                  badgeCount={badgeCount}
-                  className={
-                    isSticky
-                      ? `text-[${PRIMARY_COLOR}]`
-                      : `text-[${ON_PRIMARY_COLOR}]`
-                  }
-                />
+                    <NotifIcon
+                      badgeCount={badgeCount}
+                      className={
+                        isSticky
+                          ? `text-[${PRIMARY_COLOR}]`
+                          : `text-[${ON_PRIMARY_COLOR}]`
+                      }
+                    />
 
-                <DrawerButton
-                  isOpen={menuOpen}
-                  onClick={toggleMenu}
-                  className={
-                    isSticky
-                      ? `text-[${PRIMARY_COLOR}]`
-                      : `text-[${ON_PRIMARY_COLOR}]`
-                  }
-                />
-              </div>
+                    <DrawerButton
+                      isOpen={menuOpen}
+                      onClick={toggleMenu}
+                      className={
+                        isSticky
+                          ? `text-[${PRIMARY_COLOR}]`
+                          : `text-[${ON_PRIMARY_COLOR}]`
+                      }
+                    />
+                  </div>
 
-              {/* DRAWER */}
-              {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
-              {/* TAMPILAN MENU DALAM BENTUK VERTIKAL */}
-              <div
-                className={`fixed top-0 right-0 h-full w-64 bg-[#10565C] z-40 p-6 
+                  {/* DRAWER */}
+                  {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
+                  {/* TAMPILAN MENU DALAM BENTUK VERTIKAL */}
+                  <div
+                    className={`fixed top-0 right-0 h-full w-64 bg-[#10565C] z-40 p-6 
                     transform transition-transform duration-300 
                     ${menuOpen ? "translate-x-0" : "translate-x-full"} 
                     `}
-              >
-                {/* tulisan Fulusme navigasi ke home */}
-                <Link
-                  href={"/"}
-                  className={`text-xl text-center font-bold text-white`}
-                >
-                  FuLusme
-                </Link>
+                  >
+                    {/* tulisan Fulusme navigasi ke home */}
+                    <Link
+                      href={"/"}
+                      className={`text-xl text-center font-bold text-white`}
+                    >
+                      FuLusme
+                    </Link>
 
-                {/* menu */}
-                <ul className="flex flex-col gap-6 text-white text-base font-semibold pt-16">
-                  {/* hanya muncul ketika user belum memilih role */}
-                  {/* {userData && userData.role === "user" && step !== "role" && (
+                    {/* menu */}
+                    <ul className="flex flex-col gap-6 text-white text-base font-semibold pt-16">
+                      {/* hanya muncul ketika user belum memilih role */}
+                      {/* {userData && userData.role === "user" && step !== "role" && (
                     <div className="block md:hidden">
                       <button
                         onClick={() => setStep("role")}
@@ -278,7 +290,7 @@ const NavbarV2: React.FC = () => {
                     </div>
                   )} */}
 
-                  {/* <li onClick={toggleMenu}>
+                      {/* <li onClick={toggleMenu}>
                     <Link
                       href="/"
                       className={
@@ -291,90 +303,92 @@ const NavbarV2: React.FC = () => {
                     </Link>
                   </li> */}
 
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/dashboard"
-                      className={
-                        pathname == "/dashboard"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Dashboard
-                    </Link>
-                  </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/dashboard"
+                          className={
+                            pathname == "/dashboard"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Dashboard
+                        </Link>
+                      </li>
 
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/informasi"
-                      className={
-                        pathname == "/informasi"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Informasi
-                    </Link>
-                  </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/informasi"
+                          className={
+                            pathname == "/informasi"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Informasi
+                        </Link>
+                      </li>
 
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/terms-conditions"
-                      className={
-                        pathname == "/terms-conditions"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Syarat dan Ketentuan
-                    </Link>
-                  </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/terms-conditions"
+                          className={
+                            pathname == "/terms-conditions"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Syarat dan Ketentuan
+                        </Link>
+                      </li>
 
-                  <div className="w-fit flex md:hidden items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
-                    <p className="text-white text-sm">{profile?.fullname}</p>
-                    <img
-                      src={getAvatar()}
-                      alt="Foto Profile"
-                      width={28}
-                      height={28}
-                      loading="lazy"
-                      className="rounded-full object-cover w-[30px] h-[30px]"
-                    />
+                      <div className="w-fit flex md:hidden items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
+                        <p className="text-white text-sm">
+                          {profile?.fullname}
+                        </p>
+                        <img
+                          src={getAvatar()}
+                          alt="Foto Profile"
+                          width={28}
+                          height={28}
+                          loading="lazy"
+                          className="rounded-full object-cover w-[30px] h-[30px]"
+                        />
+                      </div>
+
+                      <li
+                        onClick={() => {
+                          removeData();
+                          window.location.href = "/auth/login";
+                        }}
+                      >
+                        <Link
+                          href="/auth/login"
+                          className="px-5 py-2 rounded-lg bg-red-500 text-white"
+                        >
+                          Keluar
+                        </Link>
+                      </li>
+                    </ul>
                   </div>
 
-                  <li
-                    onClick={() => {
-                      removeData();
-                      window.location.href = "/auth/login";
-                    }}
-                  >
-                    <Link
-                      href="/auth/login"
-                      className="px-5 py-2 rounded-lg bg-red-500 text-white"
-                    >
-                      Keluar
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
-              {/* BARRIER OVERLAY KETIKA DRAWER DIBUKA */}
-              {menuOpen && (
-                <div
-                  onClick={toggleMenu}
-                  className="fixed inset-0 bg-black bg-opacity-40 z-30"
-                />
-              )}
-            </>
-          ) : (
-            //
-            // TAMPILAN NAV BAR KETIKA USER BELUM LOGIN / REGISTER
-            //
-            <>
-              {/* MUNCUL KETIKA MD KEATAS (TAMPILAN DEKSTOP & TABLET) */}
-              {/* TAMPILAN MENU DALAM BENTUK HORIZONTAL */}
-              <ul className="hidden md:flex gap-4 items-center text-sm lg:text-base">
-                {/* <li>
+                  {/* BARRIER OVERLAY KETIKA DRAWER DIBUKA */}
+                  {menuOpen && (
+                    <div
+                      onClick={toggleMenu}
+                      className="fixed inset-0 bg-black bg-opacity-40 z-30"
+                    />
+                  )}
+                </>
+              ) : (
+                //
+                // TAMPILAN NAV BAR KETIKA USER BELUM LOGIN / REGISTER
+                //
+                <>
+                  {/* MUNCUL KETIKA MD KEATAS (TAMPILAN DEKSTOP & TABLET) */}
+                  {/* TAMPILAN MENU DALAM BENTUK HORIZONTAL */}
+                  <ul className="hidden md:flex gap-4 items-center text-sm lg:text-base">
+                    {/* <li>
                   <Link
                     href="/"
                     className={pathname == "/" ? "font-semibold" : ""}
@@ -382,113 +396,117 @@ const NavbarV2: React.FC = () => {
                     Beranda
                   </Link>
                 </li> */}
-                <li>
-                  <Link
-                    href="/informasi"
-                    className={pathname == "/informasi" ? "font-semibold" : ""}
-                  >
-                    Informasi
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/business-list"
-                    className={
-                      pathname == "/business-list" ? "font-semibold" : ""
-                    }
-                  >
-                    Daftar Bisnis
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/about-us"
-                    className={pathname == "/about-us" ? "font-semibold" : ""}
-                  >
-                    Tentang Kami
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/terms-conditions"
-                    className={
-                      pathname == "/terms-conditions" ? "font-semibold" : ""
-                    }
-                  >
-                    Syarat dan Ketentuan
-                  </Link>
-                </li>
-                <li className="w-fit">
-                  <Link
-                    href={"/auth/login"}
-                    className={`px-5 py-[9px] rounded-md ${
-                      isSticky
-                        ? `bg-[${PRIMARY_COLOR}] text-white border-2 border-[${PRIMARY_COLOR}]`
-                        : `bg-white text-[${PRIMARY_COLOR}] border-2 border-white`
-                    }`}
-                  >
-                    Masuk
-                  </Link>
-                </li>
-                <li className="w-fit">
-                  <div
-                    className={`px-5 py-[6px] rounded-md ${
-                      isSticky
-                        ? `border-2 border-[${PRIMARY_COLOR}] text-[${PRIMARY_COLOR}]`
-                        : `border-2 border-[${ON_PRIMARY_COLOR}] text-[${ON_PRIMARY_COLOR}]`
-                    } cursor-pointer`}
-                    onClick={() => {
-                      setStep("register");
-                      // setStep("role");
-                    }}
-                  >
-                    Daftar
+                    <li>
+                      <Link
+                        href="/informasi"
+                        className={
+                          pathname == "/informasi" ? "font-semibold" : ""
+                        }
+                      >
+                        Informasi
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/business-list"
+                        className={
+                          pathname == "/business-list" ? "font-semibold" : ""
+                        }
+                      >
+                        Daftar Bisnis
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/about-us"
+                        className={
+                          pathname == "/about-us" ? "font-semibold" : ""
+                        }
+                      >
+                        Tentang Kami
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/terms-conditions"
+                        className={
+                          pathname == "/terms-conditions" ? "font-semibold" : ""
+                        }
+                      >
+                        Syarat dan Ketentuan
+                      </Link>
+                    </li>
+                    <li className="w-fit">
+                      <Link
+                        href={"/auth/login"}
+                        className={`px-5 py-[9px] rounded-md ${
+                          isSticky
+                            ? `bg-[${PRIMARY_COLOR}] text-white border-2 border-[${PRIMARY_COLOR}]`
+                            : `bg-white text-[${PRIMARY_COLOR}] border-2 border-white`
+                        }`}
+                      >
+                        Masuk
+                      </Link>
+                    </li>
+                    <li className="w-fit">
+                      <div
+                        className={`px-5 py-[6px] rounded-md ${
+                          isSticky
+                            ? `border-2 border-[${PRIMARY_COLOR}] text-[${PRIMARY_COLOR}]`
+                            : `border-2 border-[${ON_PRIMARY_COLOR}] text-[${ON_PRIMARY_COLOR}]`
+                        } cursor-pointer`}
+                        onClick={() => {
+                          setStep("register");
+                          // setStep("role");
+                        }}
+                      >
+                        Daftar
+                      </div>
+                    </li>
+                  </ul>
+
+                  {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
+                  {/* BUTTON NOTIFIKASI & BUTTON DRAWER */}
+                  <div className="md:hidden flex items-center gap-4">
+                    <NotifIcon
+                      badgeCount={badgeCount}
+                      className={
+                        isSticky
+                          ? `text-[${PRIMARY_COLOR}]`
+                          : `text-[${ON_PRIMARY_COLOR}]`
+                      }
+                    />
+                    <DrawerButton
+                      isOpen={menuOpen}
+                      onClick={toggleMenu}
+                      className={
+                        isSticky
+                          ? `text-[${PRIMARY_COLOR}]`
+                          : `text-[${ON_PRIMARY_COLOR}]`
+                      }
+                    />
                   </div>
-                </li>
-              </ul>
 
-              {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
-              {/* BUTTON NOTIFIKASI & BUTTON DRAWER */}
-              <div className="md:hidden flex items-center gap-4">
-                <NotifIcon
-                  badgeCount={badgeCount}
-                  className={
-                    isSticky
-                      ? `text-[${PRIMARY_COLOR}]`
-                      : `text-[${ON_PRIMARY_COLOR}]`
-                  }
-                />
-                <DrawerButton
-                  isOpen={menuOpen}
-                  onClick={toggleMenu}
-                  className={
-                    isSticky
-                      ? `text-[${PRIMARY_COLOR}]`
-                      : `text-[${ON_PRIMARY_COLOR}]`
-                  }
-                />
-              </div>
-
-              {/* DRAWER */}
-              {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
-              {/* TAMPILAN MENU DALAM BENTUK VERTIKAL */}
-              <div
-                className={`fixed top-0 right-0 h-full w-64 bg-[${PRIMARY_COLOR}] z-40 p-6 
+                  {/* DRAWER */}
+                  {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
+                  {/* TAMPILAN MENU DALAM BENTUK VERTIKAL */}
+                  <div
+                    className={`fixed top-0 right-0 h-full w-64 bg-[${PRIMARY_COLOR}] z-40 p-6 
                     transform transition-transform duration-300 
                     ${menuOpen ? "translate-x-0" : "translate-x-full"} 
                     md:hidden`}
-              >
-                {/* tulisan Fulusme navigasi ke home */}
-                <Link
-                  href={"/"}
-                  className={`text-xl text-center font-bold text-white`}
-                >
-                  FuLusme
-                </Link>
+                  >
+                    {/* tulisan Fulusme navigasi ke home */}
+                    <Link
+                      href={"/"}
+                      className={`text-xl text-center font-bold text-white`}
+                    >
+                      FuLusme
+                    </Link>
 
-                {/* menu */}
-                <ul className="flex flex-col gap-6 text-white text-sm font-semibold pt-16">
-                  {/* <li onClick={toggleMenu}>
+                    {/* menu */}
+                    <ul className="flex flex-col gap-6 text-white text-sm font-semibold pt-16">
+                      {/* <li onClick={toggleMenu}>
                     <Link
                       href="/"
                       className={
@@ -500,87 +518,89 @@ const NavbarV2: React.FC = () => {
                       Beranda
                     </Link>
                   </li> */}
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/informasi"
-                      className={
-                        pathname == "/informasi"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Informasi
-                    </Link>
-                  </li>
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/business-list"
-                      className={
-                        pathname == "/business-list"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Daftar Bisnis
-                    </Link>
-                  </li>
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/about-us"
-                      className={
-                        pathname == "/about-us"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Tentang Kami
-                    </Link>
-                  </li>
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/terms-conditions"
-                      className={
-                        pathname == "/terms-conditions"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Syarat dan Ketentuan
-                    </Link>
-                  </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/informasi"
+                          className={
+                            pathname == "/informasi"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Informasi
+                        </Link>
+                      </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/business-list"
+                          className={
+                            pathname == "/business-list"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Daftar Bisnis
+                        </Link>
+                      </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/about-us"
+                          className={
+                            pathname == "/about-us"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Tentang Kami
+                        </Link>
+                      </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/terms-conditions"
+                          className={
+                            pathname == "/terms-conditions"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Syarat dan Ketentuan
+                        </Link>
+                      </li>
 
-                  <li className="w-fit" onClick={toggleMenu}>
-                    <Link href="/auth/login">
-                      <div
-                        className={`px-8 py-2 rounded-md bg-white text-[${PRIMARY_COLOR}]`}
+                      <li className="w-fit" onClick={toggleMenu}>
+                        <Link href="/auth/login">
+                          <div
+                            className={`px-8 py-2 rounded-md bg-white text-[${PRIMARY_COLOR}]`}
+                          >
+                            Masuk
+                          </div>
+                        </Link>
+                      </li>
+
+                      <li
+                        className="w-fit"
+                        onClick={() => {
+                          toggleMenu();
+                          setStep("register");
+                        }}
                       >
-                        Masuk
-                      </div>
-                    </Link>
-                  </li>
+                        <div
+                          className={`px-8 py-2 rounded-md bg-transparent text-white border border-gray-200`}
+                        >
+                          Daftar
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
 
-                  <li
-                    className="w-fit"
-                    onClick={() => {
-                      toggleMenu();
-                      setStep("register");
-                    }}
-                  >
+                  {/* BARRIER OVERLAY KETIKA DRAWER DIBUKA */}
+                  {menuOpen && (
                     <div
-                      className={`px-8 py-2 rounded-md bg-transparent text-white border border-gray-200`}
-                    >
-                      Daftar
-                    </div>
-                  </li>
-                </ul>
-              </div>
-
-              {/* BARRIER OVERLAY KETIKA DRAWER DIBUKA */}
-              {menuOpen && (
-                <div
-                  onClick={toggleMenu}
-                  className="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
-                />
+                      onClick={toggleMenu}
+                      className="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
+                    />
+                  )}
+                </>
               )}
             </>
           )}

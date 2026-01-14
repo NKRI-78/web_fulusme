@@ -108,6 +108,13 @@ const FormPemodal: React.FC = () => {
         const data = response.data?.data;
 
         setDataProfile({ ...data, form: form });
+        setDataPribadi((prev) => ({
+          ...prev,
+          nama: data.fullname,
+          namaPemilik: data.fullname,
+        }));
+
+        console.log("data && isUpdate", data && isUpdate);
 
         if (data && isUpdate) {
           localStorage.setItem("dataProfile", JSON.stringify(data));
@@ -116,7 +123,7 @@ const FormPemodal: React.FC = () => {
 
           setDataPribadi((prev) => ({
             ...prev,
-            nama: data.investor.ktp.name || "",
+            nama: data.fullname || "",
             nik: data.investor.ktp.nik || "",
             tempatLahir: placeOfBirth || "",
             tanggalLahir: dateOfBirth || "",
@@ -639,6 +646,7 @@ const FormPemodal: React.FC = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("formPemodal");
+      console.log("const saved = localStorage.getItem(formPemodal);", saved);
       if (saved && !isUpdate) {
         const parsed = JSON.parse(saved);
         setDataPribadi({
@@ -699,10 +707,11 @@ const FormPemodal: React.FC = () => {
     }
   }, []);
 
-  // Auto simpan ke localStorage setiap ada perubahan dataPribadi
   useEffect(() => {
     if (typeof window !== "undefined") {
+      console.log("!submitted", submitted);
       if (!submitted) {
+        console.log("fulldata dataPribadi", dataPribadi);
         const fullData = {
           ...dataPribadi,
           ...dataPekerjaan,
@@ -890,7 +899,8 @@ const FormPemodal: React.FC = () => {
     const result = schemaDataPribadi.safeParse(dataPribadi);
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
-      setErrorsPribadi(errors); // untuk ditampilkan di UI
+      console.log("errors =", errors);
+      setErrorsPribadi(errors);
       return false;
     }
     setErrorsPribadi({});
@@ -902,7 +912,7 @@ const FormPemodal: React.FC = () => {
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
       console.log("Validation Errors:", errors);
-      setErrorsPekerjaan(errors); // untuk ditampilkan di UI
+      setErrorsPekerjaan(errors);
       return false;
     }
     setErrorsPekerjaan({});

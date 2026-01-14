@@ -40,10 +40,13 @@ const Login: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API_BACKEND}/api/v1/auth/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BACKEND}/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
       const userData = response.data.data;
       Cookies.set("user", JSON.stringify(response.data.data), { expires: 7 });
 
