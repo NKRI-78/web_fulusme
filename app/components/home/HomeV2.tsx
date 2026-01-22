@@ -25,7 +25,7 @@ const HomeV2: React.FC = () => {
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"Umum" | "Pemodal" | "Penerbit">(
-    "Umum"
+    "Umum",
   );
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -387,24 +387,54 @@ const HomeV2: React.FC = () => {
           temukan peluang untuk berinvestasi hari ini.
         </p>
 
-        <GridView
-          items={projects}
-          gapClass="gap-4"
-          breakpointCols={{ sm: 2, md: 3, lg: 4 }}
-          itemKey={(p) => p.id}
-          renderItem={(p, i) => {
-            return <ProjectCard project={p} />;
-          }}
-        />
+        {/* EMPTY STATE */}
+        {projects.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-[#10565C]/10">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-8 h-8 text-[#10565C]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
 
-        <button
-          onClick={() => {
-            router.push("/business-list");
-          }}
-          className="bg-[#10565C] relative hover:bg-[#0d464b] text-white px-6 py-2 rounded-full font-semibold my-10"
-        >
-          Lihat Proyek Selengkapnya
-        </button>
+            <p className="font-semibold text-lg mb-1">
+              Belum ada proyek yang berjalan
+            </p>
+            <p className="text-sm text-gray-500 max-w-md">
+              Saat ini belum tersedia proyek investasi aktif. Silakan cek
+              kembali dalam waktu dekat untuk peluang investasi terbaru.
+            </p>
+          </div>
+        ) : (
+          <GridView
+            items={projects}
+            gapClass="gap-4"
+            breakpointCols={{ sm: 2, md: 3, lg: 4 }}
+            itemKey={(p) => p.id}
+            renderItem={(p) => <ProjectCard project={p} />}
+          />
+        )}
+
+        {projects.length > 1 && (
+          <button
+            onClick={() => {
+              router.push("/business-list");
+            }}
+            className="bg-[#10565C] relative hover:bg-[#0d464b] text-white px-6 py-2 rounded-full font-semibold my-10"
+          >
+            Lihat Proyek Selengkapnya
+          </button>
+        )}
       </section>
 
       <section className="bg-white text-black py-16 px-6 md:px-20 text-center">

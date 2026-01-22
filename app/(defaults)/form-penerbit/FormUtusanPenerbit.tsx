@@ -397,7 +397,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
               </div>
             </UpdateRing>
 
-            <UpdateRing formKey={formKey} identity="ktp">
+            <UpdateRing formKey={formKey} identity="upload-ktp-pic">
               <div>
                 <SectionPoint text="File KTP" />
                 <Subtitle

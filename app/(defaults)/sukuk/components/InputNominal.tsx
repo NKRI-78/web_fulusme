@@ -9,37 +9,41 @@ import { useDispatch, useSelector } from "react-redux";
 interface InputNominalLotProps {
   label?: string;
   unitPrice: number; // harga per lot
+  stokLot: number;
+  lembarPerLot: number; // harga per lot
   totalUnit: number; // total lot tersedia
   minInvest: number; // minimal nominal investasi
   quota?: number; // sisa kuota IDR
   roi?: number;
-  onConfirm?: (val: number) => Promise<void> | void;
+  onConfirm?: (val: Record<string, any>) => Promise<void> | void;
 }
 
 export default function InputNominalLot({
   label = "Nominal Investasi",
   unitPrice,
   totalUnit,
+  stokLot,
   minInvest,
+  lembarPerLot,
   quota,
   roi,
   onConfirm,
 }: InputNominalLotProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { data: dashboardData } = useSelector(
-    (state: RootState) => state.dashboard
+    (state: RootState) => state.dashboard,
   );
 
   const user = getUser();
 
   // ✅ cek status user
   const rekEfek = dashboardData?.rek_efek === true;
-  const isInstitusi = dashboardData?.is_institusi === true;
+  // const isInstitusi = dashboardData?.is_institusi === true;
 
   // 📦 state
   const [lot, setLot] = useState<number>(1);
   const [value, setValue] = useState<string>("");
-  const [numericValue, setNumericValue] = useState<number>(unitPrice);
+  const [numericValue, setNumericValue] = useState<number>(minInvest);
   const [error, setError] = useState<string | null>(null);
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,28 +58,22 @@ export default function InputNominalLot({
     }
   }, [dispatch]);
 
-  // ✅ SET lot awal: 10 jika institusi, 1 jika bukan
-  useEffect(() => {
-    const initialLot = isInstitusi ? 10 : 1;
-    setLot(initialLot);
-  }, [isInstitusi]);
-
   // sinkronisasi nominal ketika lot berubah
   useEffect(() => {
-    const nominal = lot * unitPrice;
+    const nominal = lot * minInvest;
     setNumericValue(nominal);
     setValue(formatRupiah(nominal));
-  }, [lot, unitPrice]);
+  }, [lot, minInvest]);
 
   // 🔹 handle perubahan nominal manual
   const handleNominalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, "");
     const numeric = Number(raw);
-    const newLot = Math.floor(numeric / unitPrice);
+    const newLot = Math.floor(numeric / minInvest);
 
     if (numeric < minInvest) {
       setError(`Minimal investasi Rp${formatRupiah(minInvest)}`);
-    } else if (!rekEfek && !isInstitusi && quota && numeric > quota) {
+    } else if (!rekEfek && quota && numeric > quota) {
       setError(`Melebihi kuota Rp${formatRupiah(quota)}!`);
     } else if (newLot > totalUnit) {
       setError(`Maksimal ${totalUnit} lot (stok penuh)`);
@@ -90,12 +88,12 @@ export default function InputNominalLot({
 
   // 🔹 handle perubahan lot (+/-)
   const handleLotChange = (newLot: number) => {
-    const nominal = newLot * unitPrice;
+    const nominal = newLot * minInvest;
 
     if (nominal < minInvest) {
       return setError(`Minimal investasi Rp${formatRupiah(minInvest)}`);
     }
-    if (!rekEfek && !isInstitusi && quota && nominal > quota) {
+    if (!rekEfek && quota && nominal > quota) {
       return setError(`Melebihi kuota Rp${formatRupiah(quota)}!`);
     }
     if (newLot > totalUnit) {
@@ -110,7 +108,7 @@ export default function InputNominalLot({
     if (!error && onConfirm) {
       try {
         setLoading(true);
-        await onConfirm(numericValue);
+        await onConfirm({ price: numericValue, total_lot: lot });
       } finally {
         setLoading(false);
       }
@@ -119,12 +117,10 @@ export default function InputNominalLot({
 
   // progress bar
   const percent =
-    !rekEfek && !isInstitusi && quota
-      ? Math.min((numericValue / quota) * 100, 100)
-      : 0;
+    !rekEfek && quota ? Math.min((numericValue / quota) * 100, 100) : 0;
 
   const sisaLot = Math.max(totalUnit - lot, 0);
-  const sisaNominal = sisaLot * unitPrice;
+  const sisaNominal = sisaLot * minInvest;
 
   return (
     <div className="w-full p-5 space-y-5">
@@ -136,13 +132,13 @@ export default function InputNominalLot({
 
       {/* 🔹 Flex Kiri-Kanan */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5">
-        {/* KIRI: JUMLAH LOT */}
+        {/* KIRI: JUMLAH Lot */}
         <div className="">
-          <p className="text-sm font-medium text-gray-700 mb-2">Jumlah Unit</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">Jumlah Lot</p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => handleLotChange(lot - 1)}
-              disabled={lot <= (isInstitusi ? 10 : 1)}
+              disabled={lot <= 1}
               className="w-10 h-10 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-40"
             >
               −
@@ -165,18 +161,18 @@ export default function InputNominalLot({
                 const num = Number(val);
                 if (isNaN(num)) return;
 
-                const minLot = isInstitusi ? 10 : 1;
+                const minLot = 1;
 
                 if (num < minLot) {
-                  setError(`Minimal ${minLot} unit untuk investasi ini`);
+                  setError(`Minimal ${minLot} Lot untuk investasi ini`);
                   setLot(num);
                   return;
                 }
 
                 // ✅ validasi kuota & batas maksimal
-                if (num > totalUnit) {
-                  setError(`Maksimal ${totalUnit} unit tersedia`);
-                  setLot(totalUnit);
+                if (num > stokLot) {
+                  setError(`Maksimal ${stokLot} Lot tersedia`);
+                  setLot(stokLot);
                   return;
                 }
 
@@ -184,7 +180,7 @@ export default function InputNominalLot({
                 setLot(num);
               }}
               onBlur={() => {
-                const minLot = isInstitusi ? 10 : 1;
+                const minLot = 1;
                 // kalau dikosongkan, auto reset ke minimal
                 if (lot === 0 || lot < minLot) {
                   setLot(minLot);
@@ -204,21 +200,7 @@ export default function InputNominalLot({
             </button>
           </div>
 
-          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
-
-          {isInstitusi && (
-            <p className="text-xs text-red-500 mt-3">
-              Sebagai Pemodal Perusahaan minimum investasi 10 Unit
-            </p>
-          )}
-
-          <p className="text-xs text-gray-500 mt-3">
-            Total tersedia: {totalUnit.toLocaleString("id-ID")} Unit
-          </p>
-          <p className="text-xs text-gray-500">
-            Harga per unit{" :"}
-            <span className=""> Rp{formatRupiah(unitPrice)}</span>
-          </p>
+          {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
         </div>
 
         {/* KANAN: NOMINAL INVESTASI */}
@@ -236,18 +218,17 @@ export default function InputNominalLot({
               value={value}
               disabled
               onChange={handleNominalChange}
-              className={`w-full h-10 rounded-xl border pl-12 pr-4 py-5 font-semibold text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#10565C] focus:border-[#10565C] ${
-                error ? "border-red-500" : "border-gray-300"
+              className={`w-full h-10 rounded-xl border pl-12 pr-4 py-5 font-semibold text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-[#10565C] focus:border-[#10565C] ${
+                error ? "border-red-500" : "border-gray-500"
               }`}
               placeholder="Masukkan nominal"
             />
           </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
       </div>
 
       {/* PROGRESS KUOTA */}
-      {!rekEfek && !isInstitusi && quota && (
+      {!rekEfek && quota && (
         <div className="space-y-2 mt-3">
           <p className="text-sm font-semibold text-gray-800">Kuota Investasi</p>
           <div className="flex justify-between text-xs text-gray-600">
@@ -270,6 +251,32 @@ export default function InputNominalLot({
           </p>
         </div>
       )}
+
+      {/* INFO LOT & HARGA */}
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-2">
+        <p className="text-sm font-semibold text-gray-800">
+          Informasi Unit Investasi
+        </p>
+
+        <div className="flex items-center justify-between text-sm text-gray-700">
+          <span>1 Lot</span>
+          <span className="font-semibold">{lembarPerLot} Lembar</span>
+        </div>
+
+        <div className="flex items-center justify-between text-sm text-gray-700">
+          <span>Harga per Lembar</span>
+          <span className="font-semibold">Rp {formatRupiah(unitPrice)}</span>
+        </div>
+
+        <div className="flex items-center justify-between text-sm text-gray-700">
+          <span>Jumlah Lot yang bisa dibeli</span>
+          <span className="font-semibold">{formatRupiah(stokLot)} Lot</span>
+        </div>
+
+        <div className="pt-2 border-t text-xs text-gray-500">
+          Nominal investasi dihitung berdasarkan jumlah lot yang Anda pilih.
+        </div>
+      </div>
 
       {/* STATUS USER */}
       {rekEfek && (
@@ -295,21 +302,8 @@ export default function InputNominalLot({
         </div>
       )}
 
-      {/* DISCLAIMER */}
-      <section className="bg-white text-black">
-        <h2 className="text-md font-bold text-center mb-3">DISCLAIMER</h2>
-        <div className="max-h-[120px] overflow-y-scroll p-2 border border-gray-300 rounded-lg text-justify text-sm leading-relaxed">
-          <p>
-            Keputusan investasi sepenuhnya ada di tangan Anda. Kami tidak
-            bertanggung jawab atas kerugian dari investasi ini. Pemodal memahami
-            bahwa pembagian dividen tidak bersifat lifetime dan dapat berubah
-            sesuai kebijakan penerbit.
-          </p>
-        </div>
-      </section>
-
       {/* CHECKBOX */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-6">
         <input
           id="agree"
           type="checkbox"
@@ -318,7 +312,8 @@ export default function InputNominalLot({
           className="h-4 w-4 text-[#10565C] border-gray-300 rounded"
         />
         <label htmlFor="agree" className="text-sm text-gray-700">
-          Saya sudah membaca dan menyetujui disclaimer di atas.
+          Keputusan investasi sepenuhnya ada di tangan Anda. Kami tidak
+          bertanggung jawab atas kerugian dari investasi ini.
         </label>
       </div>
 

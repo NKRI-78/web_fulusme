@@ -40,35 +40,46 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
           }}
         />
         <div className="absolute inset-0 bg-opacity-60 bg-[#10565C]/40" />
+
+        {/* jenis proyek */}
+        <div className="absolute bottom-2 left-2 z-10">
+          <span className="bg-white/90 text-[#10565C] text-xs font-semibold px-3 py-[2px] rounded-full">
+            {project.type_of_project}
+          </span>
+        </div>
       </div>
 
       <div className="px-4 pt-2 pb-4 bg-[#10565C] w-full h-full text-white">
-        {/* jenis proyek */}
-        <p className="text-white text-sm w-full flex mb-2">
-          {project.type_of_project}
-        </p>
-
         {/* title proyek */}
         <p className="font-semibold text-lg text-start text-white mb-2 truncate">
           {project.title}
         </p>
 
+        {/* nilai penawaran */}
+        <p className="text-white text-xs text-start">
+          Dana terkumpul{" "}
+          <span className="font-semibold">
+            {formatRupiah(project?.user_paid_amount)}
+          </span>{" "}
+          dari{" "}
+          <span className="font-semibold">
+            {formatRupiah(project?.target_amount)}
+          </span>
+        </p>
+
         {/* progress bar */}
         <ProgressBar percentage={percentage} />
 
-        {/* nilai penawaran */}
         <div className="w-full flex justify-between mt-3">
-          <p className="text-white text-sm font-semibold">
-            {formatRupiah(project?.capital)}
-          </p>
-          <p className="text-white/40 text-xs">
+          <p className="text-white text-xs">Tersisa {project?.stok_lot} Lot</p>
+          <p className="text-white/50 text-xs">
             {project.investor_paid} investor
           </p>
         </div>
 
         {/* sisa masa tayang */}
-        <div className="w-full flex justify-end mb-3 mt-2">
-          <p className="text-white text-xs font-semibold">{`Tersisa ${project.remaining_days} hari lagi`}</p>
+        <div className="w-full flex justify-end mt-3">
+          <p className="text-white text-xs font-semibold">{`${project.remaining_days} hari lagi`}</p>
         </div>
       </div>
     </div>

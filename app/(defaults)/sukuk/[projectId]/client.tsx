@@ -85,7 +85,7 @@ const SukukClient = ({ id }: Props) => {
       const fetchProject = async () => {
         try {
           const response = await axios.get(
-            `${API_BACKEND}/api/v1/project/detail/${id}`
+            `${API_BACKEND}/api/v1/project/detail/${id}`,
           );
           setProject(response.data.data);
         } catch (error: any) {
@@ -111,8 +111,8 @@ const SukukClient = ({ id }: Props) => {
     setUserData(user);
   }, []);
 
-  const handleConfirm = (val: number) => {
-    localStorage.setItem("invest_amount", String(val));
+  const handleConfirm = (val: Record<string, any>) => {
+    localStorage.setItem("invest_amount", JSON.stringify(val));
     router.push(`/payment-method/${id}`);
   };
 
@@ -209,13 +209,17 @@ const SukukClient = ({ id }: Props) => {
                       <p className="text-sm">{project?.kode_efek}</p>
                     </div>
                     <div className="flex flex-wrap justify-between">
-                      <p className="text-xs text-[#677AB9]">Jenis Akad</p>
+                      <p className="text-xs text-[#677AB9]">Efek Bersifat</p>
                       <p className="text-sm">{project?.type_of_project}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white p-2 rounded-lg space-y-1 mt-3">
+                <div className="bg-white p-2 rounded-lg space-y-2 mt-3">
+                  <p className="text-sm font-semibold text-gray-800 mb-4">
+                    Status Investasi Saat Ini
+                  </p>
+
                   <ProgressBar percentage={percentage} bgColor="#f3f4f6" />
 
                   <div className="flex flex-wrap justify-between">
@@ -225,6 +229,22 @@ const SukukClient = ({ id }: Props) => {
                     <p className="text-xs font-bold">
                       {formatRupiah(project?.user_paid_amount)}
                     </p>
+                  </div>
+
+                  <div className="flex flex-wrap justify-between">
+                    <p className="text-xs font-bold text-[#677AB9]">
+                      Dana yang Dibutuhkan
+                    </p>
+                    <p className="text-xs font-bold">
+                      {formatRupiah(project?.target_amount)}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap justify-between">
+                    <p className="text-xs font-bold text-[#677AB9]">
+                      Jumlah Lot yang tersedia
+                    </p>
+                    <p className="text-xs font-bold">{project?.stok_lot} Lot</p>
                   </div>
 
                   <div className="flex flex-wrap justify-between">
@@ -247,6 +267,9 @@ const SukukClient = ({ id }: Props) => {
                 </div>
 
                 <div className="bg-white p-2 rounded-lg mt-3">
+                  <p className="text-sm font-semibold text-gray-800 mb-4">
+                    Detail Produk Investasi
+                  </p>
                   <div className="flex flex-wrap my-2 justify-between">
                     <p className="text-xs text-[#677AB9]"> Kategori Bisnis</p>
                     <p className="text-xs">{project?.company?.jenis_usaha}</p>
@@ -256,21 +279,24 @@ const SukukClient = ({ id }: Props) => {
                       Harga Perlembar Efek:
                     </p>
                     <p className="text-xs">
-                      {formatRupiah(project?.min_invest)}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap my-2 justify-between">
-                    <p className="text-xs text-[#677AB9]">Harga Unit (LOT):</p>
-                    <p className="text-xs">
                       {formatRupiah(project?.unit_price)}
                     </p>
                   </div>
                   <div className="flex flex-wrap my-2 justify-between">
-                    <p className="text-xs text-[#677AB9]"> Jumlah Unit </p>
-                    <p className="text-xs">{`${project?.jumlah_unit} Unit`}</p>
+                    <p className="text-xs text-[#677AB9]">Harga Per Lot:</p>
+                    <p className="text-xs">
+                      {formatRupiah(project?.min_invest)}
+                    </p>
                   </div>
                   <div className="flex flex-wrap my-2 justify-between">
-                    <p className="text-xs text-[#677AB9]"> Total Unit (Rp) </p>
+                    <p className="text-xs text-[#677AB9]"> Jumlah Lembar </p>
+                    <p className="text-xs">{`${formatRupiah(project?.jumlah_unit, false)} Lembar`}</p>
+                  </div>
+                  <div className="flex flex-wrap my-2 justify-between">
+                    <p className="text-xs text-[#677AB9]">
+                      {" "}
+                      Modal Investasi (Rp){" "}
+                    </p>
                     <p className="text-xs">
                       {" "}
                       {formatRupiah(project?.capital)}{" "}
@@ -482,8 +508,10 @@ const SukukClient = ({ id }: Props) => {
         title={"Beli Efek"}
       >
         <InputNominalLot
-          unitPrice={Number(project?.unit_price)}
-          totalUnit={Number(project?.jumlah_unit)}
+          unitPrice={Number(project?.unit_price)} // unit price itu harga /lembar saham
+          lembarPerLot={Number(project?.jumlah_lot)} // lembar perlot itu 1 lot ada berapa lembar sih
+          totalUnit={Number(project?.jumlah_unit)} // ❌
+          stokLot={project?.stok_lot ?? 0}
           quota={Number(quotaData?.summary.remaining_quota_idr) ?? 0} // ✅ otomatis dari API
           roi={Number(project?.roi) ?? 0}
           minInvest={Number(project?.min_invest)}

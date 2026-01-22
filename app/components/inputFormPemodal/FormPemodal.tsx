@@ -940,7 +940,7 @@ const FormPemodal: React.FC = () => {
     if (!form) return { dataType: "", val: "" };
 
     switch (form.toLowerCase()) {
-      case "ktp":
+      case "upload-ktp-pic":
         return { dataType: "ktp_path", val: data.ktpUrl };
       case "npwp":
         return { dataType: "npwp_path", val: data.npwpUrl };

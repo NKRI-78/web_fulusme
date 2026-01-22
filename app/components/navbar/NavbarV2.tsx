@@ -54,13 +54,10 @@ const NavbarV2: React.FC = () => {
 
   const closeModal = () => setStep(null);
 
-  // setLoadingUser(true);
-
-  const user = getUser();
-
   const badgeCount = useSelector((state: RootState) => state.badge.badgeCount);
 
   useEffect(() => {
+    const user = getUser();
     console.log("user token");
     console.log(user?.id);
 
@@ -103,7 +100,8 @@ const NavbarV2: React.FC = () => {
 
   useEffect(() => {
     setHydrated(true);
-    // const userCookie = getUser();
+    setLoadingUser(true);
+    const user = getUser();
 
     try {
       setUserData(user);
@@ -132,6 +130,7 @@ const NavbarV2: React.FC = () => {
   }, [userData]);
 
   const fetchAndUpdateBadge = async () => {
+    const user = getUser();
     if (user?.token) {
       const inboxes = await dispatch(fetchInboxThunk(user?.token));
 
@@ -147,7 +146,7 @@ const NavbarV2: React.FC = () => {
 
   useEffect(() => {
     fetchAndUpdateBadge();
-  }, [user?.token, dispatch]);
+  }, [dispatch]);
 
   //* remove cookie & cache data
   const removeData = () => {
@@ -190,7 +189,7 @@ const NavbarV2: React.FC = () => {
         <NavLayout>
           <NavLogo sticky={isSticky} />
 
-          {hydrated && loadingUser ? (
+          {loadingUser ? (
             <div className="text-white">loading</div>
           ) : (
             <>

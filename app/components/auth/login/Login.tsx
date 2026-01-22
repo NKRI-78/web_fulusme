@@ -41,7 +41,7 @@ const Login: React.FC = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BACKEND}/auth/login`,
+        `${process.env.NEXT_PUBLIC_API_BACKEND}/api/v1/auth/login`,
         {
           email,
           password,
