@@ -49,7 +49,7 @@ export default function ClientLayout({
             </div>
             {pathname === "/form-pemodal" ||
             pathname === "/form-penerbit" ||
-            pathname === "/terms-conditions" ||
+            // pathname === "/terms-conditions" ||
             pathname === "/dashboard" ||
             pathname === "/form-signature" ||
             pathname === "/form-pemodal-perusahaan" ||

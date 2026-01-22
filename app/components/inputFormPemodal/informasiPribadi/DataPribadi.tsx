@@ -877,7 +877,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
           <UpdateRing
             identity={`${dataProfile?.form}`}
             // formKey={dataProfile?.form}
-            formKey="ktp"
+            formKey="upload-ktp-pic"
           >
             {/* Input File yang disembunyikan */}
             <input

@@ -53,7 +53,6 @@ export const DashboardView: React.FC = () => {
             title: "Gagal Mendapatkan Profil",
             text: "Terjadi kesalahan saat mengambil data profil Anda. Silakan coba lagi.",
             confirmButtonText: "Coba Lagi 🔄",
-            allowOutsideClick: false,
           }).then((result) => {
             if (result.isConfirmed) {
               fetchProfile();

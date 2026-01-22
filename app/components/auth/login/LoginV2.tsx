@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import axios from "axios";
 
 const errorMessages: Record<string, string> = {
   CREDENTIALS_IS_INCORRECT: "Password yang kamu masukkan salah.",
@@ -33,31 +34,42 @@ const LoginV2: React.FC = () => {
 
     setLoading(true);
     try {
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth//login`,
+        {
+          email,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // asumsi backend kirim token / data user
+      // if (res.data?.access_token) {
+      //   localStorage.setItem("token", res.data.access_token);
+      // }
+
+      await Swal.fire({
+        icon: "success",
+        title: "Login Berhasil",
+        timer: 2000,
+        showConfirmButton: false,
       });
 
-      if (res?.error) {
-        const message =
-          errorMessages[res.error as keyof typeof errorMessages] ??
-          "Terjadi kesalahan saat login. Silakan coba lagi.";
+      router.push("/dashboard");
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ??
+        "Terjadi kesalahan saat login. Silakan coba lagi.";
 
-        Swal.fire({
-          icon: "error",
-          title: "Login Gagal",
-          text: message,
-        });
-      } else {
-        await Swal.fire({
-          icon: "success",
-          title: "Login Berhasil",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        router.push("/dashboard");
-      }
+      Swal.fire({
+        icon: "error",
+        title: "Login Gagal",
+        text: message,
+      });
     } finally {
       setLoading(false);
     }

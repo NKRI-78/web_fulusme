@@ -34,7 +34,8 @@ const InboxModalDialog: React.FC<Props> = ({
             Batal
           </Button>
           <Button onClick={onAccept}>
-            {role === "investor" ? "Lihat Dokumen" : "Update"}
+            {/* {role === "investor" ? "Lihat Dokumen" : "Update"} */}
+            Update
           </Button>
         </DialogFooter>
       </DialogContent>
