@@ -1,58 +1,68 @@
-import React from "react";
 import { Metadata } from "next";
 
 import { fetchDetailProject } from "../action/fetchDetailProject";
 import { IDetailProjectData } from "../interface/IDetailProject";
-import Sukuk from "@/app/components/sukuk/Sukuk";
 import SukukClient from "./client";
-
-interface Params {
-  projectId: string;
-}
 
 export async function generateMetadata({
   params,
 }: {
-  params: Params;
+  params: Promise<{
+    projectId: string;
+  }>;
 }): Promise<Metadata> {
-  const detail: IDetailProjectData = await fetchDetailProject(params.projectId);
+  const param = await params;
+  const detail: IDetailProjectData = await fetchDetailProject(param.projectId);
 
-    const APP_DEFAULT_TITLE = detail.title;
-    const APP_DESCRIPTION = detail.desc_job;
+  const APP_DEFAULT_TITLE = detail.title ?? "";
+  const APP_DESCRIPTION = detail.desc_job;
 
-    return {
+  return {
+    title: APP_DEFAULT_TITLE,
+    description: APP_DESCRIPTION,
+    alternates: {
+      canonical: "/",
+      languages: {
+        "en-US": "/en-US",
+        "de-DE": "/de-DE",
+      },
+    },
+    openGraph: {
       title: APP_DEFAULT_TITLE,
       description: APP_DESCRIPTION,
-      // metadataBase: new URL('/nonton/' + params.projectId + '/'),
-      alternates: {
-          canonical: '/',
-          languages: {
-              'en-US': '/en-US',
-              'de-DE': '/de-DE',
-          },
-      },
-      openGraph: {
-          title: APP_DEFAULT_TITLE,
-          description: APP_DESCRIPTION,
-          images: [
+      type: "article",
+      locale: "en_US",
+      siteName: "Fulusme",
+      url: `/sukuk/${param.projectId}`,
+      images:
+        detail?.medias?.length > 0
+          ? detail.medias
+              .filter((media) => Boolean(media?.path))
+              .map((media) => ({
+                url: media.path.startsWith("http")
+                  ? media.path
+                  : media.path.startsWith("/")
+                    ? media.path
+                    : `/${media.path}`,
+                width: 800,
+                height: 600,
+                alt: APP_DEFAULT_TITLE,
+              }))
+          : [
               {
-                  url: detail?.medias[0]?.path ?? "",
-                  width: 800,
-                  height: 600,
+                url: "/images/default-image.png",
+                width: 800,
+                height: 600,
+                alt: APP_DEFAULT_TITLE,
               },
-          ],
-          type: 'article',
-          locale: 'en_US',
-          url: params.projectId.toString(),
-          siteName: "CAPTBRIDGE",
-      },
+            ],
+    },
   };
 }
-
-const SukukPage = ({ params }: { params: Params }) => {
-  // if (!project) return <div>Project not found</div>;
-
-  return <SukukClient id={params.projectId} />;
-};
-
-export default SukukPage;
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ projectId: string }>;
+}) {
+  return <SukukClient projectId={(await params).projectId} />;
+}

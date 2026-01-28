@@ -65,6 +65,7 @@ const CreateProjectPenerbit: React.FC = () => {
     ProjectTypeInterface[]
   >([]);
   const [companyId, setCompanyId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const skipCacheWrite = useRef(false);
 
@@ -139,11 +140,7 @@ const CreateProjectPenerbit: React.FC = () => {
   const fetchOptions = async (url: string, parentId?: string) => {
     try {
       const response = await axios.get(
-        `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`
-      );
-      console.log(
-        "URL",
-        `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`
+        `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`,
       );
 
       return response.data?.data.map((item: any) => ({
@@ -159,8 +156,8 @@ const CreateProjectPenerbit: React.FC = () => {
 
   //* on submit
   const onSubmit: SubmitHandler<CreateProjectFormSchema> = async (data) => {
-    console.log("create project", data);
     const penyedia = data.address[0]; // alamat penyedia
+    setLoading(true);
 
     try {
       if (!companyId) throw "ID Perusahaan tidak terdaftar";
@@ -175,7 +172,7 @@ const CreateProjectPenerbit: React.FC = () => {
         spk: data.fileSPK,
         loa: data.laporanKeuangan,
         jenis_project: String(
-          jenisProyek.find((type) => type.name === data.jenisProyek)?.id ?? 1
+          jenisProyek.find((type) => type.name === data.jenisProyek)?.id ?? 1,
         ),
         batas_akhir_pengerjaan: formatDateToCustom(data.tanggalSelesaiProyek),
         tenor_pinjaman: data.tenor,
@@ -187,8 +184,8 @@ const CreateProjectPenerbit: React.FC = () => {
         instansi_pemberi_project: data.instansiProyek,
         jenis_instansi_pemberi_project: String(
           jenisInstansiPemberiProyek.find(
-            (type) => type.name === data.jenisInstansiProyek
-          )?.id ?? 1
+            (type) => type.name === data.jenisInstansiProyek,
+          )?.id ?? 1,
         ),
         jaminan_kolateral: data.jaminanKolateral.map((value) => ({
           name: value,
@@ -221,8 +218,6 @@ const CreateProjectPenerbit: React.FC = () => {
         no_contract_value: "-",
       };
 
-      console.log("Payload ", payload);
-
       const token = getUserToken();
       await axios.post(`${API_BACKEND}/api/v1/project/store`, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -252,6 +247,8 @@ const CreateProjectPenerbit: React.FC = () => {
         timer: 3000,
         timerProgressBar: true,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -284,7 +281,7 @@ const CreateProjectPenerbit: React.FC = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const types = res.data["data"];
       if (types) {
@@ -460,7 +457,7 @@ const CreateProjectPenerbit: React.FC = () => {
                   return (
                     <Flatpickr
                       placeholder="Pilih tanggal selesai proyek"
-                      value={field.value ? new Date(field.value) : undefined}
+                      value={field.value ? new Date(field.value) : []}
                       options={{
                         dateFormat: "j F Y",
                         allowInput: false,
@@ -823,11 +820,12 @@ const CreateProjectPenerbit: React.FC = () => {
 
           <div className="w-full flex justify-end mt-8">
             <FormButton
+              disabled={loading}
               onClick={handleSubmit(onSubmit, (errors) => {
                 console.error("VALIDATION ERRORS:", errors);
               })}
             >
-              Submit
+              {loading ? "Membuat Project" : "Submit"}
             </FormButton>
           </div>
         </div>

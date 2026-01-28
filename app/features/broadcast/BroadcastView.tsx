@@ -58,7 +58,7 @@ const BroadcastView = () => {
   };
 
   return (
-    <div className="py-28 px-6">
+    <div className="py-28 px-8 lg:px-24">
       {loading ? (
         <div className="w-full h-[70vh] flex flex-col items-center justify-center">
           <CircularProgressIndicator textDescription="Memuat Halaman" />
@@ -72,14 +72,15 @@ const BroadcastView = () => {
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
+          <p className="text-xl font-black">Informasi</p>
           {broadcasts.map((broadcast, i) => (
             <BroadcastCard
               key={i}
               broadcast={broadcast}
               onClick={() => {
                 markAsRead(broadcast.id);
-                router.push(`/broadcast/${broadcast.id}`);
+                router.push(`/informasi/${broadcast.id}`);
               }}
             />
           ))}

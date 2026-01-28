@@ -7,6 +7,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import moment from "moment";
+import "moment/locale/id";
 import { useParams } from "next/navigation";
 
 const BroadcastDetailView = () => {
@@ -47,7 +48,7 @@ const BroadcastDetailView = () => {
   }, [broadcastId]);
 
   return (
-    <div className="py-28 px-24 bg-white">
+    <div className="py-28 px-8 lg:px-24 bg-white">
       {loading ? (
         <div className="w-full h-[70vh] flex flex-col items-center justify-center">
           <CircularProgressIndicator textDescription="Memuat Halaman" />
@@ -57,7 +58,7 @@ const BroadcastDetailView = () => {
           <img
             src={broadcast?.path}
             alt={`Gambar ${broadcast?.title}`}
-            className="w-full h-[400px] object-cover border border-gray-300 rounded-lg"
+            className="w-full max-h-[350px] object-cover border border-gray-300 rounded-lg"
             onError={(e) => {
               const target = e.currentTarget as HTMLImageElement;
               if (target.src !== window.location.origin + "/images/img.jpg") {
@@ -66,13 +67,12 @@ const BroadcastDetailView = () => {
             }}
           />
 
-          <p className="text-3xl font-black">{broadcast?.title}</p>
+          <p className="text-lg md:text-2xl lg:text-3xl font-black">
+            {broadcast?.title}
+          </p>
 
           <p className="text-xs text-gray-400 mt-1">
-            {moment(broadcast?.created_at)
-              .utc()
-              .locale("id")
-              .format("DD MMMM YYYY")}
+            {moment(broadcast?.created_at).locale("id").format("LLLL")}
           </p>
 
           <p className="text-sm text-gray-600">{broadcast?.content}</p>

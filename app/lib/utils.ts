@@ -21,7 +21,7 @@ export const getToken = (): string | undefined => {
 
 export const handleDescriptionTruncate = (
   description: string,
-  maxLength: number = 100
+  maxLength: number = 100,
 ) => {
   return description.length > maxLength
     ? `${description.substring(0, maxLength)}...`
@@ -32,12 +32,22 @@ export const sanitizeHtml = (html: string): string => {
   return DOMPurify.sanitize(html);
 };
 
-export const formatRupiah = (value?: string | number): string => {
+export const formatRupiah = (
+  value?: string | number,
+  withPrefix: boolean = true,
+): string => {
   if (value === undefined || value === null) return "-";
 
-  const number = typeof value === "string" ? parseInt(value) : value;
+  const number =
+    typeof value === "string" ? Number(value.replace(/[^\d-]/g, "")) : value;
 
   if (isNaN(number)) return "-";
+
+  if (!withPrefix) {
+    return new Intl.NumberFormat("id-ID", {
+      minimumFractionDigits: 0,
+    }).format(number);
+  }
 
   return new Intl.NumberFormat("id-ID", {
     style: "currency",

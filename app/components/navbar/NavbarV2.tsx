@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Tooltip from "../Tooltip";
 import { BellRing, Menu, X } from "lucide-react";
 import { AppDispatch, RootState } from "@redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +14,6 @@ import RegisterOtp from "../auth/register/RegisterOtp";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
 import Cookies from "js-cookie";
 import axios from "axios";
-import Tippy from "@tippyjs/react";
 import { User } from "@/app/interfaces/user/IUser";
 import {
   FORM_INDEX_CACHE_KEY,
@@ -26,6 +26,7 @@ import { createSocket } from "@/app/utils/sockets";
 import { fetchInboxThunk } from "@/redux/slices/inboxSlice";
 import { API_BACKEND } from "@/app/utils/constant";
 import { setBadge } from "@/redux/slices/badgeSlice";
+import Image from "next/image";
 
 const PRIMARY_COLOR = "#10565C";
 const ON_PRIMARY_COLOR = "#FFFFFF";
@@ -41,9 +42,6 @@ const NavbarV2: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const user = getUser();
-
-  // const userData = user ? JSON.parse(user) : null;
   const [userData, setUserData] = useState<AuthDataResponse | null>(null);
 
   const [hydrated, setHydrated] = useState(false);
@@ -52,12 +50,14 @@ const NavbarV2: React.FC = () => {
     "register" | "otp" | "role" | "login" | null
   >(null);
   const [profile, setProfile] = useState<User | null>(null);
+  const [loadingUser, setLoadingUser] = useState(false);
 
   const closeModal = () => setStep(null);
 
   const badgeCount = useSelector((state: RootState) => state.badge.badgeCount);
 
   useEffect(() => {
+    const user = getUser();
     console.log("user token");
     console.log(user?.id);
 
@@ -76,8 +76,8 @@ const NavbarV2: React.FC = () => {
         setBadge(
           Array.isArray(inboxes?.payload)
             ? inboxes.payload.filter((inbox) => !inbox.is_read).length
-            : 0
-        )
+            : 0,
+        ),
       );
     });
 
@@ -100,12 +100,15 @@ const NavbarV2: React.FC = () => {
 
   useEffect(() => {
     setHydrated(true);
-    // const userCookie = getUser();
+    setLoadingUser(true);
+    const user = getUser();
 
     try {
       setUserData(user);
     } catch (err) {
       console.error("Failed to parse user cookie", err);
+    } finally {
+      setLoadingUser(false);
     }
   }, []);
 
@@ -127,6 +130,7 @@ const NavbarV2: React.FC = () => {
   }, [userData]);
 
   const fetchAndUpdateBadge = async () => {
+    const user = getUser();
     if (user?.token) {
       const inboxes = await dispatch(fetchInboxThunk(user?.token));
 
@@ -134,15 +138,15 @@ const NavbarV2: React.FC = () => {
         setBadge(
           Array.isArray(inboxes?.payload)
             ? inboxes.payload.filter((inbox) => !inbox.is_read).length
-            : 0
-        )
+            : 0,
+        ),
       );
     }
   };
 
   useEffect(() => {
     fetchAndUpdateBadge();
-  }, [user?.token, dispatch]);
+  }, [dispatch]);
 
   //* remove cookie & cache data
   const removeData = () => {
@@ -171,29 +175,59 @@ const NavbarV2: React.FC = () => {
     return () => document.removeEventListener("keydown", handleEsc);
   }, [setMenuOpen]);
 
+  const getAvatar = (): string => {
+    if (profile) {
+      if (profile.avatar !== "-") return profile.avatar;
+      if (profile.selfie !== "-") return profile.selfie;
+    }
+    return "/images/default-image.png";
+  };
+
   return (
     <>
       <Nav sticky={isSticky}>
         <NavLayout>
           <NavLogo sticky={isSticky} />
 
-          {hydrated && userData !== null ? (
-            //
-            // TAMPILAN NAV BAR KETIKA USER SUDAH LOGIN / REGISTER
-            //
+          {loadingUser ? (
+            <div className="text-white">loading</div>
+          ) : (
             <>
-              {/* MUNCUL KETIKA MD KEATAS (TAMPILAN DEKSTOP & TABLET) */}
-              {/* NAMA & BUTTON NOTIFIKASI & BUTTON DRAWER */}
-              <div className="flex items-center gap-4">
-                <p
-                  className={`hidden md:block
-                      ${isSticky ? `text-[${PRIMARY_COLOR}]` : `text-white`}
-                    `}
-                >
-                  Halo, {profile?.fullname}
-                </p>
-                {/* hanya muncul ketika ia suah register tapi belum memilih role */}
-                {/* {userData && userData.role === "user" && step !== "role" && (
+              {hydrated && userData !== null ? (
+                //
+                // TAMPILAN NAV BAR KETIKA USER SUDAH LOGIN / REGISTER
+                //
+                <>
+                  {/* MUNCUL KETIKA MD KEATAS (TAMPILAN DEKSTOP & TABLET) */}
+                  {/* NAMA & BUTTON NOTIFIKASI & BUTTON DRAWER */}
+                  <div className="flex items-center gap-4">
+                    {userData.role !== "user" ? (
+                      <Link href={"/profile"}>
+                        <div className="hidden md:flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
+                          <p className="text-white text-sm">
+                            {profile?.fullname}
+                          </p>
+                          <img
+                            src={getAvatar()}
+                            alt="Foto Profile"
+                            width={28}
+                            height={28}
+                            loading="lazy"
+                            className="rounded-full object-cover w-[30px] h-[30px]"
+                          />
+                        </div>
+                      </Link>
+                    ) : (
+                      <Link href={"/dashboard/main"}>
+                        <div className="hidden md:flex items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500 cursor-pointer">
+                          <p className="text-white text-sm">
+                            {profile?.fullname}
+                          </p>
+                        </div>
+                      </Link>
+                    )}
+                    {/* hanya muncul ketika ia suah register tapi belum memilih role */}
+                    {/* {userData && userData.role === "user" && step !== "role" && (
                   <div className="hidden md:block">
                     <button
                       onClick={() => setStep("role")}
@@ -204,47 +238,47 @@ const NavbarV2: React.FC = () => {
                   </div>
                 )} */}
 
-                <NotifIcon
-                  badgeCount={badgeCount}
-                  className={
-                    isSticky
-                      ? `text-[${PRIMARY_COLOR}]`
-                      : `text-[${ON_PRIMARY_COLOR}]`
-                  }
-                />
+                    <NotifIcon
+                      badgeCount={badgeCount}
+                      className={
+                        isSticky
+                          ? `text-[${PRIMARY_COLOR}]`
+                          : `text-[${ON_PRIMARY_COLOR}]`
+                      }
+                    />
 
-                <DrawerButton
-                  isOpen={menuOpen}
-                  onClick={toggleMenu}
-                  className={
-                    isSticky
-                      ? `text-[${PRIMARY_COLOR}]`
-                      : `text-[${ON_PRIMARY_COLOR}]`
-                  }
-                />
-              </div>
+                    <DrawerButton
+                      isOpen={menuOpen}
+                      onClick={toggleMenu}
+                      className={
+                        isSticky
+                          ? `text-[${PRIMARY_COLOR}]`
+                          : `text-[${ON_PRIMARY_COLOR}]`
+                      }
+                    />
+                  </div>
 
-              {/* DRAWER */}
-              {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
-              {/* TAMPILAN MENU DALAM BENTUK VERTIKAL */}
-              <div
-                className={`fixed top-0 right-0 h-full w-64 bg-[#10565C] z-40 p-6 
+                  {/* DRAWER */}
+                  {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
+                  {/* TAMPILAN MENU DALAM BENTUK VERTIKAL */}
+                  <div
+                    className={`fixed top-0 right-0 h-full w-64 bg-[#10565C] z-40 p-6 
                     transform transition-transform duration-300 
                     ${menuOpen ? "translate-x-0" : "translate-x-full"} 
                     `}
-              >
-                {/* tulisan Fulusme navigasi ke home */}
-                <Link
-                  href={"/"}
-                  className={`text-xl text-center font-bold text-white`}
-                >
-                  FuLusme
-                </Link>
+                  >
+                    {/* tulisan Fulusme navigasi ke home */}
+                    <Link
+                      href={"/"}
+                      className={`text-xl text-center font-bold text-white`}
+                    >
+                      FuLusme
+                    </Link>
 
-                {/* menu */}
-                <ul className="flex flex-col gap-6 text-white text-base font-semibold pt-16">
-                  {/* hanya muncul ketika user belum memilih role */}
-                  {/* {userData && userData.role === "user" && step !== "role" && (
+                    {/* menu */}
+                    <ul className="flex flex-col gap-6 text-white text-base font-semibold pt-16">
+                      {/* hanya muncul ketika user belum memilih role */}
+                      {/* {userData && userData.role === "user" && step !== "role" && (
                     <div className="block md:hidden">
                       <button
                         onClick={() => setStep("role")}
@@ -255,7 +289,7 @@ const NavbarV2: React.FC = () => {
                     </div>
                   )} */}
 
-                  <li onClick={toggleMenu}>
+                      {/* <li onClick={toggleMenu}>
                     <Link
                       href="/"
                       className={
@@ -266,198 +300,212 @@ const NavbarV2: React.FC = () => {
                     >
                       Beranda
                     </Link>
-                  </li>
+                  </li> */}
 
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/dashboard"
-                      className={
-                        pathname == "/dashboard"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Dashboard
-                    </Link>
-                  </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/dashboard"
+                          className={
+                            pathname == "/dashboard"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Dashboard
+                        </Link>
+                      </li>
 
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/broadcast"
-                      className={
-                        pathname == "/broadcast"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Informasi
-                    </Link>
-                  </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/informasi"
+                          className={
+                            pathname == "/informasi"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Informasi
+                        </Link>
+                      </li>
 
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/terms-conditions"
-                      className={
-                        pathname == "/terms-conditions"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Syarat dan Ketentuan
-                    </Link>
-                  </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/terms-conditions"
+                          className={
+                            pathname == "/terms-conditions"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Syarat dan Ketentuan
+                        </Link>
+                      </li>
 
-                  <li className="md:hidden">
-                    <p className="text-white">Halo, {profile?.fullname}</p>
-                  </li>
+                      <div className="w-fit flex md:hidden items-center gap-x-3 px-4 py-2 bg-[#0c484d] rounded-full hover:bg-[#0b363a] transition-colors duration-500">
+                        <p className="text-white text-sm">
+                          {profile?.fullname}
+                        </p>
+                        <img
+                          src={getAvatar()}
+                          alt="Foto Profile"
+                          width={28}
+                          height={28}
+                          loading="lazy"
+                          className="rounded-full object-cover w-[30px] h-[30px]"
+                        />
+                      </div>
 
-                  <li
-                    onClick={() => {
-                      removeData();
-                      window.location.href = "/auth/login";
-                    }}
-                  >
-                    <Link
-                      href="/auth/login"
-                      className="px-5 py-2 rounded-lg bg-red-500 text-white"
-                    >
-                      Keluar
-                    </Link>
-                  </li>
-                </ul>
-              </div>
+                      <li
+                        onClick={() => {
+                          removeData();
+                          window.location.href = "/auth/login";
+                        }}
+                      >
+                        <Link
+                          href="/auth/login"
+                          className="px-5 py-2 rounded-lg bg-red-500 text-white"
+                        >
+                          Keluar
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
 
-              {/* BARRIER OVERLAY KETIKA DRAWER DIBUKA */}
-              {menuOpen && (
-                <div
-                  onClick={toggleMenu}
-                  className="fixed inset-0 bg-black bg-opacity-40 z-30"
-                />
-              )}
-            </>
-          ) : (
-            //
-            // TAMPILAN NAV BAR KETIKA USER BELUM LOGIN / REGISTER
-            //
-            <>
-              {/* MUNCUL KETIKA MD KEATAS (TAMPILAN DEKSTOP & TABLET) */}
-              {/* TAMPILAN MENU DALAM BENTUK HORIZONTAL */}
-              <ul className="hidden md:flex gap-4 items-center text-sm lg:text-base">
-                <li>
+                  {/* BARRIER OVERLAY KETIKA DRAWER DIBUKA */}
+                  {menuOpen && (
+                    <div
+                      onClick={toggleMenu}
+                      className="fixed inset-0 bg-black bg-opacity-40 z-30"
+                    />
+                  )}
+                </>
+              ) : (
+                //
+                // TAMPILAN NAV BAR KETIKA USER BELUM LOGIN / REGISTER
+                //
+                <>
+                  {/* MUNCUL KETIKA MD KEATAS (TAMPILAN DEKSTOP & TABLET) */}
+                  {/* TAMPILAN MENU DALAM BENTUK HORIZONTAL */}
+                  <ul className="hidden md:flex gap-4 items-center text-sm lg:text-base">
+                    {/* <li>
                   <Link
                     href="/"
                     className={pathname == "/" ? "font-semibold" : ""}
                   >
                     Beranda
                   </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/broadcast"
-                    className={pathname == "/broadcast" ? "font-semibold" : ""}
-                  >
-                    Informasi
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/business-list"
-                    className={
-                      pathname == "/business-list" ? "font-semibold" : ""
-                    }
-                  >
-                    Daftar Bisnis
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/about-us"
-                    className={pathname == "/about-us" ? "font-semibold" : ""}
-                  >
-                    Tentang Kami
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/terms-conditions"
-                    className={
-                      pathname == "/terms-conditions" ? "font-semibold" : ""
-                    }
-                  >
-                    Syarat dan Ketentuan
-                  </Link>
-                </li>
-                <li className="w-fit">
-                  <Link
-                    href={"/auth/login"}
-                    className={`px-5 py-[9px] rounded-md ${
-                      isSticky
-                        ? `bg-[${PRIMARY_COLOR}] text-white border-2 border-[${PRIMARY_COLOR}]`
-                        : `bg-white text-[${PRIMARY_COLOR}] border-2 border-white`
-                    }`}
-                  >
-                    Masuk
-                  </Link>
-                </li>
-                <li className="w-fit">
-                  <div
-                    className={`px-5 py-[6px] rounded-md ${
-                      isSticky
-                        ? `border-2 border-[${PRIMARY_COLOR}] text-[${PRIMARY_COLOR}]`
-                        : `border-2 border-[${ON_PRIMARY_COLOR}] text-[${ON_PRIMARY_COLOR}]`
-                    } cursor-pointer`}
-                    onClick={() => {
-                      setStep("register");
-                      // setStep("role");
-                    }}
-                  >
-                    Daftar
+                </li> */}
+                    <li>
+                      <Link
+                        href="/informasi"
+                        className={
+                          pathname == "/informasi" ? "font-semibold" : ""
+                        }
+                      >
+                        Informasi
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/business-list"
+                        className={
+                          pathname == "/business-list" ? "font-semibold" : ""
+                        }
+                      >
+                        Daftar Bisnis
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/about-us"
+                        className={
+                          pathname == "/about-us" ? "font-semibold" : ""
+                        }
+                      >
+                        Tentang Kami
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/terms-conditions"
+                        className={
+                          pathname == "/terms-conditions" ? "font-semibold" : ""
+                        }
+                      >
+                        Syarat dan Ketentuan
+                      </Link>
+                    </li>
+                    <li className="w-fit">
+                      <Link
+                        href={"/auth/login"}
+                        className={`px-5 py-[9px] rounded-md ${
+                          isSticky
+                            ? `bg-[${PRIMARY_COLOR}] text-white border-2 border-[${PRIMARY_COLOR}]`
+                            : `bg-white text-[${PRIMARY_COLOR}] border-2 border-white`
+                        }`}
+                      >
+                        Masuk
+                      </Link>
+                    </li>
+                    <li className="w-fit">
+                      <div
+                        className={`px-5 py-[6px] rounded-md ${
+                          isSticky
+                            ? `border-2 border-[${PRIMARY_COLOR}] text-[${PRIMARY_COLOR}]`
+                            : `border-2 border-[${ON_PRIMARY_COLOR}] text-[${ON_PRIMARY_COLOR}]`
+                        } cursor-pointer`}
+                        onClick={() => {
+                          setStep("register");
+                          // setStep("role");
+                        }}
+                      >
+                        Daftar
+                      </div>
+                    </li>
+                  </ul>
+
+                  {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
+                  {/* BUTTON NOTIFIKASI & BUTTON DRAWER */}
+                  <div className="md:hidden flex items-center gap-4">
+                    <NotifIcon
+                      badgeCount={badgeCount}
+                      className={
+                        isSticky
+                          ? `text-[${PRIMARY_COLOR}]`
+                          : `text-[${ON_PRIMARY_COLOR}]`
+                      }
+                    />
+                    <DrawerButton
+                      isOpen={menuOpen}
+                      onClick={toggleMenu}
+                      className={
+                        isSticky
+                          ? `text-[${PRIMARY_COLOR}]`
+                          : `text-[${ON_PRIMARY_COLOR}]`
+                      }
+                    />
                   </div>
-                </li>
-              </ul>
 
-              {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
-              {/* BUTTON NOTIFIKASI & BUTTON DRAWER */}
-              <div className="md:hidden flex items-center gap-4">
-                <NotifIcon
-                  badgeCount={badgeCount}
-                  className={
-                    isSticky
-                      ? `text-[${PRIMARY_COLOR}]`
-                      : `text-[${ON_PRIMARY_COLOR}]`
-                  }
-                />
-                <DrawerButton
-                  isOpen={menuOpen}
-                  onClick={toggleMenu}
-                  className={
-                    isSticky
-                      ? `text-[${PRIMARY_COLOR}]`
-                      : `text-[${ON_PRIMARY_COLOR}]`
-                  }
-                />
-              </div>
-
-              {/* DRAWER */}
-              {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
-              {/* TAMPILAN MENU DALAM BENTUK VERTIKAL */}
-              <div
-                className={`fixed top-0 right-0 h-full w-64 bg-[${PRIMARY_COLOR}] z-40 p-6 
+                  {/* DRAWER */}
+                  {/* MUNCUL KETIKA MD KEBAWAH (TAMPILAN MOBILE) */}
+                  {/* TAMPILAN MENU DALAM BENTUK VERTIKAL */}
+                  <div
+                    className={`fixed top-0 right-0 h-full w-64 bg-[${PRIMARY_COLOR}] z-40 p-6 
                     transform transition-transform duration-300 
                     ${menuOpen ? "translate-x-0" : "translate-x-full"} 
                     md:hidden`}
-              >
-                {/* tulisan Fulusme navigasi ke home */}
-                <Link
-                  href={"/"}
-                  className={`text-xl text-center font-bold text-white`}
-                >
-                  FuLusme
-                </Link>
+                  >
+                    {/* tulisan Fulusme navigasi ke home */}
+                    <Link
+                      href={"/"}
+                      className={`text-xl text-center font-bold text-white`}
+                    >
+                      FuLusme
+                    </Link>
 
-                {/* menu */}
-                <ul className="flex flex-col gap-6 text-white text-sm font-semibold pt-16">
-                  <li onClick={toggleMenu}>
+                    {/* menu */}
+                    <ul className="flex flex-col gap-6 text-white text-sm font-semibold pt-16">
+                      {/* <li onClick={toggleMenu}>
                     <Link
                       href="/"
                       className={
@@ -468,88 +516,90 @@ const NavbarV2: React.FC = () => {
                     >
                       Beranda
                     </Link>
-                  </li>
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/broadcast"
-                      className={
-                        pathname == "/broadcast"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Informasi
-                    </Link>
-                  </li>
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/business-list"
-                      className={
-                        pathname == "/business-list"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Daftar Bisnis
-                    </Link>
-                  </li>
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/about-us"
-                      className={
-                        pathname == "/about-us"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Tentang Kami
-                    </Link>
-                  </li>
-                  <li onClick={toggleMenu}>
-                    <Link
-                      href="/terms-conditions"
-                      className={
-                        pathname == "/terms-conditions"
-                          ? `text-[${ACTIVE_COLOR}]`
-                          : `text-[${ON_PRIMARY_COLOR}]`
-                      }
-                    >
-                      Syarat dan Ketentuan
-                    </Link>
-                  </li>
+                  </li> */}
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/informasi"
+                          className={
+                            pathname == "/informasi"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Informasi
+                        </Link>
+                      </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/business-list"
+                          className={
+                            pathname == "/business-list"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Daftar Bisnis
+                        </Link>
+                      </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/about-us"
+                          className={
+                            pathname == "/about-us"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Tentang Kami
+                        </Link>
+                      </li>
+                      <li onClick={toggleMenu}>
+                        <Link
+                          href="/terms-conditions"
+                          className={
+                            pathname == "/terms-conditions"
+                              ? `text-[${ACTIVE_COLOR}]`
+                              : `text-[${ON_PRIMARY_COLOR}]`
+                          }
+                        >
+                          Syarat dan Ketentuan
+                        </Link>
+                      </li>
 
-                  <li className="w-fit" onClick={toggleMenu}>
-                    <Link href="/auth/login">
-                      <div
-                        className={`px-8 py-2 rounded-md bg-white text-[${PRIMARY_COLOR}]`}
+                      <li className="w-fit" onClick={toggleMenu}>
+                        <Link href="/auth/login">
+                          <div
+                            className={`px-8 py-2 rounded-md bg-white text-[${PRIMARY_COLOR}]`}
+                          >
+                            Masuk
+                          </div>
+                        </Link>
+                      </li>
+
+                      <li
+                        className="w-fit"
+                        onClick={() => {
+                          toggleMenu();
+                          setStep("register");
+                        }}
                       >
-                        Masuk
-                      </div>
-                    </Link>
-                  </li>
+                        <div
+                          className={`px-8 py-2 rounded-md bg-transparent text-white border border-gray-200`}
+                        >
+                          Daftar
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
 
-                  <li
-                    className="w-fit"
-                    onClick={() => {
-                      toggleMenu();
-                      setStep("register");
-                    }}
-                  >
+                  {/* BARRIER OVERLAY KETIKA DRAWER DIBUKA */}
+                  {menuOpen && (
                     <div
-                      className={`px-8 py-2 rounded-md bg-transparent text-white border border-gray-200`}
-                    >
-                      Daftar
-                    </div>
-                  </li>
-                </ul>
-              </div>
-
-              {/* BARRIER OVERLAY KETIKA DRAWER DIBUKA */}
-              {menuOpen && (
-                <div
-                  onClick={toggleMenu}
-                  className="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
-                />
+                      onClick={toggleMenu}
+                      className="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
+                    />
+                  )}
+                </>
               )}
             </>
           )}
@@ -588,7 +638,7 @@ const Nav: React.FC<{ children?: React.ReactNode; sticky: boolean }> = ({
 //* navbar layout
 const NavLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="flex justify-between items-center px-10 py-6">
+    <div className="flex justify-between items-center px-10 py-4">
       {children}
     </div>
   );
@@ -617,16 +667,16 @@ const NotifIcon: React.FC<{ className?: string; badgeCount: number }> = ({
   badgeCount = 0,
 }) => {
   return (
-    <Tippy content="Inbox">
-      <Link href="/inbox" className="relative inline-block">
+    <Link href="/inbox" className="relative inline-block">
+      <Tooltip label="Notifikasi">
         <BellRing size={18} className={className} />
         {badgeCount > 0 && (
           <span className="absolute -top-2 -right-1 bg-red-500 text-white text-[10px] min-w-[14px] h-[14px] rounded-full flex items-center justify-center">
             {badgeCount}
           </span>
         )}
-      </Link>
-    </Tippy>
+      </Tooltip>
+    </Link>
   );
 };
 
@@ -644,6 +694,3 @@ const DrawerButton: React.FC<{
 };
 
 export default NavbarV2;
-function getUserToken() {
-  throw new Error("Function not implemented.");
-}

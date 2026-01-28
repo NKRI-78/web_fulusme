@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { API_BACKEND } from "@/app/utils/constant";
+import { API_BACKEND, API_PG } from "@/app/utils/constant";
 import { getUser } from "@/app/lib/auth";
 import { PaymentMethodType } from "./components/types";
 import TransactionSummary from "./components/TransactionSummary";
@@ -23,6 +23,7 @@ const PaymentMethod = ({ id }: { id: string }) => {
 
   const router = useRouter();
   const [amount, setAmount] = useState<number | null>(null);
+  const [totalLot, setTotalLot] = useState<number | null>(null);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [project, setProject] = useState<Project | null>(null);
   const [isNotFound, setIsNotFound] = useState(false);
@@ -30,7 +31,10 @@ const PaymentMethod = ({ id }: { id: string }) => {
   useEffect(() => {
     const saved = localStorage.getItem("invest_amount");
     if (saved) {
-      setAmount(Number(saved));
+      const parsed = JSON.parse(saved);
+      const { price, total_lot } = parsed;
+      setAmount(Number(price));
+      setTotalLot(Number(total_lot));
     }
   }, []);
 
@@ -41,7 +45,7 @@ const PaymentMethod = ({ id }: { id: string }) => {
     if (userData) {
       setLoading(true);
       axios
-        .get(`https://api.pg.capbridge.langitdigital78.com/api/v1/channel`, {
+        .get(`${API_PG}/api/v1/channel`, {
           headers: {
             Authorization: `Bearer ${userData.token}`,
           },
@@ -62,7 +66,7 @@ const PaymentMethod = ({ id }: { id: string }) => {
       const fetchProject = async () => {
         try {
           const response = await axios.get(
-            `${API_BACKEND}/api/v1/project/detail/${id}`
+            `${API_BACKEND}/api/v1/project/detail/${id}`,
           );
           setProject(response.data.data);
         } catch (error: any) {
@@ -92,6 +96,7 @@ const PaymentMethod = ({ id }: { id: string }) => {
         project_id: id,
         payment_method: selectedMethod.id.toString(),
         amount: baseAmount,
+        lot: totalLot,
       };
 
       const userData = getUser();
@@ -100,7 +105,7 @@ const PaymentMethod = ({ id }: { id: string }) => {
         const result = await axios.post(endpoint, payload, {
           headers: { Authorization: `Bearer ${userData?.token}` },
         });
-        router.push(`/waiting-payment?orderId=${result.data.data.id}`);
+        router.replace(`/waiting-payment?orderId=${result.data.data.id}`);
       }
     } catch (err: any) {
       let errorMessage = "Terjadi kesalahan. Silakan coba lagi.";
@@ -114,7 +119,14 @@ const PaymentMethod = ({ id }: { id: string }) => {
           errorMessage = err.message;
         }
       }
-      Swal.fire({ icon: "error", title: "Oops...", text: errorMessage });
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: errorMessage,
+        confirmButtonText: "Selesaikan Transaksi Sebelumnya",
+      }).then((result) => {
+        if (result.isConfirmed) router.push("/dashboard/investor-transaction");
+      });
     }
     setLoading(false);
   };

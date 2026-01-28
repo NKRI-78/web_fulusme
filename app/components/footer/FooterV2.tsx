@@ -10,17 +10,17 @@ const Footer: React.FC = () => {
           />
           <ul className="space-y-2 text-sm">
             <li>
-              <a href="#" className="hover:underline">
+              <a href="/terms-conditions" className="hover:underline">
                 Syarat dan Ketentuan
               </a>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <a href="/privacy-policy" className="hover:underline">
                 Kebijakan Privasi
               </a>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <a href="#faq" className="hover:underline">
                 FAQ
               </a>
             </li>
@@ -28,11 +28,18 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="space-y-2 text-sm">
-          <h4 className="text-white font-semibold">ALAMAT</h4>
-          <p className="text-white">Gedung Menara 165, Lantai 3</p>
-          <p className="text-white">Jl. TB. Simatupang Kav 1</p>
-          <p className="text-white">Cilandak, Pasar Minggu</p>
-          <p className="text-white">Jakarta Selatan, DKI Jakarta 12560</p>
+          <h4 className="font-semibold">ALAMAT</h4>
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=Menara+165"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block space-y-1 hover:underline"
+          >
+            <p className="pr-6 text-white">
+              Gedung Menara 165, Lantai 3 Jl. TB. Simatupang Kav 1 Cilandak,
+              Pasar Minggu Jakarta Selatan, DKI Jakarta 12560
+            </p>
+          </a>
         </div>
 
         <div className="space-y-2 text-sm">
@@ -54,7 +61,7 @@ const Footer: React.FC = () => {
               </a>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <a href="/pasar-sekunder" className="hover:underline">
                 Pasar Sekunder
               </a>
             </li>
@@ -75,7 +82,7 @@ const Footer: React.FC = () => {
               href="tel:02138820134"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white font-semibold cursor-pointer hover:underline hover:text-blue-300 transition-colors"
+              className="text-white cursor-pointer hover:underline"
             >
               02138820134
             </a>
@@ -87,7 +94,7 @@ const Footer: React.FC = () => {
               href="https://wa.me/6283814333442"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white font-semibold cursor-pointer hover:underline hover:text-green-300 transition-colors"
+              className="text-white cursor-pointer hover:underline"
             >
               083814333442
             </a>
@@ -97,36 +104,70 @@ const Footer: React.FC = () => {
             <p className="text-white">Email</p>
             <a
               href="mailto:info@FuLusme"
-              className="text-white font-semibold cursor-pointer hover:underline hover:text-yellow-300 transition-colors"
+              className="text-white cursor-pointer hover:underline"
             >
               info@fuLusme
-            </a>
-          </div>
-
-          <div className="flex space-x-3 pt-2">
-            <a href="#">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="#">
-              <i className="fab fa-instagram"></i>
-            </a>
-            <a href="#">
-              <i className="fab fa-youtube"></i>
-            </a>
-            <a href="#">
-              <i className="fab fa-tumblr"></i>
             </a>
           </div>
         </div>
 
         {/* OJK & Sertifikat */}
-        <div className="flex items-start justify-center space-x-6">
-          <img src="/images/covered/ojk.png" alt="OJK" className="h-12" />
-          <img
-            src="/images/covered/iso.png"
-            alt="ISO 27001:2013"
-            className="h-12"
-          />
+        <div>
+          <div className="flex items-start justify-center space-x-6">
+            <a
+              href="https://www.ojk.go.id/id/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src="/images/covered/ojk.png" alt="OJK" className="h-12" />
+            </a>
+            <a
+              href="https://www.google.com/search?q=iso+27001"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/images/covered/iso.png"
+                alt="ISO 27001:2013"
+                className="h-12"
+              />
+            </a>
+          </div>
+          <div className="flex items-center justify-center space-x-6 mt-6 mb-4">
+            <a
+              href="https://www.youtube.com/@fulusme8159"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/images/youtube.png"
+                alt="Youtube Fulusme"
+                className="h-11"
+              />
+            </a>
+            <a
+              href="https://www.facebook.com/profile.php?id=61566054190488"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/images/facebook.png"
+                alt="Youtube Facebook"
+                className="h-11"
+              />
+            </a>
+            <a
+              href="https://www.instagram.com/fulusme/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/images/instagram.png"
+                alt="Youtube Instagram"
+                className="h-11"
+              />
+            </a>
+          </div>
         </div>
       </div>
     </footer>

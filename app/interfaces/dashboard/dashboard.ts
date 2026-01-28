@@ -59,6 +59,7 @@ export interface MonthlyPaid {
 export interface DashboardData {
   verified_investor: boolean;
   rek_efek: boolean;
+  is_institusi: boolean;
   summary: Summary;
   recent_transactions: RecentTransaction[];
   active_invoices: ActiveInvoice[];

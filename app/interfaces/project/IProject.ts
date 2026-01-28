@@ -22,10 +22,12 @@ export interface Project {
   company_profile: string;
   target_amount: number;
   user_paid_amount: number;
+  jumlah_lot: string;
   spk: string;
   loa: string;
   doc_prospect: string;
   mulai_project: string;
+  stok_lot: number;
   selesai_project: string;
   jadwal_pembayaran_bunga: string;
   jadwal_pembayaran_pokok: string;

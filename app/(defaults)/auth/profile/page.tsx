@@ -1,17 +1,13 @@
-import React from "react";
-
+import ProfileView from "@/app/components/auth/profile/ProfileView";
 import type { Metadata } from "next";
-import Profile from "@app/components/auth/profile/Profile";
 
 export const metadata: Metadata = {
-  title: "Admin | Profile",
+  title: "Fulusme | Profile",
   description: "Profile",
 };
 
 const ProfilePage: React.FC = () => {
-  return (
-    <Profile />
-  );
+  return <ProfileView />;
 };
 
 export default ProfilePage;

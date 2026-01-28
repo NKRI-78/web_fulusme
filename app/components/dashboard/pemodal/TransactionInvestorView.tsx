@@ -6,11 +6,10 @@ import {
   Calendar,
   CircleDollarSign,
   Inbox,
-  X,
-  FileText,
   Eye,
   RotateCcw,
   Loader2,
+  Info,
 } from "lucide-react";
 import axios from "axios";
 import { getTransactions } from "@/actions/fetchTransaction";
@@ -20,12 +19,16 @@ import { getUser } from "@/app/lib/auth";
 import GeneralDialog from "../../GeneralDialog";
 import { API_BACKEND } from "@/app/utils/constant";
 import Swal from "sweetalert2";
-import RefundButton from "./components/ButtonRefund";
 import { AnimatedWrapper } from "../../AnimatedWrapper";
 import Center from "../../Center";
 import CircularProgressIndicator from "../../CircularProgressIndicator";
+import "tippy.js/dist/tippy.css";
+import "tippy.js/animations/shift-away.css";
+import { useRouter } from "next/navigation";
+import Tooltip from "../../Tooltip";
 
 export default function TransactionInvestorView() {
+  const router = useRouter();
   const [transactions, setTransactions] = useState<TransactionItem[]>([]);
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
@@ -45,7 +48,7 @@ export default function TransactionInvestorView() {
   const [showRefundExlanation, setShowRefundExplanation] = useState(false);
 
   const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(
-    null
+    null,
   );
   const [processing, setProcessing] = useState(false); // loading state refund
 
@@ -87,7 +90,7 @@ export default function TransactionInvestorView() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       return res.data;
     } catch (error: any) {
@@ -119,6 +122,7 @@ export default function TransactionInvestorView() {
                     <th className="p-3 text-left">#</th>
                     <th className="p-3 text-left">Project</th>
                     <th className="p-3 text-left">Perusahaan</th>
+                    <th className="p-3 text-left">Nominal</th>
                     <th className="p-3 text-left">Status</th>
                     <th className="p-3 text-center">Tanggal</th>
                     <th className="p-3 text-center">Aksi</th>
@@ -133,23 +137,28 @@ export default function TransactionInvestorView() {
                       <td className="p-3 text-left">
                         {(page - 1) * limit + idx + 1}
                       </td>
-                      <td className="p-3 font-medium text-left">
-                        {trx.project_title}
+                      <td className="p-3 text-left">{trx.project_title}</td>
+                      <td className="p-3 text-left">
+                        <div className="flex items-center gap-x-2">
+                          <Building2 className="w-4 h-4 text-primary" />
+                          {trx.company.name == "" ? "-" : trx.company.name}
+                        </div>
                       </td>
-                      <td className="p-3 flex items-center gap-2 text-left">
-                        <Building2 className="w-4 h-4 text-primary" />
-                        {trx.company.name == "" ? "-" : trx.company.name}
-                      </td>
-                      <td className="p-3 flex items-center gap-2 font-semibold text-left">
-                        <CircleDollarSign className="w-4 h-4 text-green-600" />
-                        Rp {trx.amount.toLocaleString("id-ID")}
+                      <td className="p-3 text-left">
+                        <div className="flex items-center gap-x-2">
+                          <CircleDollarSign className="w-4 h-4 text-green-600" />
+                          Rp {trx.amount.toLocaleString("id-ID")}
+                        </div>
                       </td>
                       <td className="p-3 text-left">
                         <span
                           className={`px-2 py-1 text-xs rounded-full font-medium ${
-                            trx.payment_status === "PENDING"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-green-100 text-green-700"
+                            trx.payment_status === "REFUNDED" ||
+                            trx.payment_status === "EXPIRED"
+                              ? "bg-red-100 text-red-700"
+                              : trx.payment_status === "PENDING"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : "bg-green-100 text-green-700"
                           }`}
                         >
                           {trx.payment_status}
@@ -164,43 +173,48 @@ export default function TransactionInvestorView() {
                         </div>
                       </td>
                       <td className="p-3 text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <a
-                            href={`/waiting-payment?orderId=${trx.payment_id}`}
-                            className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 transition duration-200"
-                          >
-                            <Eye className="w-4 h-4" />
-                            Lihat Detail
-                          </a>
-                          {trx.payment_status == "PAID" && (
-                            <>
-                              <button
-                                className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md bg-green-600 text-white hover:bg-green-700 shadow-sm transition duration-200"
+                        <div className="flex items-center justify-center gap-x-3">
+                          <Tooltip label="Lihat Detail">
+                            <div
+                              className="bg-blue-50 p-1 rounded-md border border-blue-500 cursor-pointer transition-all duration-400 active:scale-[0.98] hover:shadow-sm active:hover:shadow-md"
+                              onClick={() => {
+                                router.push(
+                                  `/waiting-payment?orderId=${trx.payment_id}`,
+                                );
+                              }}
+                            >
+                              <Eye size={18} className="text-blue-500" />
+                            </div>
+                          </Tooltip>
+                          {trx.payment_status === "PAID" ? (
+                            <Tooltip label="Kembalikan Dana">
+                              <div
+                                className="bg-red-50 p-1 rounded-md border border-red-500 cursor-pointer transition-all duration-400 active:scale-[0.98] hover:shadow-sm active:hover:shadow-md"
                                 onClick={() => {
                                   setSelectedPaymentId(
-                                    trx.payment_id.toString() ?? ""
+                                    trx.payment_id.toString() ?? "",
                                   );
                                   setShowRefundStatement(true);
                                 }}
                               >
-                                <RotateCcw className="w-4 h-4" />
-                                Kembalikan Dana
-                              </button>
-                            </>
-                          )}
-
-                          {trx.payment_status === "REFUNDED" && (
-                            <>
-                              <button
+                                <RotateCcw size={18} className="text-red-500" />
+                              </div>
+                            </Tooltip>
+                          ) : trx.payment_status === "REFUNDED" ? (
+                            <Tooltip label="Informasi Refund">
+                              <div
+                                className="bg-green-50 p-1 rounded-md border border-green-500 cursor-pointer transition-all duration-400 active:scale-[0.98] hover:shadow-sm active:hover:shadow-md"
                                 onClick={() => {
                                   setShowRefundExplanation(true);
                                 }}
-                                className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition duration-200"
                               >
-                                <Eye className="w-4 h-4" />
-                                Information
-                              </button>
-                            </>
+                                <Info size={18} className="text-green-500" />
+                              </div>
+                            </Tooltip>
+                          ) : (
+                            <div className="bg-transparent p-1 rounded-md border border-transparent">
+                              <Info size={18} className="text-transparent" />
+                            </div>
                           )}
                         </div>
                       </td>
@@ -329,6 +343,9 @@ export default function TransactionInvestorView() {
                 setProcessing(true);
                 try {
                   await refundPayment(selectedPaymentId, user?.token ?? "");
+
+                  // load ulang
+                  await fetchData(1);
 
                   Swal.fire({
                     icon: "success",

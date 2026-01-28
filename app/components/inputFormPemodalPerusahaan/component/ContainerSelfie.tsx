@@ -6,11 +6,18 @@ import { Camera, CameraOff, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
 interface Props {
-  photoResult: (result: File | null) => void;
+  photoUrl?: string;
+  photoResult: (result: string | null) => void;
+  resetPhotoResult: () => void;
   errorText?: string;
 }
 
-const ContainerSelfie: React.FC<Props> = ({ photoResult, errorText }) => {
+const ContainerSelfie: React.FC<Props> = ({
+  photoResult,
+  resetPhotoResult,
+  errorText,
+  photoUrl,
+}) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
@@ -104,14 +111,7 @@ const ContainerSelfie: React.FC<Props> = ({ photoResult, errorText }) => {
       const imageData = canvas.toDataURL("image/png");
       setPhoto(imageData);
 
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const fileName = `selfie-${new Date().toISOString()}.png`;
-          const file = new File([blob], fileName, { type: "image/png" });
-          photoResult(file);
-          console.log(file.name);
-        }
-      }, "image/png");
+      photoResult(imageData);
 
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
@@ -128,6 +128,13 @@ const ContainerSelfie: React.FC<Props> = ({ photoResult, errorText }) => {
 
   // *reset photo
   const resetPhoto = () => {
+    console.log("reset foto, has stream?", stream !== null);
+    console.log("has photo result?", photoResult !== null);
+    console.log("camera active?", isCameraActive !== null);
+    console.log("is stream?", stream !== null);
+
+    console.log("has photo?", photo !== null);
+    console.log("has photo url?", photoUrl !== null);
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
     }
@@ -136,7 +143,10 @@ const ContainerSelfie: React.FC<Props> = ({ photoResult, errorText }) => {
     setIsCameraActive(false);
     setErrorMessage("");
     setStream(null);
+    resetPhotoResult();
   };
+
+  const displayPhoto = photoUrl || photo;
 
   return (
     <div
@@ -150,53 +160,39 @@ const ContainerSelfie: React.FC<Props> = ({ photoResult, errorText }) => {
 
       <div
         onClick={() => {
-          if (isCameraActive) return;
+          if (isCameraActive || displayPhoto) return;
           startCamera();
         }}
         className="flex-1 flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-black cursor-pointer overflow-hidden"
       >
-        {isCameraActive ? (
+        {displayPhoto ? (
+          <div className="w-full relative">
+            <img
+              alt="Foto Selfie"
+              src={displayPhoto}
+              className="block w-full h-full object-cover"
+            />
+            <button
+              type="button"
+              onClick={resetPhoto}
+              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100"
+            >
+              <X className="w-4 h-4 text-gray-600" />
+            </button>
+          </div>
+        ) : isCameraActive ? (
           <div className="flex flex-col items-center w-full mb-2">
-            {!photo ? (
-              <video
-                ref={videoRef}
-                style={{ transform: "scaleX(-1)" }}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full relative">
-                <img
-                  alt="Foto Selfie"
-                  src={photo}
-                  className="block w-full h-full object-cover"
-                />
-                {photo && (
-                  <button
-                    type="button"
-                    onClick={resetPhoto}
-                    className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100"
-                  >
-                    <X className="w-4 h-4 text-gray-600" />
-                  </button>
-                )}
-              </div>
-            )}
-            {!photo ? (
-              <FormButton type="filled" className="mt-2" onClick={takePhoto}>
-                Ambil Foto
-              </FormButton>
-            ) : (
-              <FormButton
-                type="outlined"
-                className="mt-2"
-                onClick={retakePhoto}
-              >
-                Ambil Ulang
-              </FormButton>
-            )}
+            <video
+              ref={videoRef}
+              style={{ transform: "scaleX(-1)" }}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover"
+            />
+            <FormButton type="filled" className="mt-2" onClick={takePhoto}>
+              Ambil Foto
+            </FormButton>
           </div>
         ) : errorMessage ? (
           <>

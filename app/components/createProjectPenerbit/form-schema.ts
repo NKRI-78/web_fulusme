@@ -51,6 +51,9 @@ export interface ProjectTypeInterface {
   name: string;
 }
 
+const MIN_DANA =
+  process.env.NODE_ENV === "production" ? 100_000_000 : 1_000_000;
+
 const mapsResultSchema = z.object({
   lat: z.coerce.number().min(-90, "Latitude wajib ada"),
   lng: z.coerce.number().min(-180, "Longitude wajib ada"),
@@ -88,7 +91,10 @@ export const createProjectPenerbitSchema = z
         required_error: "Modal Proyek wajib diisi",
         invalid_type_error: "Modal Proyek harus berupa angka",
       })
-      .min(100_000_000, "Minimal Rp100.000.000")
+      .min(
+        MIN_DANA,
+        `Minimal Rp${process.env.NODE_ENV === "production" ? "100.000.000" : "1.000.000"}`,
+      )
       .max(10_000_000_000, "Maksimal Rp10.000.000.000"),
 
     modalProyek: z.coerce.number({
@@ -131,7 +137,7 @@ export const createProjectPenerbitSchema = z
         code: "custom",
         path: ["modalProyek"],
         message: `Modal Proyek minimal harus sebesar Dana yang Dibutuhkan (${data.danaYangDibutuhkan.toLocaleString(
-          "id-ID"
+          "id-ID",
         )})`,
       });
     }

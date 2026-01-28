@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 import ComponentDataPribadi from "./informasiPribadi/DataPribadi";
 import ComponentDataPekerjaan from "./informasiPekerjaan/DataPekerjaan";
 import { API_BACKEND } from "@/app/utils/constant";
-import FileViewerModal from "@/app/(defaults)/viewer/components/FilePriviewModal";
+import FileViewerModal from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
 import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
 
@@ -94,10 +94,6 @@ const FormPemodal: React.FC = () => {
     const userCookie = getUser();
     if (!userCookie) return;
 
-    // const user = JSON.parse(userCookie);
-    // const token = user?.token;
-
-    // if (!token) return;
     setUser(userCookie);
 
     const fetchProfile = async () => {
@@ -112,6 +108,13 @@ const FormPemodal: React.FC = () => {
         const data = response.data?.data;
 
         setDataProfile({ ...data, form: form });
+        setDataPribadi((prev) => ({
+          ...prev,
+          nama: data.fullname,
+          namaPemilik: data.fullname,
+        }));
+
+        console.log("data && isUpdate", data && isUpdate);
 
         if (data && isUpdate) {
           localStorage.setItem("dataProfile", JSON.stringify(data));
@@ -120,7 +123,7 @@ const FormPemodal: React.FC = () => {
 
           setDataPribadi((prev) => ({
             ...prev,
-            nama: data.investor.ktp.name || "",
+            nama: data.fullname || "",
             nik: data.investor.ktp.nik || "",
             tempatLahir: placeOfBirth || "",
             tanggalLahir: dateOfBirth || "",
@@ -398,22 +401,56 @@ const FormPemodal: React.FC = () => {
         }),
 
       posCodePekerjaan: z.string().min(1, "Kode pos wajib dipilih"),
+
+      namaBank_efek: z
+        .object({ value: z.string(), label: z.string() })
+        .nullable()
+        .optional(),
+      nomorRekening_efek: z.string().optional(),
+      namaPemilik_efek: z.string().optional(),
     })
-    .refine(
-      (data) => {
-        if (data.tujuanInvestasi === "Lainnya") {
-          return (
-            data.tujuanInvestasiLainnya &&
-            data.tujuanInvestasiLainnya.trim() !== ""
-          );
-        }
-        return true;
-      },
-      {
-        message: "Tujuan inventasi lainnya wajib diisi",
-        path: ["tujuanInvestasiLainnya"],
+    .superRefine((data, ctx) => {
+      if (
+        data.tujuanInvestasi === "Lainnya" &&
+        !data.tujuanInvestasiLainnya?.trim()
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["tujuanInvestasiLainnya"],
+          message: "Tujuan investasi lainnya wajib diisi",
+        });
       }
-    );
+
+      const adaIsi =
+        data.namaBank_efek || data.nomorRekening_efek || data.namaPemilik_efek;
+
+      if (adaIsi) {
+        if (!data.namaBank_efek) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["namaBank_efek"],
+            message:
+              "Harap pilih nama bank efek jika mengisi data rekening efek",
+          });
+        }
+        if (!data.nomorRekening_efek?.trim()) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["nomorRekening_efek"],
+            message:
+              "Harap lengkapi nomor rekening efek jika mengisi data rekening efek",
+          });
+        }
+        if (!data.namaPemilik_efek?.trim()) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["namaPemilik_efek"],
+            message:
+              "Harap lengkapi nama pemilik rekening efek jika mengisi data rekening efek",
+          });
+        }
+      }
+    });
 
   const [dataPribadi, setDataPribadi] = useState(() => {
     if (typeof window !== "undefined") {
@@ -609,6 +646,7 @@ const FormPemodal: React.FC = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("formPemodal");
+      console.log("const saved = localStorage.getItem(formPemodal);", saved);
       if (saved && !isUpdate) {
         const parsed = JSON.parse(saved);
         setDataPribadi({
@@ -669,10 +707,11 @@ const FormPemodal: React.FC = () => {
     }
   }, []);
 
-  // Auto simpan ke localStorage setiap ada perubahan dataPribadi
   useEffect(() => {
     if (typeof window !== "undefined") {
+      console.log("!submitted", submitted);
       if (!submitted) {
+        console.log("fulldata dataPribadi", dataPribadi);
         const fullData = {
           ...dataPribadi,
           ...dataPekerjaan,
@@ -860,7 +899,8 @@ const FormPemodal: React.FC = () => {
     const result = schemaDataPribadi.safeParse(dataPribadi);
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
-      setErrorsPribadi(errors); // untuk ditampilkan di UI
+      console.log("errors =", errors);
+      setErrorsPribadi(errors);
       return false;
     }
     setErrorsPribadi({});
@@ -872,7 +912,7 @@ const FormPemodal: React.FC = () => {
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
       console.log("Validation Errors:", errors);
-      setErrorsPekerjaan(errors); // untuk ditampilkan di UI
+      setErrorsPekerjaan(errors);
       return false;
     }
     setErrorsPekerjaan({});
@@ -900,7 +940,7 @@ const FormPemodal: React.FC = () => {
     if (!form) return { dataType: "", val: "" };
 
     switch (form.toLowerCase()) {
-      case "ktp":
+      case "upload-ktp-pic":
         return { dataType: "ktp_path", val: data.ktpUrl };
       case "npwp":
         return { dataType: "npwp_path", val: data.npwpUrl };
@@ -1194,7 +1234,7 @@ const FormPemodal: React.FC = () => {
               (!dataPekerjaan.setujuKebenaranData ||
                 !dataPekerjaan.setujuRisikoInvestasi)
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-purple-600 hover:bg-purple-700"
+                : "bg-[#3C2B90] hover:bg-[#2e2176]"
             }`}
           >
             Selanjutnya
@@ -1210,7 +1250,7 @@ const FormPemodal: React.FC = () => {
               !dataPekerjaan.setujuKebenaranData ||
               !dataPekerjaan.setujuRisikoInvestasi
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-purple-600 hover:bg-purple-700"
+                : "bg-[#3C2B90] hover:bg-[#2e2176]"
             }`}
           >
             {isUpdate ? "Update Data" : "Kirim Data"}

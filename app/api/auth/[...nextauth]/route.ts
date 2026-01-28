@@ -13,14 +13,17 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          const res = await fetch(`${API_BACKEND}/api/v1/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: credentials?.email,
-              password: credentials?.password,
-            }),
-          });
+          const res = await fetch(
+            `https://api-staging-capbridge.langitdigital78.com/api/v1/auth/login`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: credentials?.email,
+                password: credentials?.password,
+              }),
+            }
+          );
 
           const data = await res.json();
 

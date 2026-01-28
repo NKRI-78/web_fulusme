@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { setBadge } from "@/redux/slices/badgeSlice";
 import { Project } from "@/app/interfaces/project/IProject";
 import GridView from "../GridView";
+import { HelpButton, HelpButtonPosition } from "./HelpButton";
 
 const HomeV2: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const HomeV2: React.FC = () => {
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"Umum" | "Pemodal" | "Penerbit">(
-    "Umum"
+    "Umum",
   );
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -69,48 +70,160 @@ const HomeV2: React.FC = () => {
     Umum: [
       {
         question: "Apa itu FuLusme?",
-        answer:
-          "FuLusme adalah Penyelenggara Layanan Urun Dana Berbasis Teknologi Informasi (Securities Crowdfunding) yang merupakan tempat bertemunya Pemodal dan Penerbit dalam satu wadah platform.",
+        answer: `Fulusme adalah platform Securities Crowd Funding SCF adalah salah satu wadah tempat bertemunya Pemodal dan Penerbit yang dihubungkan dengan teknologi aplikasi, sehingga berikutnya disebut teknologi finansial (Financial Technology/FinTech). Selain itu, sejak tanggal 04 Juli 2022 lalu, Fulusme telah terdaftar dan diawasi oleh Otoritas Jasa Keuangan (OJK) dengan Nomor SK KEP-45/D.04/2022.`,
       },
       {
-        question: "Apa itu Efek?",
-        answer:
-          "Efek adalah surat berharga seperti saham, obligasi, atau surat utang lainnya yang dapat diperdagangkan di pasar modal.",
+        question:
+          "Apakah Fulusme merupakan bank atau perusahaan finansial lainnya?",
+        answer: `Fulusme bukanlah bank. Fulusme adalah platform yang Mempertemukan Pemodal dan Penerbit Secara Gotong Royong untuk mendanai proyek yang spesifik saja dan tidak ada proses penyimpanan uang seperti bank. Fulusme bisa dijadikan alternatif bisnis yang menguntungkan seperti layaknya pendanaan di pasar modal, karena selain aman, juga memiliki tingkat bagi hasil/bunga yang menarik dalam periode yang cepat/pendek 1- 24 bulan.`,
       },
       {
-        question: "Apa itu Lembaga Penyimpanan dan Penyelesaian?",
+        question: "Jika bukan bank, apakah aman mendanai di Fulusme?",
+        answer: `Meskipun Fulusme bukan bank, tetapi memiliki sistem yang ketat dalam melakukan verifikasi proyek sebelum di danai. Fulusme juga memilki tim yang melakukan analisa resiko berdasarkan hasil kompilasi dan verifikasi data untuk memastikan bahwa proyek yang akan didanai adalah valid dan menguntungkan bagi Pemodal.`,
+      },
+      {
+        question:
+          "Mengapa harus mendanai dan mengajukan Pendanaan permodalan di Fulusme?",
+        answer: `Dibandingkan lembaga keuangan konvensional, proses pengajuan Pendanaan di Fulusme lebih fleksibel, mudah dan akan dibantu oleh tim kami yang berpengalaman dalam membantu penyiapan dokumen apabila diperlukan. Kecepatan respon terhadap kebutuhan calon Penerbit dan syarat yang mudah, juga merupakan kunci utama. Selain hal tersebut, yang paling penting juga adalah keamanan pendanaan bagi Pendana dan imbal hasil /bunga yang menarik.`,
+      },
+      {
+        question: "Apakah ada denda jika terjadi keterlambatan pembayaran?",
+        answer: "Ya, denda ajakan dikenakan sesuai ketentuan yang berlaku",
+      },
+      {
+        question: "Apakah mungkin terjadi gagal bayar (default)?",
+        answer: `Segala kemungkinan bisa saja terjadi pada setiap alternatif model pendanaan. Sedari awal, Fulusme berusaha memitigasi segala resiko yang mungkin timbul. Fulusme sedapat mungkin juga melakukan screening yang ketat sebelum memberikan permodalan. Kalaupun akhirnya terjadi gagal bayar, Fulusme akan melakukan pendekatan kepada Penerbit untuk melakukan kewajibannya.`,
+      },
+      {
+        question: "Berapa lama waktu pendanaan/Pendanaan di Fulusme?",
+        answer: "Berkisar dari 1 bulan hingga 24 bulan.",
+      },
+      {
+        question: "Apakah Fulusme dapat membantu semua kebutuhan permodalan?",
         answer:
-          "• Lembaga Penyimpanan dan Penyelesaian (LPP) adalah pihak yang menyelenggarakan kegiatan kustodian sentral bagi bank kustodian, perusahaan efek, dan pihak lain.\n • Fungsi LPP pada kegiatan Layanan Urun Dana antara lain: \n - Mengadministrasikan efek yang ditawarkan Penerbit \n - Menyelesaikan transaksi efek setelah terjadi pembelian oleh Pemodal \n - Mendistribusikan efek yang telah dibeli untuk dapat disimpan di rekening efek milik Pemodal yang ada Bank Kustodian \n • LPP dalam Layanan Urun Dana ini menggunakan Kustodian Sentral Efek Indonesia (KSEI).",
+          "Ya, tetapi untuk saat ini hanya membiayai kebutuhan permodalan untuk bisnis/Proyek (B2B) dan UMKM dan melalui proses assesmen tim terlebih dahulu.",
+      },
+      {
+        question: "Berapa besar Pendanaan yang bisa di ajukan?",
+        answer:
+          "Peminjaman bisa dimulai dari Rp 100 juta hingga maksimal Rp 10 milyar.",
       },
     ],
+
     Pemodal: [
       {
-        question: "Apa itu Pemodal?",
-        answer:
-          "Anda bisa mendaftar di platform FuLusme, melakukan verifikasi, dan mulai berinvestasi pada proyek yang tersedia.",
+        question: "Siapa saja yang dapat mendanai di Fulusme?",
+        answer: `Warga Negara Indonesia (WNI) atau Warga Negara Asing (WNA) minimal berusia 18 tahun dan Badan Usaha di wilayah Republik Indonesia. Bagi WNI, keabsahan identitas diri akan dibuktikan melalui dokumen KTP dan NPWP. Sedangkan bagi WNA melalui paspor dan rekening bank yang ada di Indonesia. Badan Usaha dibuktikan dengan dokumen lengkap perusahaan yang sah.`,
       },
       {
-        question: "Bagaimana cara berinvestasi di FuLusme?",
-        answer:
-          "Untuk berinvestasi, langkah pertama Anda harus memiliki akun di FuLusme. Berikut tata cara pembuatan Akun Pemodal : \n • Daftarkan diri Anda pada tautan berikut. \n • Masukkan data diri anda, email, dan nomor ponsel yang anda pakai \n • Setelah memasukkan nomor ponsel pada langkah pertama, anda akan diminta memasukkan kode OTP yang dikirimkan ke nomor ponsel anda \n • Kemudian masukkan kata sandi yang ingin anda gunakan \n • Anda harus membaca dan menyetujui syarat dan ketentuan kami sebelum mendaftarkan diri. Kemudian akan dikirimkan email verifikasi pada email yang anda masukkan \n • Verifikasi email dan kemudian masuk menggunakan Email dan kata sandi anda. \n • Langkah berikutnya adalah proses KYC yang berada di posisi sebelah kiri Dashboard, dimana Anda harus mengisi semua tahapan dan pertanyaan yang ada. Setelah Anda mengisi semua data pada proses KYC, maka akan dilakukan verifikasi data oleh tim FuLusme yang memerlukan waktu 2x24 jam di hari kerja. \n • Anda akan menerima pemberitahuan via email terkait status verifikasi data Anda. Jika data Anda sudah terverifikasi, maka Anda dapat mulai berinvestasi di FuLusme.",
+        question: "Bagaimana proses untuk menjadi pendana?",
+        answer: `
+          ●	Pertama kali harus mendaftar di bagian registrasi pemodal. Isi data-data yang diminta, kemudian klik “daftar”.\n
+          ●	Selanjutnya periksa email anda dan klik link verifikasi yang dikirimkan Fulusme, untuk memastikan bahwa email itu adalah benar milik anda.\n
+          ●	Berikutnya anda akan memiliki akun pribadi di Fulusme. Di akun itu anda dapat melihat semua profile proyek yang siap untuk didanaiz.
+          `,
       },
       {
-        question: "Apa yang dimaksud dengan Prospekstus?",
+        question: "Apakah bisa mendanai beberapa proyek dalam satu waktu?",
         answer:
-          "Prospektus adalah seluruh informasi penting dan relevan mengenai penawaran investasi yang ditawarkan Penerbit untuk membantu Pemodal dalam membuat keputusan investasi.",
+          "Ya, siapapun bisa mendanai beberapa proyek dalam waktu yang bersamaan (selama quota pendanaan cukup).",
+      },
+      {
+        question: "Bagaimana nilai perhitungan bagi hasil/bunga untuk Pemodal?",
+        answer: `Nilai persentase bagi hasil dapat dilihat langsung di setiap marketplace yang ditayangkan. Tetapi nilai tersebut sangat bergantung dari hasil akhir pengelolaan proyek. Oleh karena itu tim Fulusme berusaha sedetil mungkin dalam melakukan analisis, sehingga nilai akhir yang dipersentasekan sebagai nisbah/bunga tidak jauh menyimpang dari yang ditayangkan di awal marketplace.`,
+      },
+      {
+        question:
+          "Berapa nilai minimal dan maksimal yang ditetapkan untuk pendanaan di Fulusme?",
+        answer: `Model Pendanaan di Fulusme menggunakan istilah Lot, yang nilainya bisa dilihat di halaman marketplace. Untuk minimal dan maksimalnya tergantung dari pendana, berapa banyak mereka akan mendanai Lot nya. Jumlah Lot bisa dilihat di tiap halaman proyek di marketplace.`,
+      },
+      {
+        question: "Apa saja biaya yang timbul saat mendanai di Fulusme?",
+        answer: `Untuk saat ini, tidak ada pungutan atau biaya apapun ke pihak Pemodal, terkecuali jika pendanaan tidak terkumpul maksimal disuatu proyek, sehingga terpaksa dilakukan pengembalian/retur oleh pihak Fulusme. Jika ini terjadi, maka biaya transfer retur antar bank akan dibebankan ke pihak Pemodal, sesuai dengan kebijakan biaya antar bank secara real dan Fulusme tidak mengutip sedikitpun dalam hal ini.`,
+      },
+      {
+        question: "Kapankah Pemodal bisa mendapatkan keuntungannya?",
+        answer: `Pada akhir periode pendanaan, Pemodal akan menerima pengembalian berupa jumlah dana pokok yang disalurkan dalam Pendanaan kepada Pemodal, serta keuntungan berupa imbal hasil/bunga. Seluruh dana akan ditransfer ke rekening milik Pemodal.`,
+      },
+      {
+        question: "Apakah ada risiko mendanai di Fulusme?",
+        answer: `Skenario terburuk tetap mungkin terjadi dan perlu dipertimbangkan. Fulusme menyarankan calon Pemodal untuk berkonsultasi dengan penasihat keuangan sebelum mengambil keputusan. Risiko terbesar yang mungkin terjadi dalam Pendanaan SCF adalah Pemodal tidak menerima kembali dana yang disalurkan dan imbal hasil atau bunga dikarenakan kegagalan pembayaran.`,
+      },
+      {
+        question:
+          "Bagaimana antisipasi untuk menekan terjadinya kerugian Pemodal  akibat Penerbit yang mengalami kegagalan pembayaran?",
+        answer: `Untuk meminimalisasi risiko kegagalan, Fulusme akan melakukan analisis, seleksi, dan persetujuan berdasarkan sistem credit-scoring dan meminta Jaminan terhadap setiap Pendanaan yang diajukan.`,
       },
     ],
     Penerbit: [
       {
-        question: "Apa itu Penerbit?",
+        question: "Apakah yang dimaksud dengan Penerbit?",
         answer:
-          "Penerbit adalah pihak yang mencari pendanaan melalui platform FuLusme dengan menawarkan efek kepada publik.",
+          "Yang dimaksud dengan Penerbit adalah badan usaha yang memilki proyek atau usaha yang layak untuk dikerjakan dan memiliki nilai bisnis tetapi terkendala dengan permodalan, sehingga membutuhkan dana untuk dikelola sehingga menghasilkan keuntungan secara bisnis.",
+      },
+      {
+        question: "Siapa sajakah yang berhak sebagai Penerbit?",
+        answer:
+          "Semua perusahaan yang memiliki badan hukum di wilayah negara Republik Indonesia dan dibuktikan dengan dokumen lengkap perusahaan yang sah.",
+      },
+      {
+        question: "Bagaimanakah proses untuk mendapatkan Pendanaan?",
+        answer: `
+          ●	Pertama kali harus mendaftar di halaman registrasi Penerbit. Isi data-data yang diminta, kemudian klik “daftar”.\n
+          ●	Selanjutnya periksa email anda dan klik link verifikasi yang dikirimkan Fulusme, untuk memastikan bahwa email itu adalah benar milik anda.\n
+          ●	Berikutnya anda akan memiliki akun pribadi di Fulusme.\n
+          ●	Setelah itu anda dapat mengajukan Pendanaan permodalan dengan mengisi aplikasi dan syarat – syarat yang dibutuhkan.
+          `,
+      },
+      {
+        question: "Apa saja syarat untuk menjadi Penerbit?",
+        answer: `
+          ●	Mengisi form  Pengajuan Pendanaan.\n
+          ●	Melengkapi dokumen tanda pengenal yang dibutuhkan, seperti KTP.\n
+          ●	Melengkapi dokumen perusahaan seperti AKTA dll.\n
+          ●	Melengkapi dokumen proyek seperti SPK/Invoice dan dokumen pendukung lainnya, jika ada.
+          `,
       },
       {
         question:
-          "Bagaimana jika masa penawaran (45 Hari) berakhir namun pendanaan belum terkumpul?",
-        answer:
-          "• TIDAK ada masa penambahan jangka waktu penawaran sesuai dengan POJK Nomor 57/2020. \n • Jika penghimpunan dana tidak mencapai batas minimum pendanaan yang telah disepakati, maka proses kerjasama batal demi hukum dan dana investasi akan dikembalikan 100% kepada Pemodal. \n • Jika penghimpunan dana telah mencapai batas minimum pendanaan yang telah disepakati, maka kerjasama akan tetap dilanjutkan sesuai minimum pendanaan yang terkumpul",
+          "Berapa lama proses dari mulai submit dokumen hingga pencairan dana?",
+        answer: `
+          ●	Sejak dari form aplikasi di submit, maka tim kami akan segera mengunjungi perusahaan anda untuk melakukan pencocokan data dan verifikasi.\n
+          ●	Jika sudah lolos verifikasi, maka tim internal kami akan melakukan kredit analis untuk menentukan scoring perusahaan anda.\n
+          ●	Proses dari mulai aplikasi di submit hingga tayang di marketplace membutuhkan waktu sekitar 4 hari. Jika proyek anda telah lolos verifikasi dan analisis kredit, maka Fulusme akan menayangkan proyek anda di marketplace selama 45 hari. Jika sudah mencukupi/Fully Funded, maka 2 (dua) hari berikutnya kami akan mentransfernya ke rekening Penerbit. Jadi proses yang dibutuhkan adalah sekitar 20 hari.\n
+          ●	Apabila sebelum masa tayang 45 hari selesai tetapi dana sudah terkumpul, maka pihak Fulusme akan langsung mentransfer ke pihak Penerbit paling lambat 2 hari setelah dana terkumpul.\n
+          `,
+      },
+      {
+        question:
+          "Apakah ada fee/biaya untuk mendapatkan Pendanaan bagi Penerbit?",
+        answer: `
+          Ada. Sejak awal proses pengajuan Pendanaan, semua biaya yang akan dikenakan ke pihak Penerbit adalah biaya yang sudah tersebut di Perjanjian awal dan tidak ada biaya tiba-tiba atau yang disembunyikan. Biaya – biaya tersebut adalah :\n
+          ●	Fee Platform untuk Fulusme sebagai penyelenggara layanan Pendanaan SCF sebesar 5% dari total nilai Pendanaan yang disetujui, sebelum di transfer ke Penerbit.\n
+          ●	Provisi Asuransi. Jika calon Penerbit tidak memiliki jaminan, maka Fulusme akan merekomendasikan calon Penerbit ke rekanan asuransi Pendanaan yang menjadi rekanan Fulusme. Besarnya nilai provisi yang harus dibayar merupakan tanggungan pihak Penerbit dan nilainya sangat tergantung pada taksiran yang dilakukan oleh pihak asuransi terhadap proyek calon Penerbit.\n
+          ● Biaya Notarial.\n
+          ● Biaya keanggotaan KSEI.
+          `,
+      },
+      {
+        question:
+          "Apakah bisa mengajukan Pendanaan lagi di saat Pendanaan proyek sedang berjalan?",
+        answer: `TIDAK, anda harus menyelesaikan Pendanaan proyek pertama, dan pengajuan Proyek berikutnya tetapi tetap dengan prosedur dan verifikasi sebagaimana layaknya Pendanaan baru.`,
+      },
+      {
+        question:
+          "Apakah seluruh jenis bisnis dapat mengajukan Pendanaan di Fulusme?",
+        answer: `Tidak, Fulusme akan berusaha semaksimal mungkin untuk menjaga konsistensi bisnis kami sesuai dengan kaidah . Beberapa contoh industri yang tidak didukung oleh Fulusme adalah yang berasal dari industri perjudian, peternakan babi dan segala turunannya, rokok, segala hal yang terkait dengan minuman keras dan yang memabukkan, obat terlarang, prostitusi, perjudian dan kegiatan yang mengandung keraguan dan spekulasi.`,
+      },
+      {
+        question:
+          "Siapa saja instansi yang proyeknya berpotensi memiliki peluang untuk  bisa mendapatkan Pendanaan di Fulusme?",
+        answer: `Beberapa contoh proyek yang berasal dari instansi yang memiliki peluang besar  untuk bisa didanai oleh Fulusme adalah Perusahaan Multinasional, perusahaan yang terdaftar di bursa saham, Instansi Pemerintah, Perusahaan swasta dengan riwayat pembayaran yang terkenal baik, dan lain lain.`,
+      },
+      {
+        question:
+          "Apakah saya harus memberikan jaminan agar bisa memperoleh  Pendanaan di Fulusme?",
+        answer: `Ya. Selain menggunakan jaminan aset (collateral), Untuk lebih mengetahui lebih dalam tentang Fulusme, silakan mengirimkan pesan melalui Contact Us.`,
       },
     ],
   };
@@ -230,13 +343,13 @@ const HomeV2: React.FC = () => {
                   <li className="flex gap-x-2 items-center">
                     <img className="w-6" src="/images/check.png" alt="Check" />
                     <span className="text-[#969696]">
-                      Berizin resmi dan diawasi OJK: Surat KEP-11/D.04/2025
+                      Berizin resmi dan diawasi OJK : Surat KEP-45/D.04/2022
                     </span>
                   </li>
                   <li className="flex gap-x-2 items-center">
                     <img className="w-6" src="/images/check.png" alt="Check" />
                     <span className="text-[#969696]">
-                      Bersertifikasi ISO 27009:2025
+                      Bersertifikasi ISO 27001 : 2013
                     </span>
                   </li>
                   <li className="flex gap-x-2 items-center">
@@ -274,24 +387,54 @@ const HomeV2: React.FC = () => {
           temukan peluang untuk berinvestasi hari ini.
         </p>
 
-        <GridView
-          items={projects}
-          gapClass="gap-4"
-          breakpointCols={{ sm: 2, md: 3, lg: 4 }}
-          itemKey={(p) => p.id}
-          renderItem={(p, i) => {
-            return <ProjectCard project={p} />;
-          }}
-        />
+        {/* EMPTY STATE */}
+        {projects.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-[#10565C]/10">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-8 h-8 text-[#10565C]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
 
-        <button
-          onClick={() => {
-            router.push("/business-list");
-          }}
-          className="bg-[#10565C] relative hover:bg-[#0d464b] text-white px-6 py-2 rounded-full font-semibold my-10"
-        >
-          Lihat Proyek Selengkapnya
-        </button>
+            <p className="font-semibold text-lg mb-1">
+              Belum ada proyek yang berjalan
+            </p>
+            <p className="text-sm text-gray-500 max-w-md">
+              Saat ini belum tersedia proyek investasi aktif. Silakan cek
+              kembali dalam waktu dekat untuk peluang investasi terbaru.
+            </p>
+          </div>
+        ) : (
+          <GridView
+            items={projects}
+            gapClass="gap-4"
+            breakpointCols={{ sm: 2, md: 3, lg: 4 }}
+            itemKey={(p) => p.id}
+            renderItem={(p) => <ProjectCard project={p} />}
+          />
+        )}
+
+        {projects.length > 1 && (
+          <button
+            onClick={() => {
+              router.push("/business-list");
+            }}
+            className="bg-[#10565C] relative hover:bg-[#0d464b] text-white px-6 py-2 rounded-full font-semibold my-10"
+          >
+            Lihat Proyek Selengkapnya
+          </button>
+        )}
       </section>
 
       <section className="bg-white text-black py-16 px-6 md:px-20 text-center">
@@ -382,7 +525,7 @@ const HomeV2: React.FC = () => {
         </div>
       </section>
 
-      <section className="text-black py-16 px-6 md:px-20">
+      <section className="text-black py-16 px-6 md:px-20" id="faq">
         <div className="text-center mb-10">
           <h2 className="relative text-2xl font-bold mb-2">FAQ</h2>
           <p className="relative text-sm text-gray-600">
@@ -450,6 +593,7 @@ const HomeV2: React.FC = () => {
           })}
         </div>
       </section>
+
       <section className="bg-white text-black px-6 md:px-20 py-16">
         <h2 className="text-2xl relative font-bold text-center mb-6">
           DISCLAIMER
@@ -497,7 +641,7 @@ const HomeV2: React.FC = () => {
             bisnis yang anda investasikan tersebut.
           </p>
           <p>
-            FuLusmeTIDAK BERTANGGUNG JAWAB terhadap risiko kerugian dan gugatan
+            FuLusme TIDAK BERTANGGUNG JAWAB terhadap risiko kerugian dan gugatan
             hukum serta segala bentuk risiko lain yang timbul dikemudian hari
             atas hasil investasi bisnis yang anda tentukan sendiri saat ini.
             Beberapa risiko yang dapat terjadi saat Anda berinvestasi yaitu :
@@ -620,8 +764,27 @@ const HomeV2: React.FC = () => {
           </div>
         </div>
       </section>
+      {/* <section className="bg-white text-black px-6 md:px-20 py-10">
+        <h2 className="text-2xl relative font-bold text-center mb-6">
+          DISCLAIMER
+        </h2>
 
-      <div className="fixed bottom-4 right-4 z-50">
+        <div className="h-[80vh] relative overflow-hidden p-2 border border-gray-300 rounded-lg space-y-4 text-justify text-sm leading-relaxed shadow-md">
+          <iframe
+            src="/document/disclaimer.html"
+            width="100%"
+            height="100%"
+            style={{
+              border: "none",
+              background: "white",
+              minHeight: "80vh",
+            }}
+            title="Disclaimer"
+          />
+        </div>
+      </section> */}
+
+      {/* <div className="fixed bottom-4 right-4 z-50">
         <a
           href="https://wa.me/6283814333442"
           target="_blank"
@@ -631,7 +794,10 @@ const HomeV2: React.FC = () => {
           <img src="/images/wa.png" alt="WA" className="w-5 h-5 mr-2" />
           Butuh Bantuan?
         </a>
-      </div>
+      </div> */}
+      <HelpButtonPosition>
+        <HelpButton />
+      </HelpButtonPosition>
 
       <Modal
         isOpen={showOtpModal}

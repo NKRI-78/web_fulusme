@@ -688,11 +688,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
           <p className="text-sm text-gray-400 mb-2">
             File maksimal berukuran 10mb
           </p>
-          <UpdateRing
-            identity={`${dataProfile?.form}`}
-            // formKey={dataProfile?.form}
-            formKey="slipGaji"
-          >
+          <UpdateRing identity={`${dataProfile?.form}`} formKey="slip-gaji">
             {/* Input File yang disembunyikan */}
             <input
               type="file"
@@ -894,16 +890,15 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
               }}
               placeholder="Pilih Nama Bank"
             />
-            {/* {errors?.namaBank && (
-              <p className="text-red-500 text-sm mt-1">{errors.namaBank[0]}</p>
-            )} */}
+            {errors?.namaBank_efek && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.namaBank_efek[0]}
+              </p>
+            )}
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-2">
-              Nomor Rekening
-              {/* <span className="text-red-500">*</span> */}
-            </label>
+            <label className="text-sm font-medium mb-2">Nomor Rekening</label>
             <input
               type="text"
               name="nomorRekening_efek"
@@ -914,17 +909,16 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
               onChange={onChange}
               className="border rounded p-2 w-full mb-0 placeholder:text-sm"
             />
-            {/* {errors?.nomorRekening && (
+            {errors?.nomorRekening_efek && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.nomorRekening[0]}
+                {errors.nomorRekening_efek[0]}
               </p>
-            )} */}
+            )}
           </div>
 
           <div>
             <label className="text-sm font-medium mb-2">
               Nama Pemilik Rekening
-              {/* <span className="text-red-500">*</span> */}
             </label>
             <input
               type="text"
@@ -934,60 +928,13 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
               onChange={onChange}
               className="border rounded p-2 w-full mb-0 placeholder:text-sm"
             />
-            {/* {errors?.namaPemilik && (
+            {errors?.namaPemilik_efek && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.namaPemilik[0]}
+                {errors.namaPemilik_efek[0]}
               </p>
-            )} */}
+            )}
           </div>
         </div>
-
-        {/* <div className="mb-4 mt-4">
-          <label className="text-md mb-2">
-            Foto Pemodal <span className="text-red-500">*</span>
-          </label>
-
-          <p className="text-sm text-gray-400 mb-2">
-            File maksimal berukuran 10mb
-          </p>
-
-          Input File yang disembunyikan
-          <input
-            type="file"
-            id="fotoPemodalUrlUpload"
-            className="hidden"
-            onChange={handleFileChange}
-            disabled={uploadStatus["fotoPemodalUrl"] === true}
-            accept="image/*"
-            data-keyname="fotoPemodalUrl"
-          />
-
-          Label sebagai tombol
-          <label
-            htmlFor="fotoPemodalUrlUpload"
-            className="inline-flex text-sm items-center gap-2 py-2 px-4 bg-gray-800 text-white rounded-lg cursor-pointer hover:bg-gray-800 transition"
-          >
-            <>
-              <FaFileAlt />
-              Upload Dokumen
-            </>
-          </label>
-        </div>
-        {typeof window !== "undefined" && formData.fotoPemodalUrl && (
-          <button
-            type="button"
-            onClick={onLihatFotoPemodal}
-            className="text-blue-600 underline text-sm block mt-2 mb-2"
-          >
-            Lihat Foto Pemodal
-          </button>
-        )}
-
-        {errors?.fotoPemodalUrl && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.fotoPemodalUrl[0]}
-          </p>
-        )} */}
 
         <div className="mb-6 mt-6">
           <h3 className="font-semibold text-gray-900 mb-2">

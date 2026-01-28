@@ -12,6 +12,25 @@ export interface ProfileUpdate {
     path: string;
   };
 
+  // company: {
+  //   id: string;
+  //   name: string;
+  //   nib: string;
+  //   nib_path: string;
+  //   akta_pendirian: string;
+  //   akta_perubahan_terahkir: string;
+  //   sk_kumham: string;
+  //   sk_kumham_terahkir: string;
+  //   sk_kumham_path: string;
+  //   npwp_path: string;
+  //   total_employees: number;
+  //   laporan_keuangan_path: string;
+  //   rekening_koran: string;
+  //   address: CompanyAddress[];
+  //   directors: CompanyPerson[];
+  //   komisaris: CompanyPerson[];
+  //   projects: CompanyProject[];
+  // };
   company: {
     id: string;
     name: string;
@@ -23,7 +42,15 @@ export interface ProfileUpdate {
     sk_kumham_terahkir: string;
     sk_kumham_path: string;
     npwp_path: string;
-    total_employees: number;
+    siup: string;
+    tdp: string;
+    site: string;
+    email: string;
+    npwp: string;
+    phone: string;
+    bank: CompanyBank;
+    jenis_perusahaan: string;
+    total_employees: string;
     laporan_keuangan_path: string;
     rekening_koran: string;
     address: CompanyAddress[];
@@ -31,6 +58,12 @@ export interface ProfileUpdate {
     komisaris: CompanyPerson[];
     projects: CompanyProject[];
   };
+}
+
+export interface CompanyBank {
+  name: string;
+  no: string;
+  owner: string;
 }
 
 export interface CompanyAddress {

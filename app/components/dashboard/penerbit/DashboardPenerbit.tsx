@@ -10,11 +10,13 @@ import { ProjectCard } from "../PenerbitProjectCard";
 interface Props {
   profile: User | null;
   hasPaidAdministration: boolean;
+  isUploadDokumenPelengkap: boolean;
 }
 
 export const DashboardPenerbit: React.FC<Props> = ({
   profile,
   hasPaidAdministration,
+  isUploadDokumenPelengkap,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -56,6 +58,17 @@ export const DashboardPenerbit: React.FC<Props> = ({
             akses lanjutan terkait pengisian dokumen pelengkap maksimal kerja 2x24 jam. 
             Informasi tersebut akan dikirimkan melalui inbox, 
             silakan cek inbox Anda secara berkala. Terima kasih."
+            buttonTitle="Inbox"
+            navigateToPath={"/inbox"}
+          />
+        );
+      } else if (isUploadDokumenPelengkap) {
+        return (
+          <PanelContent
+            title="Upload Dokumen Pelengkap"
+            message="Segera cek inbox email Anda, karena tim admin publish 
+            telah mengirimkan akses form yang perlu Anda gunakan untuk 
+            mengunggah dokumen pelengkap."
             buttonTitle="Inbox"
             navigateToPath={"/inbox"}
           />
@@ -114,7 +127,7 @@ export const DashboardPenerbit: React.FC<Props> = ({
             title="Lengkapi Data Perusahaan Anda"
             message="Untuk menayangkan proyek, Anda perlu menyelesaikan proses registrasi data perusahaan terlebih dahulu. Silakan lengkapi segera untuk melanjutkan."
             buttonTitle="Registrasi Perusahaan"
-            navigateToPath={"/form-penerbit"}
+            navigateToPath={"/form-penerbit?form=complete-company"}
           />
         );
       }

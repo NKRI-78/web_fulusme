@@ -7,6 +7,9 @@ export interface User {
   selfie: string;
   photo_ktp: string;
   no_ktp: string;
+  phone: string;
+  email: string;
+  npwp: string;
   last_education: string;
   gender: string;
   status_marital: string;
@@ -18,9 +21,12 @@ export interface User {
   district_name: string;
   subdistrict_name: string;
   postal_code: string;
+  slip_gaji: string;
+  profile_security_account: UserSecurityAccount;
   doc: UserDoc;
   investor: UserInvestor;
   company: UserCompany;
+  rek_efek: boolean;
   verify_emiten: boolean;
   verify_investor: boolean;
   nama_ahli_waris: string;
@@ -43,6 +49,8 @@ export interface UserInvestor {
 
 export interface UserBank {
   no: string;
+  name: string;
+  owner: string;
   bank_name: string;
   bank_owner: string;
   bank_branch: string;
@@ -87,12 +95,20 @@ export interface UserCompany {
   nib_path: string;
   akta_pendirian: string;
   akta_perubahan_terahkir: string;
+  akta_perubahan_terahkir_path: string;
   sk_kumham: string;
   sk_kumham_terahkir: string;
+  sk_pendirian_perusahaan: string;
   sk_kumham_path: string;
   npwp_path: string;
   siup: string;
   tdp: string;
+  site: string;
+  email: string;
+  npwp: string;
+  phone: string;
+  bank: UserBank;
+  jenis_perusahaan: string;
   total_employees: string;
   laporan_keuangan_path: string;
   rekening_koran: string;
@@ -132,4 +148,11 @@ export interface UserKomisaris {
   ktp_path: string;
   npwp: string;
   npwp_path: string;
+}
+
+export interface UserSecurityAccount {
+  account_name: string;
+  account: string;
+  account_sub_no: string;
+  account_bank: string;
 }

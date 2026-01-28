@@ -134,7 +134,7 @@ const Inbox = () => {
 
   return (
     <>
-      <div className="py-28 px-6 text-black">
+      <div className="py-28 px-14 text-black">
         {loading ? (
           <InboxSkeleton />
         ) : inboxes.length ? (
@@ -170,16 +170,38 @@ const Inbox = () => {
           onAccept={() => {
             if (selectedInbox.field_3 === "reupload-document") {
               if (updateKey) {
-                if (roleUser !== "investor") {
-                  router.push(
-                    `/form-penerbit?update=true&form=${updateKey}&inbox-id=${selectedInbox.id}`
-                  );
-                } else {
+                if (roleUser === "investor institusi") {
+                  if (["photo_ktp", "surat-kuasa"].includes(updateKey)) {
+                    router.push(
+                      `/form-pemodal-perusahaan?update=true&form=${updateKey}`
+                    );
+                  } else if (
+                    [
+                      "akta-perubahan-terakhir",
+                      "akta-pendirian-perusahaan",
+                      "sk-pendirian-perusahaan",
+                      "sk-kumham-path",
+                      "npwp-perusahaan",
+                    ].includes(updateKey)
+                  ) {
+                    router.push(
+                      `/form-data-pemodal-perusahaan?update=true&form=${updateKey}`
+                    );
+                  } else {
+                    router.push(
+                      `/form-pemodal-perusahaan?update=true&form=${updateKey}`
+                    );
+                  }
+                } else if (roleUser === "investor") {
                   if (updateKey === "slip-gaji") {
                     router.push(`/form-pemodal?update=true&form=slip-gaji`);
                   } else {
                     router.push(`/form-pemodal?update=true&form=${updateKey}`);
                   }
+                } else {
+                  router.push(
+                    `/form-penerbit?update=true&form=${updateKey}&inbox-id=${selectedInbox.id}`
+                  );
                 }
               }
             } else if (selectedInbox.field_3 === "uploaded-doc") {

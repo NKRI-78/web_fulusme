@@ -39,6 +39,8 @@ import {
 } from "@/app/(defaults)/form-penerbit/form-cache-key";
 import { UpdateFieldValue } from "@/app/(defaults)/form-penerbit/PenerbitParent";
 import { IFormPublisher } from "./IFormPublisher";
+import FileInput from "./_component/FileInput";
+import Subtitle from "./_component/SectionSubtitle";
 
 type Props = {
   profile: ProfileUpdate | null;
@@ -151,9 +153,9 @@ const FormPenerbit: React.FC<Props> = ({
         sk_kumham_terahkir: c.sk_kumham_terahkir,
 
         // siup
-        siup: c.sk_kumham_terahkir,
+        siup: c.siup,
         // tdp
-        tdp: c.sk_kumham_terahkir,
+        tdp: c.tdp,
 
         fileNpwp: c.npwp_path,
         company_nib_path: c.nib_path,
@@ -459,6 +461,8 @@ const FormPenerbit: React.FC<Props> = ({
         return values.siup;
       case "tdp":
         return values.tdp;
+      case "nib":
+        return values.company_nib_path;
       case "npwp":
         return values.fileNpwp;
       case "akta-pendirian-perusahaan":
@@ -483,84 +487,236 @@ const FormPenerbit: React.FC<Props> = ({
           <section className="w-full">
             <div className="grid grid-cols-2 gap-4">
               <UpdateRing identity={"sk-kumham-terakhir"} formKey={formKey}>
-                <FileUpload
+                {/* <FileUpload
                   label="SK Kumham Terakhir"
                   fileUrl={watch("sk_kumham_terahkir")}
                   onUpload={(e) => handleUploadFile(e, "sk_kumham_terahkir")}
                   error={errors?.sk_kumham_terahkir?.message}
-                />
+                /> */}
+                <div>
+                  <SectionPoint text="SK Kumham Terakhir" />
+                  <Subtitle
+                    text="File maksimal berukuran 10mb"
+                    className="mb-1"
+                  />
+                  <FileInput
+                    fileName="SK Kumham Terakhir"
+                    accept=".pdf"
+                    fileUrl={watch("sk_kumham_terahkir")}
+                    onChange={(fileUrl) => {
+                      setValue("sk_kumham_terahkir", fileUrl, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    }}
+                    errorText={errors?.sk_kumham_terahkir?.message}
+                  />
+                </div>
               </UpdateRing>
               <UpdateRing identity={"siup"} formKey={formKey}>
-                <FileUpload
+                {/* <FileUpload
                   label="Surat Izin Usaha Perdagangan (SIUP)"
                   fileUrl={watch("siup")}
                   onUpload={(e) => handleUploadFile(e, "siup")}
                   error={errors?.siup?.message}
-                />
+                /> */}
+                <div>
+                  <SectionPoint text="Surat Izin Usaha Perdagangan (SIUP)" />
+                  <Subtitle
+                    text="File maksimal berukuran 10mb"
+                    className="mb-1"
+                  />
+                  <FileInput
+                    fileName="SIUP"
+                    accept=".pdf"
+                    fileUrl={watch("siup")}
+                    onChange={(fileUrl) => {
+                      setValue("siup", fileUrl, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    }}
+                    errorText={errors?.siup?.message}
+                  />
+                </div>
               </UpdateRing>
               <UpdateRing identity={"tdp"} formKey={formKey}>
-                <FileUpload
+                {/* <FileUpload
                   label="Tanda Daftar Perusahaan (TDP)"
                   fileUrl={watch("tdp")}
                   onUpload={(e) => handleUploadFile(e, "tdp")}
                   error={errors?.tdp?.message}
-                />
+                /> */}
+                <div>
+                  <SectionPoint text="Tanda Daftar Perusahaan (TDP)" />
+                  <Subtitle
+                    text="File maksimal berukuran 10mb"
+                    className="mb-1"
+                  />
+                  <FileInput
+                    fileName="TDP"
+                    accept=".pdf"
+                    fileUrl={watch("tdp")}
+                    onChange={(fileUrl) => {
+                      setValue("tdp", fileUrl, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    }}
+                    errorText={errors?.tdp?.message}
+                  />
+                </div>
               </UpdateRing>
               <UpdateRing identity={"npwp"} formKey={formKey}>
-                <FileUpload
+                {/* <FileUpload
                   label="NPWP"
                   fileUrl={watch("fileNpwp")}
                   onUpload={(e) => handleUploadFile(e, "fileNpwp")}
                   error={errors?.fileNpwp?.message}
-                />
+                /> */}
+                <div>
+                  <SectionPoint text="NPWP" />
+                  <Subtitle
+                    text="File maksimal berukuran 10mb"
+                    className="mb-1"
+                  />
+                  <FileInput
+                    fileName="NPWP"
+                    accept=".pdf"
+                    fileUrl={watch("fileNpwp")}
+                    onChange={(fileUrl) => {
+                      setValue("fileNpwp", fileUrl, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    }}
+                    errorText={errors?.fileNpwp?.message}
+                  />
+                </div>
               </UpdateRing>
 
               <UpdateRing identity={"nib"} formKey={formKey}>
-                <FileUpload
+                {/* <FileUpload
                   label="Nomor Induk Berusaha (NIB)"
                   fileUrl={watch("company_nib_path")}
                   onUpload={(e) => handleUploadFile(e, "company_nib_path")}
                   error={errors?.company_nib_path?.message}
-                />
+                /> */}
+                <div>
+                  <SectionPoint text="Nomor Induk Berusaha (NIB)" />
+                  <Subtitle
+                    text="File maksimal berukuran 10mb"
+                    className="mb-1"
+                  />
+                  <FileInput
+                    fileName="NIB"
+                    accept=".pdf"
+                    fileUrl={watch("company_nib_path")}
+                    onChange={(fileUrl) => {
+                      setValue("company_nib_path", fileUrl, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    }}
+                    errorText={errors?.company_nib_path?.message}
+                  />
+                </div>
               </UpdateRing>
 
               <UpdateRing
                 identity={"akta-pendirian-perusahaan"}
                 formKey={formKey}
               >
-                <FileUpload
+                {/* <FileUpload
                   label="Akte Pendirian Perusahaan"
                   fileUrl={watch("akta_pendirian")}
                   onUpload={(e) => handleUploadFile(e, "akta_pendirian")}
                   error={errors?.akta_pendirian?.message}
-                />
+                /> */}
+                <div>
+                  <SectionPoint text="Akte Pendirian Perusahaan" />
+                  <Subtitle
+                    text="File maksimal berukuran 10mb"
+                    className="mb-1"
+                  />
+                  <FileInput
+                    fileName="Akte Pendirian Perusahaan"
+                    accept=".pdf"
+                    fileUrl={watch("akta_pendirian")}
+                    onChange={(fileUrl) => {
+                      setValue("akta_pendirian", fileUrl, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    }}
+                    errorText={errors?.akta_pendirian?.message}
+                  />
+                </div>
               </UpdateRing>
 
               <UpdateRing identity={"sk-kumham-pendirian"} formKey={formKey}>
-                <FileUpload
+                {/* <FileUpload
                   label="SK Kumham Pendirian"
                   fileUrl={watch("sk_kumham_path")}
                   onUpload={(e) => handleUploadFile(e, "sk_kumham_path")}
                   error={errors?.sk_kumham_path?.message}
-                />
+                /> */}
+                <div>
+                  <SectionPoint text="SK Kumham Pendirian" />
+                  <Subtitle
+                    text="File maksimal berukuran 10mb"
+                    className="mb-1"
+                  />
+                  <FileInput
+                    fileName="SK Kumham Pendirian"
+                    accept=".pdf"
+                    fileUrl={watch("sk_kumham_path")}
+                    onChange={(fileUrl) => {
+                      setValue("sk_kumham_path", fileUrl, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    }}
+                    errorText={errors?.sk_kumham_path?.message}
+                  />
+                </div>
               </UpdateRing>
 
               <UpdateRing
                 identity={"akta-perubahan-terakhir"}
                 formKey={formKey}
               >
-                <FileUpload
+                {/* <FileUpload
                   label="Akte Perubahan Terakhir"
                   fileUrl={watch("akta_perubahan_terahkir_path")}
                   onUpload={(e) =>
                     handleUploadFile(e, "akta_perubahan_terahkir_path")
                   }
                   error={errors?.akta_perubahan_terahkir_path?.message}
-                />
+                /> */}
+                <div>
+                  <SectionPoint text="Akte Perubahan Terakhir" />
+                  <Subtitle
+                    text="File maksimal berukuran 10mb"
+                    className="mb-1"
+                  />
+                  <FileInput
+                    fileName="Akte Perubahan Terakhir"
+                    accept=".pdf"
+                    fileUrl={watch("akta_perubahan_terahkir_path")}
+                    onChange={(fileUrl) => {
+                      setValue("akta_perubahan_terahkir_path", fileUrl, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      });
+                    }}
+                    errorText={errors?.akta_perubahan_terahkir_path?.message}
+                  />
+                </div>
               </UpdateRing>
             </div>
 
-            <div>
+            <div className="mt-4">
               <label className="block mb-1">
                 Jumlah Karyawan<span className="text-red-500 ml-1">*</span>
               </label>
@@ -588,23 +744,61 @@ const FormPenerbit: React.FC<Props> = ({
                 <SectionTitle text="2. Struktur Permodalan" />
                 <div className="my-1" />
                 <UpdateRing identity="laporan-keuangan" formKey={formKey}>
-                  <FileUpload
+                  {/* <FileUpload
                     label="Laporan Keuangan"
                     fileUrl={watch("laporanKeuangan")}
                     onUpload={(e) => handleUploadFile(e, "laporanKeuangan")}
                     error={errors?.laporanKeuangan?.message}
-                  />
+                  /> */}
+                  <div>
+                    <SectionPoint text="Laporan Keuangan" />
+                    <Subtitle
+                      text="File maksimal berukuran 10mb"
+                      className="mb-1"
+                    />
+                    <FileInput
+                      fileName="Laporan Keuangan"
+                      accept=".pdf"
+                      fileUrl={watch("laporanKeuangan")}
+                      onChange={(fileUrl) => {
+                        setValue("laporanKeuangan", fileUrl, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        });
+                      }}
+                      errorText={errors?.laporanKeuangan?.message}
+                    />
+                  </div>
                 </UpdateRing>
               </div>
 
               <div className="flex flex-col">
                 <UpdateRing identity="rekening-koran" formKey={formKey}>
-                  <FileUpload
+                  {/* <FileUpload
                     label="Rekening Koran"
                     fileUrl={watch("rekeningKoran")}
                     onUpload={(e) => handleUploadFile(e, "rekeningKoran")}
                     error={errors?.rekeningKoran?.message}
-                  />
+                  /> */}
+                  <div>
+                    <SectionPoint text="Rekening Koran" />
+                    <Subtitle
+                      text="File maksimal berukuran 10mb"
+                      className="mb-1"
+                    />
+                    <FileInput
+                      fileName="Rekening Koran"
+                      accept=".pdf"
+                      fileUrl={watch("rekeningKoran")}
+                      onChange={(fileUrl) => {
+                        setValue("rekeningKoran", fileUrl, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        });
+                      }}
+                      errorText={errors?.rekeningKoran?.message}
+                    />
+                  </div>
                 </UpdateRing>
               </div>
             </div>

@@ -16,6 +16,7 @@ import DashboardUndefinedRole from "./UndefinedRole";
 import Center from "../Center";
 import { AnimatedWrapper } from "../AnimatedWrapper";
 import { InboxResponse } from "../notif/inbox-interface";
+import DashboardPemodalPerusahaan from "./pemodal/DashboardPemodalPerusahaan";
 
 export const DashboardView: React.FC = () => {
   const user = getUser();
@@ -28,6 +29,7 @@ export const DashboardView: React.FC = () => {
   const [investorData, setInvestorData] = useState<InvestorData | null>(null);
 
   const [hasPaidAdministration, setHasPaidAdministration] = useState(false);
+  const [isUploadDokumenPelengkap, setUploadDokumenPelengkap] = useState(false);
 
   //* fetch data
   useEffect(() => {
@@ -51,7 +53,6 @@ export const DashboardView: React.FC = () => {
             title: "Gagal Mendapatkan Profil",
             text: "Terjadi kesalahan saat mengambil data profil Anda. Silakan coba lagi.",
             confirmButtonText: "Coba Lagi 🔄",
-            allowOutsideClick: false,
           }).then((result) => {
             if (result.isConfirmed) {
               fetchProfile();
@@ -71,7 +72,11 @@ export const DashboardView: React.FC = () => {
             });
             const inboxes = res.data.data as InboxResponse[];
             const hasPaid = inboxes.some((data) => data.type === "transaction");
+            const uploadDokumenPelengkap = inboxes.some(
+              (data) => data.field_3 === "additional-document"
+            );
             setHasPaidAdministration(hasPaid);
+            setUploadDokumenPelengkap(uploadDokumenPelengkap);
           } catch (e) {
             setHasPaidAdministration(false);
           }
@@ -79,7 +84,7 @@ export const DashboardView: React.FC = () => {
         fetchInbox();
       }
 
-      if (user?.role === "investor") {
+      if (user?.role === "investor" || user?.role === "investor institusi") {
         const fetchProjects = async () => {
           try {
             const res = await axios.get(`${API_BACKEND}/api/v1/project/list`, {
@@ -130,9 +135,20 @@ export const DashboardView: React.FC = () => {
             <DashboardPenerbit
               profile={profile}
               hasPaidAdministration={hasPaidAdministration}
+              isUploadDokumenPelengkap={isUploadDokumenPelengkap}
             />
           ) : user?.role === "investor" ? (
-            <DashboardPemodal profile={profile} data={investorData} />
+            <DashboardPemodal
+              profile={profile}
+              data={investorData}
+              projects={projects}
+            />
+          ) : user?.role === "investor institusi" ? (
+            <DashboardPemodalPerusahaan
+              profile={profile}
+              data={investorData}
+              projects={projects}
+            />
           ) : user?.role === "user" ? (
             <DashboardUser user={user} />
           ) : (

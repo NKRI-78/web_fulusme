@@ -1,4 +1,7 @@
-export const penerbitPICUpdateKeys: string[] = ["surat-kuasa", "ktp"];
+export const penerbitPICUpdateKeys: string[] = [
+  "surat-kuasa",
+  "upload-ktp-pic",
+];
 
 export const penerbitUpdateKeys: string[] = [
   "sk-kumham-terakhir",

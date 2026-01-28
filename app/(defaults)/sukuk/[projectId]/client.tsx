@@ -12,7 +12,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Cookies from "js-cookie";
 import axios from "axios";
-import defaultImage from "/public/images/default-image.png";
 import { API_BACKEND } from "@/app/utils/constant";
 import Custom404 from "@/app/not-found";
 import ProgressBar from "../components/ProgressBar";
@@ -22,19 +21,19 @@ import { Project } from "@/app/interfaces/project/IProject";
 import GeneralDialog from "@/app/components/GeneralDialog";
 import ShareDialog from "@/app/components/ShareDialog";
 import CircularProgressIndicator from "@/app/components/CircularProgressIndicator";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Modal from "@/app/helper/Modal";
 import InputNominal from "../components/InputNominal";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchDashboardClient } from "@/redux/slices/dashboardSlice";
+import InputNominalLot from "../components/InputNominal";
 
 type Props = {
-  id: string;
+  projectId: string;
 };
 
-const SukukClient = ({ id }: Props) => {
+const SukukClient = ({ projectId }: Props) => {
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
 
@@ -81,11 +80,11 @@ const SukukClient = ({ id }: Props) => {
 
   //* fetch project detail by id
   useEffect(() => {
-    if (id) {
+    if (projectId) {
       const fetchProject = async () => {
         try {
           const response = await axios.get(
-            `${API_BACKEND}/api/v1/project/detail/${id}`
+            `${API_BACKEND}/api/v1/project/detail/${projectId}`,
           );
           setProject(response.data.data);
         } catch (error: any) {
@@ -111,9 +110,9 @@ const SukukClient = ({ id }: Props) => {
     setUserData(user);
   }, []);
 
-  const handleConfirm = (val: number) => {
-    localStorage.setItem("invest_amount", String(val));
-    router.push(`/payment-method/${id}`);
+  const handleConfirm = (val: Record<string, any>) => {
+    localStorage.setItem("invest_amount", JSON.stringify(val));
+    router.push(`/payment-method/${projectId}`);
   };
 
   return isNotFound ? (
@@ -146,7 +145,7 @@ const SukukClient = ({ id }: Props) => {
                           src={
                             item.path && item.path.startsWith("https")
                               ? item.path
-                              : defaultImage.src
+                              : "/images/default-image.png"
                           }
                           alt={`Slide ${idx + 1}`}
                           className="w-full h-64 object-cover"
@@ -209,13 +208,17 @@ const SukukClient = ({ id }: Props) => {
                       <p className="text-sm">{project?.kode_efek}</p>
                     </div>
                     <div className="flex flex-wrap justify-between">
-                      <p className="text-xs text-[#677AB9]">Jenis Akad</p>
+                      <p className="text-xs text-[#677AB9]">Efek Bersifat</p>
                       <p className="text-sm">{project?.type_of_project}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white p-2 rounded-lg space-y-1 mt-3">
+                <div className="bg-white p-2 rounded-lg space-y-2 mt-3">
+                  <p className="text-sm font-semibold text-gray-800 mb-4">
+                    Status Investasi Saat Ini
+                  </p>
+
                   <ProgressBar percentage={percentage} bgColor="#f3f4f6" />
 
                   <div className="flex flex-wrap justify-between">
@@ -225,6 +228,22 @@ const SukukClient = ({ id }: Props) => {
                     <p className="text-xs font-bold">
                       {formatRupiah(project?.user_paid_amount)}
                     </p>
+                  </div>
+
+                  <div className="flex flex-wrap justify-between">
+                    <p className="text-xs font-bold text-[#677AB9]">
+                      Dana yang Dibutuhkan
+                    </p>
+                    <p className="text-xs font-bold">
+                      {formatRupiah(project?.target_amount)}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap justify-between">
+                    <p className="text-xs font-bold text-[#677AB9]">
+                      Jumlah Lot yang tersedia
+                    </p>
+                    <p className="text-xs font-bold">{project?.stok_lot} Lot</p>
                   </div>
 
                   <div className="flex flex-wrap justify-between">
@@ -247,28 +266,36 @@ const SukukClient = ({ id }: Props) => {
                 </div>
 
                 <div className="bg-white p-2 rounded-lg mt-3">
+                  <p className="text-sm font-semibold text-gray-800 mb-4">
+                    Detail Produk Investasi
+                  </p>
                   <div className="flex flex-wrap my-2 justify-between">
                     <p className="text-xs text-[#677AB9]"> Kategori Bisnis</p>
                     <p className="text-xs">{project?.company?.jenis_usaha}</p>
                   </div>
                   <div className="flex flex-wrap my-2 justify-between">
-                    <p className="text-xs text-[#677AB9]">Minimal Investasi:</p>
-                    <p className="text-xs">
-                      {formatRupiah(project?.min_invest)}
+                    <p className="text-xs text-[#677AB9]">
+                      Harga Perlembar Efek:
                     </p>
-                  </div>
-                  <div className="flex flex-wrap my-2 justify-between">
-                    <p className="text-xs text-[#677AB9]">Harga Unit:</p>
                     <p className="text-xs">
                       {formatRupiah(project?.unit_price)}
                     </p>
                   </div>
                   <div className="flex flex-wrap my-2 justify-between">
-                    <p className="text-xs text-[#677AB9]"> Jumlah Unit </p>
-                    <p className="text-xs">{`${project?.jumlah_unit} Unit`}</p>
+                    <p className="text-xs text-[#677AB9]">Harga Per Lot:</p>
+                    <p className="text-xs">
+                      {formatRupiah(project?.min_invest)}
+                    </p>
                   </div>
                   <div className="flex flex-wrap my-2 justify-between">
-                    <p className="text-xs text-[#677AB9]"> Total Unit (Rp) </p>
+                    <p className="text-xs text-[#677AB9]"> Jumlah Lembar </p>
+                    <p className="text-xs">{`${formatRupiah(project?.jumlah_unit, false)} Lembar`}</p>
+                  </div>
+                  <div className="flex flex-wrap my-2 justify-between">
+                    <p className="text-xs text-[#677AB9]">
+                      {" "}
+                      Modal Investasi (Rp){" "}
+                    </p>
                     <p className="text-xs">
                       {" "}
                       {formatRupiah(project?.capital)}{" "}
@@ -388,8 +415,10 @@ const SukukClient = ({ id }: Props) => {
                 className="bg-transparent w-full outline-none text-black"
               />
               <button
-                onClick={() => {
-                  navigator.clipboard.writeText(project?.location.url ?? "-");
+                onClick={async () => {
+                  await navigator.clipboard.writeText(
+                    project?.location.url ?? "-",
+                  );
                   Swal.fire({
                     toast: true,
                     position: "top-end",
@@ -479,9 +508,14 @@ const SukukClient = ({ id }: Props) => {
         onClose={() => setShowModal(false)}
         title={"Beli Efek"}
       >
-        <InputNominal
-          minValue={Number(project?.min_invest)}
-          quota={Number(quotaData?.summary.remaining_quota_idr) ?? 0}
+        <InputNominalLot
+          unitPrice={Number(project?.unit_price)} // unit price itu harga /lembar saham
+          lembarPerLot={Number(project?.jumlah_lot)} // lembar perlot itu 1 lot ada berapa lembar sih
+          totalUnit={Number(project?.jumlah_unit)} // ❌
+          stokLot={project?.stok_lot ?? 0}
+          quota={Number(quotaData?.summary.remaining_quota_idr) ?? 0} // ✅ otomatis dari API
+          roi={Number(project?.roi) ?? 0}
+          minInvest={Number(project?.min_invest)}
           onConfirm={handleConfirm}
         />
       </Modal>

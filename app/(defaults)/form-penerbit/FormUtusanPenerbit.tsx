@@ -134,6 +134,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
         const urlPhotoSelfie = await uploadFotoSelfie(formFields.photo!);
 
         const payload = {
+          role: "2",
           fullname: formFields.fullname,
           photo_selfie: urlPhotoSelfie,
           jabatan: formFields.jabatan,
@@ -307,6 +308,9 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
         {/* conteiner foto selfie */}
         <ContainerSelfie
           photoUrl={formFields.photo}
+          resetPhotoResult={() => {
+            setFormFields({ ...formFields, photo: "" });
+          }}
           photoResult={(photoSelfie) => {
             if (photoSelfie) {
               setFormFields({ ...formFields, photo: photoSelfie });
@@ -393,7 +397,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
               </div>
             </UpdateRing>
 
-            <UpdateRing formKey={formKey} identity="ktp">
+            <UpdateRing formKey={formKey} identity="upload-ktp-pic">
               <div>
                 <SectionPoint text="File KTP" />
                 <Subtitle

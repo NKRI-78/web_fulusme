@@ -74,8 +74,8 @@ export default function RegisterSelectRole({
               {/* Pemodal */}
               <div
                 onClick={() => {
-                  // setShowInvestorModal(true);
-                  handleSelectRole(1, "investor");
+                  setShowInvestorModal(true);
+                  // handleSelectRole(1, "investor");
                 }}
                 className="border border-green-600 rounded-xl p-4 hover:bg-green-50 cursor-pointer"
               >
@@ -135,7 +135,7 @@ export default function RegisterSelectRole({
               <div className="relative">
                 <div
                   onClick={() => {
-                    // handleSelectRole(9, "investor company")
+                    handleSelectRole(9, "investor company");
                   }}
                   className="border border-green-600 rounded-xl p-4 hover:bg-green-50 cursor-pointer"
                 >
@@ -148,11 +148,11 @@ export default function RegisterSelectRole({
                   </p>
                 </div>
 
-                <div className="absolute inset-0 bg-white/60 flex items-center justify-center rounded-xl cursor-not-allowed">
+                {/* <div className="absolute inset-0 bg-white/60 flex items-center justify-center rounded-xl cursor-not-allowed">
                   <span className="text-white text-xs bg-black/70 rounded-md px-2 py-1">
                     Sedang dalam pembangunan
                   </span>
-                </div>
+                </div> */}
               </div>
             </div>
 

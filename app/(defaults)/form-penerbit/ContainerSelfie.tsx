@@ -8,11 +8,13 @@ import React, { useEffect, useRef, useState } from "react";
 interface Props {
   photoUrl?: string;
   photoResult: (result: string | null) => void;
+  resetPhotoResult: () => void;
   errorText?: string;
 }
 
 const ContainerSelfie: React.FC<Props> = ({
   photoResult,
+  resetPhotoResult,
   errorText,
   photoUrl,
 }) => {
@@ -126,6 +128,13 @@ const ContainerSelfie: React.FC<Props> = ({
 
   // *reset photo
   const resetPhoto = () => {
+    console.log("reset foto, has stream?", stream !== null);
+    console.log("has photo result?", photoResult !== null);
+    console.log("camera active?", isCameraActive !== null);
+    console.log("is stream?", stream !== null);
+
+    console.log("has photo?", photo !== null);
+    console.log("has photo url?", photoUrl !== null);
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
     }
@@ -134,6 +143,7 @@ const ContainerSelfie: React.FC<Props> = ({
     setIsCameraActive(false);
     setErrorMessage("");
     setStream(null);
+    resetPhotoResult();
   };
 
   const displayPhoto = photoUrl || photo;

@@ -30,17 +30,32 @@ export interface UpdateFieldValue {
   val_array: UpdateFieldValueManajemen[];
 }
 
-const getFormIndexBasedFormKey = (form: string | null): number => {
-  console.log("get form index, form= " + form);
-  if (!form) return 0;
+const loadFormIndex = (isUpdate: boolean, form: string | null): number => {
+  // if form == complete-company maka index adalah 1 dimulai dari register perusahaan
+  // melewati register pic karena konteksnya user udah register pic yang belum register perusahaan
+  if (form === "complete-company") return 1;
 
-  // jika formKey memuat form update penerbit maka navigate to index form penerbit yaitu index-2
-  // jika tidak itu artinya update berada di form PIC/Form utusan penerbit yaitu index-0
-  if (penerbitUpdateKeys.includes(form)) {
-    return 2;
+  if (isUpdate) {
+    console.log("get form index, form= " + form);
+    if (!form) return 0;
+
+    // jika formKey memuat form update penerbit maka navigate to index form penerbit yaitu index-2
+    // jika tidak itu artinya update berada di form PIC/Form utusan penerbit yaitu index-0
+    if (penerbitUpdateKeys.includes(form)) return 2;
   } else {
-    return 0;
+    const formIndexCache = localStorage.getItem(FORM_INDEX_CACHE_KEY);
+    return formIndexCache ? Number(formIndexCache) : 0;
   }
+
+  // fallback
+  return 0;
+};
+
+const hasDirekturOrKomisaris = (formKey: string | null): boolean => {
+  if (!formKey) return false;
+  const isDirektur = formKey.includes("direktur");
+  const isKomisaris = formKey.includes("komisaris");
+  return isDirektur || isKomisaris;
 };
 
 export default function MultiStepFormWrapper() {
@@ -53,9 +68,7 @@ export default function MultiStepFormWrapper() {
   const [userProfile, setUserProfile] = useState<ProfileUpdate | null>(null);
 
   const [loadingGetFormIndex, setLoadingGetFormIndex] = useState<boolean>(true);
-  const [formIndex, setFormIndex] = useState<number>(
-    isUpdate ? getFormIndexBasedFormKey(formKey) : 0
-  );
+  const [formIndex, setFormIndex] = useState<number>(0);
 
   const userCookie = getUser();
 
@@ -67,10 +80,9 @@ export default function MultiStepFormWrapper() {
     // hanya load cache form index ketika ia tidak sedang dalam mode update
     setLoadingGetFormIndex(true);
 
-    if (!isUpdate) {
-      const formIndexCache = localStorage.getItem(FORM_INDEX_CACHE_KEY);
-      setFormIndex(formIndexCache ? Number(formIndexCache) : 0);
-    }
+    const formIndexResult = loadFormIndex(isUpdate !== null, formKey);
+    console.log("formundexresult", formIndexResult);
+    setFormIndex(formIndexResult);
 
     setLoadingGetFormIndex(false);
   }, [isUpdate]);
@@ -113,6 +125,9 @@ export default function MultiStepFormWrapper() {
     const isKTP = formKey?.endsWith("upload-ktp") ?? false;
     const isNPWP = formKey?.endsWith("upload-npwp") ?? false;
     const isSusunanManajemen = isKTP || isNPWP;
+    const formKeyResult = hasDirekturOrKomisaris(formKey)
+      ? "update-direktur-komisaris"
+      : formKey;
 
     const payload = {
       user_id: userProfile?.id ?? "-",
@@ -129,7 +144,7 @@ export default function MultiStepFormWrapper() {
     try {
       if (userCookie) {
         await axios.put(
-          `${API_BACKEND}/api/v1/document/update/${formKey}`,
+          `${API_BACKEND}/api/v1/document/update/${formKeyResult}`,
           payload,
           {
             headers: { Authorization: `Bearer ${userCookie.token}` },
@@ -152,11 +167,13 @@ export default function MultiStepFormWrapper() {
 
         router.back();
       }
-    } catch (error) {
+    } catch (err: any) {
+      const message =
+        err.response?.data?.message || err.message || "Terjadi kesalahan";
       Swal.fire({
         icon: "error",
         title: "Update Gagal",
-        text: `${error}`,
+        text: `${message}`,
         timer: 3000,
         timerProgressBar: true,
       });

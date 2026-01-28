@@ -6,11 +6,10 @@ export const metadata: Metadata = {
   description: "Pilih Metode Pembayaran",
 };
 
-// ✅ ambil [id] dari params, terus oper ke PaymentMethod sebagai props
-export default function PaymentMethodPage({
+export default async function PaymentMethodPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  return <PaymentMethod id={params.id} />;
+  return <PaymentMethod id={(await params).id} />;
 }
