@@ -11,7 +11,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { useParams } from "next/navigation";
 import axios from "axios";
-import defaultImage from "../../../public/images/default-image.png";
 import { API_BACKEND } from "@/app/utils/constant";
 import Custom404 from "@/app/not-found";
 
@@ -107,7 +106,7 @@ const Sukuk = ({ id }: Props) => {
     const fetchProject = async () => {
       try {
         const response = await axios.get(
-          `${API_BACKEND}/api/v1/project/detail/${id}`
+          `${API_BACKEND}/api/v1/project/detail/${id}`,
         );
         setProject(response.data.data);
       } catch (error: any) {
@@ -206,7 +205,7 @@ const Sukuk = ({ id }: Props) => {
                     mode === "unit"
                       ? unit.toString()
                       : new Intl.NumberFormat("id-ID").format(
-                          parseInt(nominalInput || "0")
+                          parseInt(nominalInput || "0"),
                         )
                   }
                   onChange={(e) => handleInputChange(e.target.value)}
@@ -272,7 +271,7 @@ const Sukuk = ({ id }: Props) => {
               <button
                 onClick={() =>
                   navigator.clipboard.writeText(
-                    "https://maps.app.goo.gl/Zcm3fjeKTwzKN9Qs9"
+                    "https://maps.app.goo.gl/Zcm3fjeKTwzKN9Qs9",
                   )
                 }
                 className="ml-2 px-2 py-1 text-sm bg-[#677AB9] hover:bg-[#2a1a6a] text-white rounded"
@@ -310,7 +309,7 @@ const Sukuk = ({ id }: Props) => {
                       src={
                         item.path && item.path.startsWith("https")
                           ? item.path
-                          : defaultImage.src
+                          : "/images/default-image.png"
                       }
                       alt={`Slide ${idx + 1}`}
                       className="w-full h-64 object-cover"

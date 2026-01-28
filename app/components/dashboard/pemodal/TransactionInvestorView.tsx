@@ -6,8 +6,6 @@ import {
   Calendar,
   CircleDollarSign,
   Inbox,
-  X,
-  FileText,
   Eye,
   RotateCcw,
   Loader2,
@@ -21,14 +19,13 @@ import { getUser } from "@/app/lib/auth";
 import GeneralDialog from "../../GeneralDialog";
 import { API_BACKEND } from "@/app/utils/constant";
 import Swal from "sweetalert2";
-import RefundButton from "./components/ButtonRefund";
 import { AnimatedWrapper } from "../../AnimatedWrapper";
 import Center from "../../Center";
 import CircularProgressIndicator from "../../CircularProgressIndicator";
-import Tippy from "@tippyjs/react";
-import "tippy.js/dist/tippy.css"; // style dasar
+import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
 import { useRouter } from "next/navigation";
+import Tooltip from "../../Tooltip";
 
 export default function TransactionInvestorView() {
   const router = useRouter();
@@ -51,7 +48,7 @@ export default function TransactionInvestorView() {
   const [showRefundExlanation, setShowRefundExplanation] = useState(false);
 
   const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(
-    null
+    null,
   );
   const [processing, setProcessing] = useState(false); // loading state refund
 
@@ -93,7 +90,7 @@ export default function TransactionInvestorView() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       return res.data;
     } catch (error: any) {
@@ -160,8 +157,8 @@ export default function TransactionInvestorView() {
                             trx.payment_status === "EXPIRED"
                               ? "bg-red-100 text-red-700"
                               : trx.payment_status === "PENDING"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-green-100 text-green-700"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : "bg-green-100 text-green-700"
                           }`}
                         >
                           {trx.payment_status}
@@ -177,55 +174,34 @@ export default function TransactionInvestorView() {
                       </td>
                       <td className="p-3 text-center">
                         <div className="flex items-center justify-center gap-x-3">
-                          <Tippy
-                            content="Lihat Detail"
-                            className="bg-black text-xs rounded-md text-white"
-                            placement="top" // posisi tooltip
-                            arrow={true} // aktifkan panah
-                            animation="shift-away" // animasi smooth
-                            duration={[400, 250]} // [masuk, keluar]
-                          >
+                          <Tooltip label="Lihat Detail">
                             <div
                               className="bg-blue-50 p-1 rounded-md border border-blue-500 cursor-pointer transition-all duration-400 active:scale-[0.98] hover:shadow-sm active:hover:shadow-md"
                               onClick={() => {
                                 router.push(
-                                  `/waiting-payment?orderId=${trx.payment_id}`
+                                  `/waiting-payment?orderId=${trx.payment_id}`,
                                 );
                               }}
                             >
                               <Eye size={18} className="text-blue-500" />
                             </div>
-                          </Tippy>
+                          </Tooltip>
                           {trx.payment_status === "PAID" ? (
-                            <Tippy
-                              content="Kembalikan Dana"
-                              className="bg-black text-xs rounded-md text-white"
-                              placement="top" // posisi tooltip
-                              arrow={true} // aktifkan panah
-                              animation="shift-away" // animasi smooth
-                              duration={[400, 250]} // [masuk, keluar]
-                            >
+                            <Tooltip label="Kembalikan Dana">
                               <div
                                 className="bg-red-50 p-1 rounded-md border border-red-500 cursor-pointer transition-all duration-400 active:scale-[0.98] hover:shadow-sm active:hover:shadow-md"
                                 onClick={() => {
                                   setSelectedPaymentId(
-                                    trx.payment_id.toString() ?? ""
+                                    trx.payment_id.toString() ?? "",
                                   );
                                   setShowRefundStatement(true);
                                 }}
                               >
                                 <RotateCcw size={18} className="text-red-500" />
                               </div>
-                            </Tippy>
+                            </Tooltip>
                           ) : trx.payment_status === "REFUNDED" ? (
-                            <Tippy
-                              content="Informasi Refund"
-                              className="bg-black text-xs rounded-md text-white"
-                              placement="top" // posisi tooltip
-                              arrow={true} // aktifkan panah
-                              animation="shift-away" // animasi smooth
-                              duration={[400, 250]} // [masuk, keluar]
-                            >
+                            <Tooltip label="Informasi Refund">
                               <div
                                 className="bg-green-50 p-1 rounded-md border border-green-500 cursor-pointer transition-all duration-400 active:scale-[0.98] hover:shadow-sm active:hover:shadow-md"
                                 onClick={() => {
@@ -234,7 +210,7 @@ export default function TransactionInvestorView() {
                               >
                                 <Info size={18} className="text-green-500" />
                               </div>
-                            </Tippy>
+                            </Tooltip>
                           ) : (
                             <div className="bg-transparent p-1 rounded-md border border-transparent">
                               <Info size={18} className="text-transparent" />

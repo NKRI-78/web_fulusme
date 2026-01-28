@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Tooltip from "../Tooltip";
 import { BellRing, Menu, X } from "lucide-react";
 import { AppDispatch, RootState } from "@redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +14,6 @@ import RegisterOtp from "../auth/register/RegisterOtp";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
 import Cookies from "js-cookie";
 import axios from "axios";
-import Tippy from "@tippyjs/react";
 import { User } from "@/app/interfaces/user/IUser";
 import {
   FORM_INDEX_CACHE_KEY,
@@ -76,8 +76,8 @@ const NavbarV2: React.FC = () => {
         setBadge(
           Array.isArray(inboxes?.payload)
             ? inboxes.payload.filter((inbox) => !inbox.is_read).length
-            : 0
-        )
+            : 0,
+        ),
       );
     });
 
@@ -138,8 +138,8 @@ const NavbarV2: React.FC = () => {
         setBadge(
           Array.isArray(inboxes?.payload)
             ? inboxes.payload.filter((inbox) => !inbox.is_read).length
-            : 0
-        )
+            : 0,
+        ),
       );
     }
   };
@@ -667,19 +667,16 @@ const NotifIcon: React.FC<{ className?: string; badgeCount: number }> = ({
   badgeCount = 0,
 }) => {
   return (
-    <Tippy
-      content="Inbox"
-      className="bg-black/50 text-sm font-medium backdrop-blur-md px-4 py-1 rounded-md text-white"
-    >
-      <Link href="/inbox" className="relative inline-block">
+    <Link href="/inbox" className="relative inline-block">
+      <Tooltip label="Notifikasi">
         <BellRing size={18} className={className} />
         {badgeCount > 0 && (
           <span className="absolute -top-2 -right-1 bg-red-500 text-white text-[10px] min-w-[14px] h-[14px] rounded-full flex items-center justify-center">
             {badgeCount}
           </span>
         )}
-      </Link>
-    </Tippy>
+      </Tooltip>
+    </Link>
   );
 };
 

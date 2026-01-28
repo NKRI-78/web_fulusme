@@ -600,13 +600,13 @@ const ComponentDataPribadi: React.FC<Props> = ({
   }, [customOptionsBank, dataProfile?.investor.bank?.bank_name]);
 
   const formatOptionLabel = ({ label, icon }: any) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2"> 
       <span>{label}</span>
     </div>
   );
 
   const tanggalLahirDate = useMemo(() => {
-    return formData.tanggalLahir ? new Date(formData.tanggalLahir) : undefined;
+    return formData.tanggalLahir ? new Date(formData.tanggalLahir) : [];
   }, [formData.tanggalLahir]);
 
   return (
