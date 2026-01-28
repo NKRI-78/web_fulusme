@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "nextjs-web-crowd-fund",
+      name: "web_fulusme",
       script: "npm",
       args: "run start",
       env: {
@@ -11,4 +11,3 @@ module.exports = {
     },
   ],
 };
-  
