@@ -227,31 +227,6 @@ export default function InputNominalLot({
         </div>
       </div>
 
-      {/* PROGRESS KUOTA */}
-      {!rekEfek && quota && (
-        <div className="space-y-2 mt-3">
-          <p className="text-sm font-semibold text-gray-800">Kuota Investasi</p>
-          <div className="flex justify-between text-xs text-gray-600">
-            <span>
-              Rp{numericValue.toLocaleString("id-ID")} / Rp
-              {quota.toLocaleString("id-ID")}
-            </span>
-            <span>{percent.toFixed(0)}%</span>
-          </div>
-          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className={`h-2 rounded-full transition-all ${
-                percent >= 100 ? "bg-red-500" : "bg-[#10565C]"
-              }`}
-              style={{ width: `${percent}%` }}
-            />
-          </div>
-          <p className="text-xs text-gray-500 text-right">
-            Sisa Kuota: {sisaLot} Lot — Rp{formatRupiah(sisaNominal)}
-          </p>
-        </div>
-      )}
-
       {/* INFO LOT & HARGA */}
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-2">
         <p className="text-sm font-semibold text-gray-800">
@@ -277,6 +252,41 @@ export default function InputNominalLot({
           Nominal investasi dihitung berdasarkan jumlah lot yang Anda pilih.
         </div>
       </div>
+
+      {/* PROGRESS KUOTA */}
+      {!rekEfek && quota && (
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-2">
+          <p className="text-sm font-semibold text-gray-800">
+            Simulasi Kuota Investasi Saya
+          </p>
+
+          <div className="flex items-center justify-between text-sm text-gray-700">
+            <span>Kuota Sekarang</span>
+            <span className="font-semibold">
+              Rp {quota.toLocaleString("id-ID")}
+            </span>
+          </div>
+
+          <div className="flex justify-between text-xs text-gray-600">
+            <div className="flex gap-x-1">
+              <span>Sisa Kuota</span>
+              <span>Rp {formatRupiah(quota - numericValue)}</span>
+            </div>
+            <div className="flex gap-x-1">
+              <span>Terpakai</span>
+              <span>{percent.toFixed(0)}%</span>
+            </div>
+          </div>
+          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className={`h-2 rounded-full transition-all ${
+                percent >= 100 ? "bg-red-500" : "bg-[#10565C]"
+              }`}
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* STATUS USER */}
       {rekEfek && (
