@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2018",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -23,30 +19,14 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@app/*": [
-        "./app/*"
-      ],
-      "@redux/*": [
-        "./redux/*"
-      ],
-      "@lib/*": [
-        "./app/lib/*"
-      ],
-      "@components/*": [
-        "./app/components/*"
-      ],
-      "@contexts/*": [
-        "./app/contexts/*"
-      ],
-      "@interfaces/*": [
-        "./app/interfaces/*"
-      ],
-      "@hooks/*": [
-        "./app/hooks/*"
-      ]
+      "@/*": ["./*"],
+      "@app/*": ["./app/*"],
+      "@redux/*": ["./redux/*"],
+      "@lib/*": ["./app/lib/*"],
+      "@components/*": ["./app/components/*"],
+      "@contexts/*": ["./app/contexts/*"],
+      "@interfaces/*": ["./app/interfaces/*"],
+      "@hooks/*": ["./app/hooks/*"]
     }
   },
   "include": [
@@ -55,9 +35,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "app/(defaults)/auth/login/of.page.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

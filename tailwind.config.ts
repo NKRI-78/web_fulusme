@@ -11,6 +11,8 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        primary: "#10565C",
+        "on-primary": "#FFFFFF",
       },
       keyframes: {
         blinkBackground: {

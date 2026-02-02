@@ -3,7 +3,6 @@ import "reactjs-tiptap-editor/style.css";
 
 import ClientLayout from "@components/client/Client";
 import { FileViewerProvider } from "./hooks/useFileViewerModal";
-import { Metadata } from "next";
 
 export const metadata = {
   title: "Fulusme.id – Platform Investasi",
@@ -30,7 +29,7 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;

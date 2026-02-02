@@ -39,58 +39,25 @@ const Login: React.FC = () => {
     }
 
     setLoading(true);
+
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BACKEND}/api/v1/auth/login`,
-        {
-          email,
-          password,
-        }
-      );
-      const userData = response.data.data;
-      Cookies.set("user", JSON.stringify(response.data.data), { expires: 7 });
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (!userData.enabled) {
-        await Swal.fire({
-          icon: "info",
-          title: "Verifikasi Diperlukan",
-          text: "Anda belum memasukkan kode OTP. Silakan verifikasi terlebih dahulu.",
-          iconColor: "#10565C",
-          confirmButtonColor: "#10565C",
-          confirmButtonText: "Verifikasi Sekarang",
-        });
+      const data = await res.json();
 
-        const payloads = {
-          val: userData.email,
-        };
-        const { data } = await axios.post(
-          `${API_BACKEND}/api/v1/resend-otp`,
-          payloads
-        );
-
-        localStorage.setItem("showOtp", "true");
-
-        router.push("/");
-        return;
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Login gagal");
       }
-      if (userData.role === "user") {
-        await Swal.fire({
-          icon: "info",
-          title: "Data Belum Lengkap",
-          text: "Silakan pilih peran anda dan lengkapi semua data yang dibutuhkan.",
-          confirmButtonText: "Pilh Peran",
-          iconColor: "#10565C",
-          confirmButtonColor: "#10565C",
-        });
 
-        localStorage.setItem("user", JSON.stringify(response.data.data));
-
-        if (userData.role === "user") {
-          localStorage.setItem("showSelectRole", "true");
-          router.push("/");
-          return;
-        }
+      if (!data.user.enabled) {
       }
+
+      if (data.user.role === "user") {
+      }
+
       await Swal.fire({
         icon: "success",
         title: "Login Berhasil",
@@ -98,24 +65,122 @@ const Login: React.FC = () => {
         showConfirmButton: false,
       });
 
-      router.push("/dashboard");
+      // router.push("/dashboard");
     } catch (error: any) {
-      const rawMessage = error.response?.data?.message;
-
-      const message =
-        errorMessages[rawMessage as keyof typeof errorMessages] ??
-        "Terjadi kesalahan saat login. Silakan coba lagi.";
-
+      const errTitle =
+        error.message === "CREDENTIALS_IS_INCORRECT"
+          ? "Kata Sandi Salah"
+          : error.message === "USER_NOT_FOUND"
+            ? "Email Tidak Ditemukan"
+            : "Login Gagal";
+      const errMsg =
+        error.message === "CREDENTIALS_IS_INCORRECT"
+          ? "Kata sandi yang Anda masukkan tidak sesuai. Silakan periksa kembali dan coba lagi."
+          : error.message === "USER_NOT_FOUND"
+            ? "Email yang Anda masukkan tidak terdaftar atau tidak sesuai. Silakan periksa kembali alamat email Anda."
+            : (error.message ?? "Terjadi kesalahan saat login.");
       Swal.fire({
         icon: "error",
-        title: "Login Gagal",
-        text: message,
+        title: errTitle,
+        text: errMsg,
         confirmButtonColor: "#10565C",
       });
     } finally {
       setLoading(false);
     }
   };
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   if (!email || !password) {
+  //     return Swal.fire({
+  //       icon: "warning",
+  //       title: "Form Belum Lengkap",
+  //       text: "Email atau password belum diisi. Silakan lengkapi terlebih dahulu.",
+  //       iconColor: "#10565C",
+  //       confirmButtonColor: "#10565C",
+  //     });
+  //   }
+
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.post(
+  //       `${process.env.NEXT_PUBLIC_API_BACKEND}/api/v1/auth/login`,
+  //       {
+  //         email,
+  //         password,
+  //       }
+  //     );
+  //     const userData = response.data.data;
+  //     Cookies.set("user", JSON.stringify(response.data.data), { expires: 7 });
+
+  //     if (!userData.enabled) {
+  //       await Swal.fire({
+  //         icon: "info",
+  //         title: "Verifikasi Diperlukan",
+  //         text: "Anda belum memasukkan kode OTP. Silakan verifikasi terlebih dahulu.",
+  //         iconColor: "#10565C",
+  //         confirmButtonColor: "#10565C",
+  //         confirmButtonText: "Verifikasi Sekarang",
+  //       });
+
+  //       const payloads = {
+  //         val: userData.email,
+  //       };
+  //       const { data } = await axios.post(
+  //         `${API_BACKEND}/api/v1/resend-otp`,
+  //         payloads
+  //       );
+
+  //       localStorage.setItem("showOtp", "true");
+
+  //       router.push("/");
+  //       return;
+  //     }
+  //     if (userData.role === "user") {
+  //       await Swal.fire({
+  //         icon: "info",
+  //         title: "Data Belum Lengkap",
+  //         text: "Silakan pilih peran anda dan lengkapi semua data yang dibutuhkan.",
+  //         confirmButtonText: "Pilh Peran",
+  //         iconColor: "#10565C",
+  //         confirmButtonColor: "#10565C",
+  //       });
+
+  //       localStorage.setItem("user", JSON.stringify(response.data.data));
+
+  //       if (userData.role === "user") {
+  //         localStorage.setItem("showSelectRole", "true");
+  //         router.push("/");
+  //         return;
+  //       }
+  //     }
+  //     await Swal.fire({
+  //       icon: "success",
+  //       title: "Login Berhasil",
+  //       timer: 2000,
+  //       showConfirmButton: false,
+  //     });
+
+  //     router.push("/dashboard");
+  //   } catch (error: any) {
+  //     const rawMessage = error.response?.data?.message;
+
+  //     const message =
+  //       errorMessages[rawMessage as keyof typeof errorMessages] ??
+  //       "Terjadi kesalahan saat login. Silakan coba lagi.";
+
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Login Gagal",
+  //       text: message,
+  //       confirmButtonColor: "#10565C",
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className="w-full h-screen bg-gray-100 px-8 sm:px-12 md:px-16 lg:px-20 py-14">

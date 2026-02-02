@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 
 import ModalLogout from "@components/modal/logout/Logout";
 import FooterV2 from "@components/footer/FooterV2";
-import NavbarV2 from "../navbar/NavbarV2";
 
 import localFont from "next/font/local";
 
@@ -35,36 +34,33 @@ export default function ClientLayout({
       <div
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {pathname === "/auth/login" || pathname === "/auth/register" ? (
+        {/* {pathname === "/auth/login" || pathname === "/auth/register" ? (
           <div className="w-full flex items-center justify-center h-screen">
             {children}
           </div>
         ) : (
-          <main className="min-h-screen text-white relative overflow-hidden flex flex-col">
-            {!isViewer && <NavbarV2 />}
-            <div className="">
-              <div className="">{children}</div>
-            </div>
-            {pathname === "/form-pemodal" ||
-            pathname === "/form-penerbit" ||
-            pathname === "/dashboard" ||
-            pathname === "/form-signature" ||
-            pathname === "/form-pemodal-perusahaan" ||
-            pathname === "/dashboard/create-project" ||
-            pathname === "/dashboard/dokumen-pelengkap" ||
-            pathname === "/dashboard/main" ||
-            pathname === "/dashboard/project-draft" ||
-            pathname === "/dashboard/portfolio" ||
-            pathname === "/dashboard/emiten-transaction" ||
-            pathname === "/dashboard/investor-transaction" ||
-            pathname === "/inbox" ||
-            pathname === "/form-data-pemodal-perusahaan" ||
-            pathname === "/informasi" ||
-            pathname === "/transaction"
-              ? ""
-              : !isViewer && <FooterV2 />}
-          </main>
-        )}
+        )} */}
+        <main className="min-h-screen text-white relative overflow-hidden flex flex-col">
+          <div className="">{children}</div>
+          {pathname === "/form-pemodal" ||
+          pathname === "/form-penerbit" ||
+          pathname === "/dashboard" ||
+          pathname === "/form-signature" ||
+          pathname === "/form-pemodal-perusahaan" ||
+          pathname === "/dashboard/create-project" ||
+          pathname === "/dashboard/dokumen-pelengkap" ||
+          pathname === "/dashboard/main" ||
+          pathname === "/dashboard/project-draft" ||
+          pathname === "/dashboard/portfolio" ||
+          pathname === "/dashboard/emiten-transaction" ||
+          pathname === "/dashboard/investor-transaction" ||
+          pathname === "/inbox" ||
+          pathname === "/form-data-pemodal-perusahaan" ||
+          pathname === "/informasi" ||
+          pathname === "/transaction"
+            ? ""
+            : !isViewer && <FooterV2 />}
+        </main>
         <ModalLogout />
       </div>
     </Provider>
