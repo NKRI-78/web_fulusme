@@ -26,7 +26,7 @@ import { createSocket } from "@/app/utils/sockets";
 import { fetchInboxThunk } from "@/redux/slices/inboxSlice";
 import { API_BACKEND } from "@/app/utils/constant";
 import { setBadge } from "@/redux/slices/badgeSlice";
-import Image from "next/image";
+import CircularProgressIndicator from "../CircularProgressIndicator";
 
 const PRIMARY_COLOR = "#10565C";
 const ON_PRIMARY_COLOR = "#FFFFFF";
@@ -99,8 +99,8 @@ const NavbarV2: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setHydrated(true);
     setLoadingUser(true);
+    setHydrated(true);
     const user = getUser();
 
     try {
@@ -189,8 +189,8 @@ const NavbarV2: React.FC = () => {
         <NavLayout>
           <NavLogo sticky={isSticky} />
 
-          {loadingUser ? (
-            <div className="text-white">loading</div>
+          {(loadingUser && userData == null) || !hydrated ? (
+            <CircularProgressIndicator size={32} />
           ) : (
             <>
               {hydrated && userData !== null ? (

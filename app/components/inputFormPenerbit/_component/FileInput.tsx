@@ -6,6 +6,37 @@ import clsx from "clsx";
 import { API_BACKEND_MEDIA } from "@/app/utils/constant";
 import { compressImage } from "@/app/helper/CompressorImage";
 
+const IMAGE_MIME = ["image/png", "image/jpeg"];
+const DOC_MIME = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+
+const IMAGE_EXT = ["png", "jpg", "jpeg"];
+const DOC_EXT = ["pdf", "doc", "docx"];
+
+function getFileExtension(file: File) {
+  return file.name.split(".").pop()?.toLowerCase();
+}
+
+function isAllowedFile(file: File, accept?: string) {
+  const ext = getFileExtension(file);
+  if (!ext) return false;
+
+  const isImage = IMAGE_EXT.includes(ext) && IMAGE_MIME.includes(file.type);
+  const isDoc = DOC_EXT.includes(ext) && DOC_MIME.includes(file.type);
+
+  // accept mengandung image → hanya image
+  if (accept?.includes("image")) return isImage;
+
+  // accept mengandung pdf/doc → dokumen
+  if (accept?.includes("pdf") || accept?.includes("doc")) return isDoc;
+
+  // fallback default → dokumen
+  return isDoc;
+}
+
 interface FileInputProps {
   fileName: string;
   fileUrl?: string;
@@ -44,14 +75,24 @@ const FileInput: React.FC<FileInputProps> = ({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (loading) return;
 
-    setLoading(true);
-    console.log("loading? " + loading);
-
     const file = e.target.files?.[0];
     if (!file) {
       setLoading(false);
       return;
     }
+
+    if (!isAllowedFile(file, accept)) {
+      Swal.fire({
+        title: "Gagal",
+        text: "Tipe file tidak didukung. Hanya PDF/DOC atau PNG/JPG.",
+        icon: "warning",
+        timer: 3000,
+      });
+      e.target.value = "";
+      return;
+    }
+
+    setLoading(true);
 
     if (file.size > 10 * 1024 * 1024) {
       setLoading(false);
@@ -80,12 +121,12 @@ const FileInput: React.FC<FileInputProps> = ({
           onUploadProgress: (progress) => {
             const total = progress.total ?? 1;
             const percentCompleted = Math.round(
-              (progress.loaded * 100) / total
+              (progress.loaded * 100) / total,
             );
             console.log("Progress:", percentCompleted, "%");
             setUploadProgress(percentCompleted);
           },
-        }
+        },
       );
 
       const url = res.data?.data?.path;
@@ -117,7 +158,7 @@ const FileInput: React.FC<FileInputProps> = ({
       <label
         className={clsx(
           "relative inline-flex items-center gap-2 px-2 md:px-6 py-2 rounded-lg cursor-pointer font-semibold text-[12px] text-white overflow-hidden",
-          loading ? "bg-gray-400" : "bg-gray-700 hover:bg-gray-800"
+          loading ? "bg-gray-400" : "bg-gray-700 hover:bg-gray-800",
         )}
       >
         {loading && (
@@ -138,7 +179,7 @@ const FileInput: React.FC<FileInputProps> = ({
             className="hidden"
             ref={fileInputRef}
             onChange={handleFileChange}
-            accept={accept}
+            accept={accept ?? ".pdf,.doc,.docx"}
             disabled={loading}
           />
         </div>
