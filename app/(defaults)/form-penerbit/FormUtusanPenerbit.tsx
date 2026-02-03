@@ -16,6 +16,8 @@ import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PIC_CACHE_KEY } from "./form-cache-key";
 import { UpdateFieldValue } from "./PenerbitParent";
 import { setCookie } from "@/app/helper/cookie";
+import { uploadMediaService } from "@/app/helper/mediaService";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 interface FormSchema {
   photo: string;
@@ -151,7 +153,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
-          }
+          },
         );
 
         setCookie(
@@ -159,7 +161,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
           JSON.stringify({
             ...user,
             role: "emiten",
-          } as AuthDataResponse)
+          } as AuthDataResponse),
         );
 
         await Swal.fire({
@@ -273,18 +275,11 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
 
     const photoFile = new File([u8arr], "Foto Selfie", { type: mime });
 
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", "Foto Selfie");
-    formData.append("media", photoFile);
+    const uploadPhotoResult = await uploadMediaService(photoFile);
 
-    try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData
-      );
-      return res.data?.data?.path ?? "";
-    } catch (error) {
+    if (uploadPhotoResult.ok && uploadPhotoResult.data) {
+      return uploadPhotoResult.data.path;
+    } else {
       return "-";
     }
   };

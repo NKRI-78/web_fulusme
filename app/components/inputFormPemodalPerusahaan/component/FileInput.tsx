@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { API_BACKEND_MEDIA } from "@/app/utils/constant";
 import { compressImage } from "@/app/helper/CompressorImage";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 const IMAGE_MIME = ["image/png", "image/jpeg"];
 const DOC_MIME = [
@@ -88,21 +89,9 @@ const FileInput: React.FC<FileInputProps> = ({
       return;
     }
 
-    const isImage = file.type.startsWith("image/");
-    const compressedFile = isImage ? await compressImage(file) : file;
-
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", fileName);
-    formData.append("media", compressedFile);
-
     try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData,
-      );
-
-      const url = res.data?.data?.path;
+      const uploadMediaResult = await uploadMediaService(file);
+      const url = uploadMediaResult.data?.path;
       if (url) {
         onChange(url);
 

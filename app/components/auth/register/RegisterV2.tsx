@@ -9,6 +9,7 @@ import { API_BACKEND } from "@app/utils/constant";
 import { setCookie } from "@/app/helper/cookie";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
+import { AuthResponse } from "@/app/interfaces/auth/auth";
 
 const schema = z
   .object({

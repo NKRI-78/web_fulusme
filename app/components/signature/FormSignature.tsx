@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 interface FormData {
   signature: string;
@@ -70,7 +71,7 @@ const FormSignature: React.FC = () => {
     }
 
     const existingPdfBytes = await fetch(pdfUrl).then((res) =>
-      res.arrayBuffer()
+      res.arrayBuffer(),
     );
     const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
@@ -101,17 +102,10 @@ const FormSignature: React.FC = () => {
     });
     const file = new File([blob], "signed.pdf", { type: "application/pdf" });
 
-    const uploadForm = new FormData();
-    uploadForm.append("folder", "web");
-    uploadForm.append("subfolder", "signed-doc");
-    uploadForm.append("media", file);
+    const uploadMediaResult = await uploadMediaService(file);
 
-    const uploadRes = await axios.post(
-      "https://api-media.inovatiftujuh8.com/api/v1/media/upload",
-      uploadForm
-    );
+    let signedPdfUrl = uploadMediaResult.data?.path;
 
-    const signedPdfUrl = uploadRes.data?.data?.path;
     if (!signedPdfUrl) {
       Swal.fire({
         title: "Gagal",
@@ -132,7 +126,7 @@ const FormSignature: React.FC = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       Swal.fire({

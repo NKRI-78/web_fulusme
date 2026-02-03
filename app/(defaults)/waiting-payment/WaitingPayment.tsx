@@ -57,7 +57,7 @@ export interface PaymentData {
 
 const WaitingPayment = () => {
   const [waitingPayment, setWaitingPayment] = useState<PaymentData | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
@@ -89,7 +89,7 @@ const WaitingPayment = () => {
       try {
         const response = await axios.get(
           `${API_BACKEND}/api/v1/transaction/project/detail/${orderId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
 
         const data = response.data.data;
@@ -181,6 +181,11 @@ const WaitingPayment = () => {
       expireMoment && expireMoment.isValid()
         ? expireMoment.toDate().getTime()
         : moment(waitingPayment.created_at).toDate().getTime() + 30 * 60 * 1000;
+
+    console.log("expireMoment & expireTime", {
+      expireMoment,
+      expireTime,
+    });
 
     const createdTime = moment(waitingPayment.created_at).toDate().getTime();
     const duration = Math.floor((expireTime - createdTime) / 1000);
@@ -325,17 +330,6 @@ const WaitingPayment = () => {
         </div>
       </motion.div>
 
-      {/* Detail PENDING */}
-      {waitingPayment.payment_status === "PENDING" && !expired && (
-        <DetailPembayaran
-          invoice={invoice}
-          waitingPayment={waitingPayment}
-          showQRVA={true}
-          handleCopy={handleCopy}
-          note={null}
-        />
-      )}
-
       {/* Detail PAID */}
       {waitingPayment.payment_status === "PAID" && (
         <DetailPembayaran
@@ -346,6 +340,19 @@ const WaitingPayment = () => {
           note=""
         />
       )}
+
+      {/* Detail PENDING */}
+      {waitingPayment.payment_status === "PENDING" &&
+        !expired &&
+        !statusLoading && (
+          <DetailPembayaran
+            invoice={invoice}
+            waitingPayment={waitingPayment}
+            showQRVA={true}
+            handleCopy={handleCopy}
+            note={null}
+          />
+        )}
 
       {/* Detail REFUNDED */}
       {waitingPayment.payment_status === "REFUNDED" && (
@@ -387,8 +394,8 @@ const DetailPembayaran = ({
         {waitingPayment.payment_status === "REFUNDED"
           ? "Detail Pembayaran (Refunded)"
           : waitingPayment.payment_status === "PAID"
-          ? "Detail Pembayaran (Lunas)"
-          : "Metode Pembayaran"}
+            ? "Detail Pembayaran (Lunas)"
+            : "Metode Pembayaran"}
       </h3>
 
       {note && (
@@ -487,7 +494,7 @@ const DetailPembayaran = ({
             method={inv.payment_method}
             vaNumber={inv.vaNumber}
           />
-        ) : null
+        ) : null,
       )}
 
     {/* Tombol balik dashboard buat PAID / REFUNDED */}

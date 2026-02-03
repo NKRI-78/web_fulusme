@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { FolderUp, X, Video as VideoIcon } from "lucide-react";
 import SectionPoint from "./SectionPoint";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 interface VideoUploaderContainerProps {
   fileOnChange: (videoUrl: string) => void;
@@ -25,33 +26,27 @@ const VideoUploaderContainer: React.FC<VideoUploaderContainerProps> = ({
   const [fileName, setFileName] = useState<string>("");
 
   const allowedType = "video/mp4";
-  const maxSize = 300 * 1024 * 1024;
+  const maxSize = 200 * 1024 * 1024;
 
   const disabled = isUploading || !!videoUrl;
 
   const uploadFile = async (file: File): Promise<string | null> => {
     try {
-      const formData = new FormData();
-      formData.append("folder", "web");
-      formData.append("subfolder", file.name);
-      formData.append("media", file);
-
-      const res = await axios.post(
-        "https://api-media.inovatiftujuh8.com/api/v1/media/upload",
-        formData,
-        {
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percent = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total
-              );
-              setProgress(percent);
-            }
-          },
-        }
+      const uploadMediaResult = await uploadMediaService(
+        file,
+        (progressEvent) => {
+          if (progressEvent.total) {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total,
+            );
+            setProgress(percent);
+          }
+        },
       );
 
-      return res.data?.data?.path || null;
+      const photoUrl = uploadMediaResult.data?.path;
+      if (!photoUrl) return null;
+      return photoUrl;
     } catch (error) {
       console.error("Upload gagal:", error);
       Swal.fire({
@@ -144,8 +139,8 @@ const VideoUploaderContainer: React.FC<VideoUploaderContainerProps> = ({
           errorText
             ? "border-red-500"
             : isDragging
-            ? "border-blue-700 bg-blue-50"
-            : "border-blue-500"
+              ? "border-blue-700 bg-blue-50"
+              : "border-blue-500"
         }`}
         onClick={triggerInput}
         onDrop={handleDrop}
