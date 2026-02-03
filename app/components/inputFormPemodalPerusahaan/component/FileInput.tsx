@@ -4,6 +4,38 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { API_BACKEND_MEDIA } from "@/app/utils/constant";
 import { compressImage } from "@/app/helper/CompressorImage";
+import { uploadMediaService } from "@/app/helper/mediaService";
+
+const IMAGE_MIME = ["image/png", "image/jpeg"];
+const DOC_MIME = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+
+const IMAGE_EXT = ["png", "jpg", "jpeg"];
+const DOC_EXT = ["pdf", "doc", "docx"];
+
+function getFileExtension(file: File) {
+  return file.name.split(".").pop()?.toLowerCase();
+}
+
+function isAllowedFile(file: File, accept?: string) {
+  const ext = getFileExtension(file);
+  if (!ext) return false;
+
+  const isImage = IMAGE_EXT.includes(ext) && IMAGE_MIME.includes(file.type);
+  const isDoc = DOC_EXT.includes(ext) && DOC_MIME.includes(file.type);
+
+  // accept mengandung image → hanya image
+  if (accept?.includes("image")) return isImage;
+
+  // accept mengandung pdf/doc → dokumen
+  if (accept?.includes("pdf") || accept?.includes("doc")) return isDoc;
+
+  // fallback default → dokumen
+  return isDoc;
+}
 
 interface FileInputProps {
   fileName: string;
@@ -41,26 +73,25 @@ const FileInput: React.FC<FileInputProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!isAllowedFile(file, accept)) {
+      Swal.fire({
+        title: "Gagal",
+        text: "Tipe file tidak didukung. Hanya PDF/DOC atau PNG/JPG.",
+        icon: "warning",
+        timer: 3000,
+      });
+      e.target.value = "";
+      return;
+    }
+
     if (file.size > 10 * 1024 * 1024) {
       alert("Ukuran file maksimal 10MB");
       return;
     }
 
-    const isImage = file.type.startsWith("image/");
-    const compressedFile = isImage ? await compressImage(file) : file;
-
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", fileName);
-    formData.append("media", compressedFile);
-
     try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData
-      );
-
-      const url = res.data?.data?.path;
+      const uploadMediaResult = await uploadMediaService(file);
+      const url = uploadMediaResult.data?.path;
       if (url) {
         onChange(url);
 
@@ -91,13 +122,13 @@ const FileInput: React.FC<FileInputProps> = ({
         className={`inline-flex items-center gap-2 px-2 md:px-6 py-2 rounded-lg cursor-pointer font-semibold text-[12px] text-white bg-gray-700 hover:bg-gray-800`}
       >
         <FileText size={13} />
-        {fileUrl ? "Update Dokumen" : placeholder ?? "Upload Dokumen"}
+        {fileUrl ? "Update Dokumen" : (placeholder ?? "Upload Dokumen")}
         <input
           type="file"
           className="hidden"
           ref={fileInputRef}
           onChange={handleFileChange}
-          accept={accept}
+          accept={accept ?? ".pdf,.doc,.docx"}
         />
       </label>
 

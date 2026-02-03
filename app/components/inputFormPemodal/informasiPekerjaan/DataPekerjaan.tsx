@@ -7,6 +7,7 @@ import { API_BACKEND_MEDIA } from "@/app/utils/constant";
 import { compressImage } from "@/app/helper/CompressorImage";
 import UpdateRing from "../component/UpdateRing";
 import { NumericFormat } from "react-number-format";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 interface Props {
   formData: {
@@ -41,7 +42,7 @@ interface Props {
   onChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => void;
 
   onPenghasilanBulanan: (value: string) => void;
@@ -149,7 +150,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
   const pengalamanInvestasi = ["Ada", "Tidak Ada"];
   const pengetahuanPasarModal = ["Ada", "Tidak Ada"];
   const [uploadStatus, setUploadStatus] = useState<{ [key: string]: boolean }>(
-    {}
+    {},
   );
 
   const [province, setProvince] = useState<any>([]);
@@ -180,20 +181,10 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
       return;
     }
 
-    const compressedFile = await compressImage(file);
-
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", keyName);
-    formData.append("media", compressedFile);
-
     setUploadStatus((prev) => ({ ...prev, [keyName]: true }));
     try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData
-      );
-      const fileUrl = res.data?.data?.path;
+      const uploadMediaResult = await uploadMediaService(file);
+      const fileUrl = uploadMediaResult.data?.path;
       if (fileUrl) {
         const labelMap: { [key: string]: string } = {
           ktpUrl: "KTP",
@@ -321,7 +312,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
     const fetchBank = async () => {
       try {
         const response = await axios.get(
-          `https://api.gateway.langitdigital78.com/v1/bank`
+          `https://api.gateway.langitdigital78.com/v1/bank`,
         );
         setBank(response.data.data.beneficiary_banks);
       } catch (error) {
@@ -362,7 +353,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
       onToleransiResiko(dataProfile.investor.risk.tolerance || "");
       onPengalamanInvestasi(dataProfile.investor.risk.experience || "");
       onPengetahuanPasarModal(
-        dataProfile.investor.risk.capital_market_knowledge || ""
+        dataProfile.investor.risk.capital_market_knowledge || "",
       );
     }
   }, []);
@@ -443,28 +434,28 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
     (province: { code: string; nama: string }) => ({
       value: province.code,
       label: province.nama,
-    })
+    }),
   );
 
   const customOptionsCity = city?.map(
     (city: { code: string; nama: string }) => ({
       value: city.code,
       label: city.nama,
-    })
+    }),
   );
 
   const customOptionsDistrict = district?.map(
     (district: { code: string; nama: string }) => ({
       value: district.code,
       label: district.nama,
-    })
+    }),
   );
 
   const customOptionsSubDistrict = subDistrict?.map(
     (subDistrict: { code: string; nama: string }) => ({
       value: subDistrict.code,
       label: subDistrict.nama,
-    })
+    }),
   );
 
   const formatOptionLabel = ({ label, icon }: any) => (

@@ -11,6 +11,7 @@ import { API_BACKEND_MEDIA } from "@/app/utils/constant";
 import { compressImage } from "@/app/helper/CompressorImage";
 import UpdateRing from "../component/UpdateRing";
 import ContainerSelfie from "../component/ContainerSelfie";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 interface Props {
   formData: {
@@ -45,7 +46,7 @@ interface Props {
   onChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => void;
   onGenderChange: (value: string) => void;
   onWeddingChange: (value: string) => void;
@@ -150,7 +151,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
   const pekerjaanOptions = ["PNS", "Swasta", "Wiraswasta", "Lainnya"];
 
   const [uploadStatus, setUploadStatus] = useState<{ [key: string]: boolean }>(
-    {}
+    {},
   );
 
   const [syncNamaToPemilik, setSyncNamaToPemilik] = useState(true);
@@ -187,7 +188,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
   const maxDate = new Date(
     today.getFullYear() - 17,
     today.getMonth(),
-    today.getDate()
+    today.getDate(),
   );
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,20 +209,10 @@ const ComponentDataPribadi: React.FC<Props> = ({
       return;
     }
 
-    const compressedFile = await compressImage(file);
-
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", keyName);
-    formData.append("media", compressedFile);
-
     try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData
-      );
+      const uploadMediaResult = await uploadMediaService(file);
 
-      const fileUrl = res.data?.data?.path;
+      const fileUrl = uploadMediaResult.data?.path;
 
       if (fileUrl) {
         const labelMap: { [key: string]: string } = {
@@ -275,20 +266,14 @@ const ComponentDataPribadi: React.FC<Props> = ({
       return;
     }
 
-    const compressedFile = await compressImage(file);
-
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", keyName);
-    formData.append("media", compressedFile);
-
     try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData
-      );
+      const uploadMediaResult = await uploadMediaService(file);
 
-      const fileUrl = res.data?.data?.path;
+      let fileUrl = "-";
+
+      if (uploadMediaResult.ok && uploadMediaResult.data) {
+        fileUrl = uploadMediaResult.data.path;
+      }
 
       onUploadSelfie(fileUrl);
       console.log(fileUrl, "fileUrl");
@@ -493,7 +478,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
     const fetchBank = async () => {
       try {
         const response = await axios.get(
-          `https://api.gateway.langitdigital78.com/v1/bank`
+          `https://api.gateway.langitdigital78.com/v1/bank`,
         );
         setBank(response.data.data.beneficiary_banks);
       } catch (error) {
@@ -551,28 +536,28 @@ const ComponentDataPribadi: React.FC<Props> = ({
     (province: { code: any; nama: any }) => ({
       value: province.code,
       label: province.nama,
-    })
+    }),
   );
 
   const customOptionsCity = city?.map(
     (city: { code: string; nama: string }) => ({
       value: city.code,
       label: city.nama,
-    })
+    }),
   );
 
   const customOptionsDistrict = district?.map(
     (district: { code: string; nama: string }) => ({
       value: district.code,
       label: district.nama,
-    })
+    }),
   );
 
   const customOptionsSubDistrict = subDistrict?.map(
     (subDistrict: { code: string; nama: string }) => ({
       value: subDistrict.code,
       label: subDistrict.nama,
-    })
+    }),
   );
 
   const customOptionsBank = useMemo(() => {
@@ -591,7 +576,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
       return;
 
     const foundBank = customOptionsBank.find(
-      (opt) => opt.label === dataProfile.investor.bank.bank_name
+      (opt) => opt.label === dataProfile.investor.bank.bank_name,
     );
 
     if (foundBank) {
@@ -606,7 +591,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
   );
 
   const tanggalLahirDate = useMemo(() => {
-    return formData.tanggalLahir ? new Date(formData.tanggalLahir) : undefined;
+    return formData.tanggalLahir ? new Date(formData.tanggalLahir) : [];
   }, [formData.tanggalLahir]);
 
   return (
@@ -779,7 +764,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                     const year = selectedDate.getFullYear();
                     const month = String(selectedDate.getMonth() + 1).padStart(
                       2,
-                      "0"
+                      "0",
                     );
                     const day = String(selectedDate.getDate()).padStart(2, "0");
 

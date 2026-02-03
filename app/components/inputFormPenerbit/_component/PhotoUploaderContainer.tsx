@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { compressImage } from "@/app/helper/CompressorImage";
 import SectionPoint from "./SectionPoint";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 interface PhotoUploaderContainerProps {
   fileOnChange: (urls: string[]) => void;
@@ -31,19 +32,10 @@ const PhotoUploaderContainer: React.FC<PhotoUploaderContainerProps> = ({
 
   const uploadFile = async (file: File): Promise<string | null> => {
     try {
-      const compressedFile = await compressImage(file);
-
-      const formData = new FormData();
-      formData.append("folder", "web");
-      formData.append("subfolder", file.name);
-      formData.append("media", compressedFile);
-
-      const res = await axios.post(
-        "https://api-media.inovatiftujuh8.com/api/v1/media/upload",
-        formData
-      );
-
-      return res.data?.data?.path || null;
+      const uploadMediaResult = await uploadMediaService(file);
+      const photoUrl = uploadMediaResult.data?.path;
+      if (!photoUrl) return null;
+      return photoUrl;
     } catch (error) {
       console.error("Upload gagal:", error);
       return null;
@@ -53,7 +45,7 @@ const PhotoUploaderContainer: React.FC<PhotoUploaderContainerProps> = ({
   const handleFiles = async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
     const validFiles = fileArray.filter((file) =>
-      allowedTypes.includes(file.type)
+      allowedTypes.includes(file.type),
     );
 
     if (uploadedUrls.length + validFiles.length > maxUpload) {
@@ -134,8 +126,8 @@ const PhotoUploaderContainer: React.FC<PhotoUploaderContainerProps> = ({
           errorText
             ? "border-red-500"
             : isDragging
-            ? "border-blue-700 bg-blue-50"
-            : "border-blue-500"
+              ? "border-blue-700 bg-blue-50"
+              : "border-blue-500"
         }`}
         onClick={triggerInput}
         onDrop={handleDrop}
