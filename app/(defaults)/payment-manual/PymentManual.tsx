@@ -18,6 +18,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { API_BACKEND, API_BACKEND_MEDIA } from "@/app/utils/constant";
 import Swal from "sweetalert2";
 import { getUser } from "@/app/lib/auth";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 const ACCEPT_TYPES = ["image/jpeg", "image/png"] as const;
 type AcceptType = (typeof ACCEPT_TYPES)[number];
@@ -110,7 +111,7 @@ export default function PembayaranDanamon({
       const f = e.dataTransfer.files?.[0];
       if (f) setValue("proof", f, { shouldDirty: true, shouldValidate: true });
     },
-    [setValue]
+    [setValue],
   );
 
   const clearFile = () => {
@@ -122,17 +123,13 @@ export default function PembayaranDanamon({
   };
 
   const onSubmit = async ({ proof }: FormValues) => {
-    const form = new FormData();
-    form.append("folder", "web");
-    form.append("subfolder", "capbridge");
-    form.append("media", proof);
+    const uploadMediaResult = await uploadMediaService(file);
 
-    const resMedia = await axios.post(
-      `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-      form
-    );
+    let fileUrl = "-";
 
-    const fileUrl = resMedia.data?.data?.path;
+    if (uploadMediaResult.ok && uploadMediaResult.data) {
+      fileUrl = uploadMediaResult.data.path;
+    }
 
     const payload = {
       path: fileUrl,
@@ -149,7 +146,7 @@ export default function PembayaranDanamon({
         headers: {
           Authorization: `Bearer ${user?.token}`,
         },
-      }
+      },
     );
 
     if (res.status !== 200) {

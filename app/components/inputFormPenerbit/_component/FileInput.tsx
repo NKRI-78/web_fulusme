@@ -5,6 +5,8 @@ import Swal from "sweetalert2";
 import clsx from "clsx";
 import { API_BACKEND_MEDIA } from "@/app/utils/constant";
 import { compressImage } from "@/app/helper/CompressorImage";
+import { getAuthUser } from "@/app/helper/getAuthUser";
+import { getMediaService, uploadMediaService } from "@/app/helper/mediaService";
 
 const IMAGE_MIME = ["image/png", "image/jpeg"];
 const DOC_MIME = [
@@ -20,21 +22,20 @@ function getFileExtension(file: File) {
   return file.name.split(".").pop()?.toLowerCase();
 }
 
-function isAllowedFile(file: File, accept?: string) {
+function isAllowedFile(file: File) {
   const ext = getFileExtension(file);
+  console.log("getFileExtension", ext);
   if (!ext) return false;
 
   const isImage = IMAGE_EXT.includes(ext) && IMAGE_MIME.includes(file.type);
   const isDoc = DOC_EXT.includes(ext) && DOC_MIME.includes(file.type);
 
-  // accept mengandung image → hanya image
-  if (accept?.includes("image")) return isImage;
+  console.log("isImage & isDoc", {
+    isImage,
+    isDoc,
+  });
 
-  // accept mengandung pdf/doc → dokumen
-  if (accept?.includes("pdf") || accept?.includes("doc")) return isDoc;
-
-  // fallback default → dokumen
-  return isDoc;
+  return isDoc || isImage;
 }
 
 interface FileInputProps {
@@ -81,7 +82,7 @@ const FileInput: React.FC<FileInputProps> = ({
       return;
     }
 
-    if (!isAllowedFile(file, accept)) {
+    if (!isAllowedFile(file)) {
       Swal.fire({
         title: "Gagal",
         text: "Tipe file tidak didukung. Hanya PDF/DOC atau PNG/JPG.",
@@ -91,8 +92,6 @@ const FileInput: React.FC<FileInputProps> = ({
       e.target.value = "";
       return;
     }
-
-    setLoading(true);
 
     if (file.size > 10 * 1024 * 1024) {
       setLoading(false);
@@ -105,52 +104,29 @@ const FileInput: React.FC<FileInputProps> = ({
       return;
     }
 
-    const isImage = file.type.startsWith("image/");
-    const compressedFile = isImage ? await compressImage(file) : file;
+    setLoading(true);
 
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", fileName);
-    formData.append("media", compressedFile);
+    const uploadMediaResponse = await uploadMediaService(file, (progress) => {
+      const total = progress.total ?? 1;
+      const percentCompleted = Math.round((progress.loaded * 100) / total);
+      setUploadProgress(percentCompleted);
+    });
 
-    try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData,
-        {
-          onUploadProgress: (progress) => {
-            const total = progress.total ?? 1;
-            const percentCompleted = Math.round(
-              (progress.loaded * 100) / total,
-            );
-            console.log("Progress:", percentCompleted, "%");
-            setUploadProgress(percentCompleted);
-          },
-        },
-      );
-
-      const url = res.data?.data?.path;
-      if (url) {
-        onChange(url);
-      } else {
-        Swal.fire({
-          title: "Gagal",
-          text: "Upload gagal, tidak ada URL yang diterima.",
-          icon: "warning",
-          timer: 3000,
-        });
-      }
-    } catch (error) {
-      console.error("Gagal upload:", error);
+    if (uploadMediaResponse.ok && uploadMediaResponse.data) {
+      onChange(uploadMediaResponse.data.path);
+    } else {
       Swal.fire({
-        title: "Gagal",
-        text: "Upload gagal. Silakan coba lagi.",
         icon: "warning",
+        title: "Gagal",
+        text:
+          uploadMediaResponse.error_code === "unauthorized"
+            ? "Silakan login kembali untuk melanjutkan upload."
+            : "Upload gagal. Silakan coba lagi.",
         timer: 3000,
       });
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (

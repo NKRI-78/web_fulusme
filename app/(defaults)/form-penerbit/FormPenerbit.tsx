@@ -24,6 +24,7 @@ import { fetchStatusCompany } from "@/app/utils/fetchStatusPerushaan";
 import { PhoneInput } from "./components/PhoneInput";
 import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PENERBIT_1_CACHE_KEY } from "./form-cache-key";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 export const alamatSchema = z.object({
   name: z.string().optional(),
@@ -87,7 +88,7 @@ export const schema = z
       .refine(
         (v) =>
           /^\d{4}$/.test(v) && +v >= 1950 && +v <= new Date().getFullYear(),
-        "Tahun tidak valid"
+        "Tahun tidak valid",
       ),
 
     address: z
@@ -144,11 +145,11 @@ export type FormData = z.infer<typeof schema>;
 const fetchOptions = async (url: string, parentId?: string) => {
   try {
     const response = await axios.get(
-      `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`
+      `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`,
     );
     console.log(
       "URL",
-      `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`
+      `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`,
     );
 
     return response.data?.data.map((item: any) => ({
@@ -192,7 +193,7 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
 
   const [optionsBussines, setOptionsBussines] = useState<TypeOption[]>([]);
   const [optionsCompanyType, setOptionsCompanyType] = useState<TypeOption[]>(
-    []
+    [],
   );
   const [statusCompany, setstatusCompany] = useState<TypeOption[]>([]);
 
@@ -365,7 +366,7 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
       {
         shouldValidate: false,
         shouldDirty: true,
-      }
+      },
     );
   }, [alamatPerusahaan, sameAsCompany, setValue]);
 
@@ -373,7 +374,7 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
     const fetchBank = async () => {
       try {
         const response = await axios.get(
-          `https://api.gateway.langitdigital78.com/v1/bank`
+          `https://api.gateway.langitdigital78.com/v1/bank`,
         );
         setBank(response.data.data.beneficiary_banks);
       } catch (error) {
@@ -446,7 +447,7 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
 
   const handleUploadFile = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: Path<FormData>
+    field: Path<FormData>,
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -465,18 +466,14 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", "capbridge");
-    formData.append("media", file);
-
     try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData
-      );
+      const uploadMediaResult = await uploadMediaService(file);
 
-      const fileUrl = res.data?.data?.path;
+      let fileUrl = "-";
+
+      if (uploadMediaResult.ok && uploadMediaResult.data) {
+        fileUrl = uploadMediaResult.data.path;
+      }
 
       const uploadMessages = {
         company_nib_path: "Upload NIB Perusahaan berhasil!",

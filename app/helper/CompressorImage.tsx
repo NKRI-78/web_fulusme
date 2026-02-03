@@ -9,12 +9,10 @@ export const compressImage = (file: File, quality = 0.8): Promise<File> => {
     }
 
     if (!(file instanceof File)) {
-      console.error("compressImage error: Bukan File object", file);
       return reject(new Error("Input must be a File object."));
     }
 
     if (!file.type.startsWith("image/")) {
-      console.warn("Bukan file gambar, skip compression:", file.type);
       return resolve(file);
     }
 

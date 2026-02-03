@@ -29,6 +29,7 @@ import { API_BACKEND, API_BACKEND_MEDIA } from "@/app/utils/constant";
 import Swal from "sweetalert2";
 import { getUser } from "@/app/lib/auth";
 import DetailPembayaran from "../components/DetailPembayaran";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 /* =========================
  *  TYPES
@@ -91,7 +92,7 @@ function parseDetail(raw: unknown): PaymentDetail | null {
         ? d.total_amount
         : info.reduce(
             (s: number, it: any) => s + (Number(it?.calculated_amount) || 0),
-            0
+            0,
           );
     return { info, total_amount: total };
   }
@@ -111,7 +112,7 @@ const proofSchema = z
     (file) => ACCEPT_TYPES.includes(file.type as (typeof ACCEPT_TYPES)[number]),
     {
       message: "Tipe file tidak didukung (JPG/PNG).",
-    }
+    },
   )
   .refine((file) => file.size <= MAX_SIZE_MB * 1024 * 1024, {
     message: `Ukuran file maksimal ${MAX_SIZE_MB}MB.`,
@@ -149,7 +150,7 @@ export default function PembayaranBCAWithDetail({
 
   const [loading, setLoading] = useState(true);
   const [headerTitle, setHeaderTitle] = useState(
-    "Pembayaran Administrasi Proyek"
+    "Pembayaran Administrasi Proyek",
   );
   const [headerStatus, setHeaderStatus] = useState<string>("");
   const [detail, setDetail] = useState<PaymentDetail | null>(null);
@@ -169,7 +170,7 @@ export default function PembayaranBCAWithDetail({
           `${API_BACKEND}/api/v1/inbox/detail/${inboxId}`,
           {
             headers: { Authorization: `Bearer ${user.token}` },
-          }
+          },
         );
 
         // Sesuaikan dengan envelope respons yang kamu kirim
@@ -192,7 +193,7 @@ export default function PembayaranBCAWithDetail({
     detail?.total_amount ??
     (detail?.info || []).reduce(
       (s, it) => s + (Number(it.calculated_amount) || 0),
-      0
+      0,
     );
 
   /* ----------------- RHF ----------------- */
@@ -242,7 +243,7 @@ export default function PembayaranBCAWithDetail({
       const f = e.dataTransfer.files?.[0];
       if (f) setValue("proof", f, { shouldDirty: true, shouldValidate: true });
     },
-    [setValue]
+    [setValue],
   );
 
   const clearFile = () => {
@@ -260,18 +261,13 @@ export default function PembayaranBCAWithDetail({
       if (!user?.token) return;
 
       // 1) upload media
-      const form = new FormData();
-      form.append("folder", "web");
-      form.append("subfolder", "capbridge");
-      form.append("media", proof);
+      const uploadMediaResult = await uploadMediaService(file);
 
-      const resMedia = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        form,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      let fileUrl = "-";
 
-      const fileUrl = resMedia.data?.data?.path;
+      if (uploadMediaResult.ok && uploadMediaResult.data) {
+        fileUrl = uploadMediaResult.data.path;
+      }
 
       // 2) simpan dokumen transaksi
       const payload = {
@@ -289,7 +285,7 @@ export default function PembayaranBCAWithDetail({
       const res = await axios.post(
         `${API_BACKEND}/api/v1/document/transaction/payment`,
         payload,
-        { headers: { Authorization: `Bearer ${user.token}` } }
+        { headers: { Authorization: `Bearer ${user.token}` } },
       );
 
       if (res.status !== 200)

@@ -41,6 +41,7 @@ import { UpdateFieldValue } from "@/app/(defaults)/form-penerbit/PenerbitParent"
 import { IFormPublisher } from "./IFormPublisher";
 import FileInput from "./_component/FileInput";
 import Subtitle from "./_component/SectionSubtitle";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 type Props = {
   profile: ProfileUpdate | null;
@@ -139,11 +140,11 @@ const FormPenerbit: React.FC<Props> = ({
 
   const hasDirekturUtama = useMemo(
     () => direkturValues.some((d: any) => d.jabatan === "direktur-utama"),
-    [direkturValues]
+    [direkturValues],
   );
   const hasKomisarisUtama = useMemo(
     () => komisarisValues.some((k: any) => k.jabatan === "komisaris-utama"),
-    [komisarisValues]
+    [komisarisValues],
   );
 
   useEffect(() => {
@@ -190,7 +191,7 @@ const FormPenerbit: React.FC<Props> = ({
   }, [isUpdate, profile]);
 
   const handleRegisterCompany = async (
-    penerbitFormCache: FormPenerbitValues
+    penerbitFormCache: FormPenerbitValues,
   ) => {
     setLoading(true);
     try {
@@ -281,7 +282,7 @@ const FormPenerbit: React.FC<Props> = ({
         payload,
         {
           headers: { Authorization: `Bearer ${userData.token}` },
-        }
+        },
       );
       console.log(res);
 
@@ -399,7 +400,7 @@ const FormPenerbit: React.FC<Props> = ({
 
   const handleUploadFile = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: Path<FormPenerbitValues>
+    field: Path<FormPenerbitValues>,
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -418,19 +419,9 @@ const FormPenerbit: React.FC<Props> = ({
       return;
     }
 
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", "capbridge");
-    formData.append("media", file);
-
     try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData
-      );
-
-      const fileUrl = res.data?.data?.path;
-
+      const uploadMediaResult = await uploadMediaService(file);
+      const fileUrl = uploadMediaResult.data?.path;
       if (fileUrl) {
         setValue(field, fileUrl, { shouldValidate: true });
       } else {
@@ -450,7 +441,7 @@ const FormPenerbit: React.FC<Props> = ({
   const agree = watch(`agree`);
 
   const getUpdateFieldValueBasedFormKey = (
-    values: FormPenerbitValues
+    values: FormPenerbitValues,
   ): string => {
     if (!formKey) return "-";
 
