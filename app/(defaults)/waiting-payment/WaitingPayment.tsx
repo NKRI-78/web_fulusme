@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import moment from "moment";
 import { API_BACKEND } from "@/app/utils/constant";
-import { createSocket } from "@/app/utils/sockets";
 import { Socket as ClientSocket } from "socket.io-client";
 import Cookies from "js-cookie";
 import Link from "next/link";
@@ -20,6 +19,8 @@ import SkeletonWaitingPayment from "./components/SkeletonWaitingPayment";
 import { motion } from "framer-motion";
 import CaraPembayaran from "./components/HowToPayment";
 import { getUser } from "@/app/lib/auth";
+import { getSocket } from "@/app/utils/sockets";
+import { getAuthUser } from "@/app/helper/getAuthUser";
 
 export interface PaymentMethod {
   id: number;
@@ -139,9 +140,7 @@ const WaitingPayment = () => {
 
   // Socket listener
   useEffect(() => {
-    const user = getUser();
-    const userId = user?.id;
-    const socket: ClientSocket = createSocket(userId ?? "-");
+    const socket = getSocket();
 
     socket.on("payment-update", () => {
       if (hasPaidRef.current) return;

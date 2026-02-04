@@ -10,6 +10,7 @@ interface Props {
   photoResult: (result: string | null) => void;
   resetPhotoResult: () => void;
   errorText?: string;
+  disabled?: boolean;
 }
 
 const ContainerSelfie: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const ContainerSelfie: React.FC<Props> = ({
   resetPhotoResult,
   errorText,
   photoUrl,
+  disabled,
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -38,7 +40,7 @@ const ContainerSelfie: React.FC<Props> = ({
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const hasCamera = devices.some(
-          (device) => device.kind === "videoinput"
+          (device) => device.kind === "videoinput",
         );
 
         if (!hasCamera) {
@@ -74,7 +76,7 @@ const ContainerSelfie: React.FC<Props> = ({
           err.name === "PermissionDeniedError"
         ) {
           setErrorMessage(
-            "Akses kamera ditolak. Silakan aktifkan izin kamera di pengaturan browser."
+            "Akses kamera ditolak. Silakan aktifkan izin kamera di pengaturan browser.",
           );
         } else {
           setErrorMessage("Terjadi kesalahan saat mengakses kamera.");
@@ -128,6 +130,7 @@ const ContainerSelfie: React.FC<Props> = ({
 
   // *reset photo
   const resetPhoto = () => {
+    if (disabled) return;
     console.log("reset foto, has stream?", stream !== null);
     console.log("has photo result?", photoResult !== null);
     console.log("camera active?", isCameraActive !== null);
@@ -160,10 +163,13 @@ const ContainerSelfie: React.FC<Props> = ({
 
       <div
         onClick={() => {
-          if (isCameraActive || displayPhoto) return;
+          if (disabled || isCameraActive || displayPhoto) return;
           startCamera();
         }}
-        className="flex-1 flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-black cursor-pointer overflow-hidden"
+        className={[
+          "flex-1 flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-black overflow-hidden",
+          disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
+        ].join(" ")}
       >
         {displayPhoto ? (
           <div className="w-full relative">
@@ -175,7 +181,7 @@ const ContainerSelfie: React.FC<Props> = ({
             <button
               type="button"
               onClick={resetPhoto}
-              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100"
+              className={`absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100 ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
             >
               <X className="w-4 h-4 text-gray-600" />
             </button>

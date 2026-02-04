@@ -49,6 +49,7 @@ const getFormCache = (): FormSchema | null => {
 interface FormUtusanPenerbitProps {
   isUpdate: boolean;
   profile: ProfileUpdate | null;
+  loadingUpdate: boolean;
   onSubmitCallback: () => void;
   onUpdateCallback: (val: UpdateFieldValue) => void;
 }
@@ -56,6 +57,7 @@ interface FormUtusanPenerbitProps {
 const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
   isUpdate,
   profile,
+  loadingUpdate,
   onSubmitCallback,
   onUpdateCallback,
 }) => {
@@ -125,6 +127,11 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
   useEffect(() => {
     localStorage.setItem(FORM_PIC_CACHE_KEY, JSON.stringify(formFields));
   }, [formFields]);
+
+  //* check form ini apakah update atau engga
+  const checkIsUpdate = (formId: string): boolean => {
+    return isUpdate && formId !== formKey;
+  };
 
   //* onSubmit
   const onSubmitEvent = async () => {
@@ -241,7 +248,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
     if (!formFields.suratKuasa) {
       newErrors.suratKuasa = "Surat Kuasa wajib disertakan";
     }
-    if (!formFields.fileKtp) {
+    if (!formFields.fileKtp || formFields.fileKtp === "-") {
       newErrors.fileKtp = "File KTP wajib disertakan";
     }
 
@@ -306,6 +313,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
           resetPhotoResult={() => {
             setFormFields({ ...formFields, photo: "" });
           }}
+          disabled={isUpdate}
           photoResult={(photoSelfie) => {
             if (photoSelfie) {
               setFormFields({ ...formFields, photo: photoSelfie });
@@ -337,6 +345,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
           <TextField
             placeholder="Jabatan"
             value={formFields.jabatan}
+            disabled={isUpdate}
             onChange={(val) => {
               setFormFields({ ...formFields, jabatan: val.target.value });
               if (val) {
@@ -353,6 +362,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
             placeholder="Nomor KTP"
             type="number"
             maxLength={16}
+            disabled={isUpdate}
             value={formFields.noKtp}
             onChange={(val) => {
               setFormFields({ ...formFields, noKtp: val.target.value });
@@ -381,6 +391,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
                   fileName="Surat Kuasa"
                   accept=".pdf,.word"
                   fileUrl={formFields.suratKuasa}
+                  disabled={checkIsUpdate("surat-kuasa")}
                   onChange={(fileUrl) => {
                     setFormFields({ ...formFields, suratKuasa: fileUrl });
                     if (fileUrl) {
@@ -403,6 +414,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
                   fileName="File KTP"
                   accept=".pdf,.jpg,.jpeg,.png"
                   fileUrl={formFields.fileKtp}
+                  disabled={checkIsUpdate("upload-ktp-pic")}
                   onChange={(fileUrl) => {
                     setFormFields({ ...formFields, fileKtp: fileUrl });
                     if (fileUrl) {
@@ -418,8 +430,15 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
           <div className="my-10"></div>
 
           <div className="w-full flex justify-end gap-4 mt-6">
-            <FormButton disabled={loading} onClick={handleSubmit}>
-              {loading ? "Loading..." : isUpdate ? "Update" : "Lanjutkan"}
+            <FormButton
+              disabled={loading || loadingUpdate}
+              onClick={handleSubmit}
+            >
+              {loading || loadingUpdate
+                ? "Loading..."
+                : isUpdate
+                  ? "Update"
+                  : "Lanjutkan"}
             </FormButton>
           </div>
         </div>
