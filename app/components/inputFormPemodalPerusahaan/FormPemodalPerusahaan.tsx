@@ -560,7 +560,7 @@ const FormPemodalPerusahaan: React.FC = () => {
 
                 <FileInput
                   fileName="File-KTP"
-                  accept=".pdf,.jpg,.jpeg,.png"
+                  accept=".pdf,.doc,.docx"
                   fileUrl={formFields.fileKtp}
                   onChange={(fileUrl) => {
                     setFormFields({ ...formFields, fileKtp: fileUrl });
