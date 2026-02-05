@@ -8,7 +8,6 @@ export function SocketProvider({ userId }: { userId: string }) {
     initSocket(userId);
 
     return () => {
-      // logout / app close
       disconnectSocket();
     };
   }, [userId]);

@@ -129,7 +129,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
   }, [formFields]);
 
   //* check form ini apakah update atau engga
-  const checkIsUpdate = (formId: string): boolean => {
+  const disabledFormWhenUpdate = (formId: string): boolean => {
     return isUpdate && formId !== formKey;
   };
 
@@ -246,10 +246,14 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
       newErrors.noKtp = "No KTP kurang dari 16 digit";
     }
     if (!formFields.suratKuasa) {
-      newErrors.suratKuasa = "Surat Kuasa wajib disertakan";
+      if (!disabledFormWhenUpdate("surat-kuasa")) {
+        newErrors.suratKuasa = "Surat Kuasa wajib disertakan";
+      }
     }
     if (!formFields.fileKtp || formFields.fileKtp === "-") {
-      newErrors.fileKtp = "File KTP wajib disertakan";
+      if (!disabledFormWhenUpdate("upload-ktp-pic")) {
+        newErrors.fileKtp = "File KTP wajib disertakan";
+      }
     }
 
     setErrors(newErrors);
@@ -391,7 +395,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
                   fileName="Surat Kuasa"
                   accept=".pdf,.word"
                   fileUrl={formFields.suratKuasa}
-                  disabled={checkIsUpdate("surat-kuasa")}
+                  disabled={disabledFormWhenUpdate("surat-kuasa")}
                   onChange={(fileUrl) => {
                     setFormFields({ ...formFields, suratKuasa: fileUrl });
                     if (fileUrl) {
@@ -414,7 +418,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
                   fileName="File KTP"
                   accept=".pdf,.jpg,.jpeg,.png"
                   fileUrl={formFields.fileKtp}
-                  disabled={checkIsUpdate("upload-ktp-pic")}
+                  disabled={disabledFormWhenUpdate("upload-ktp-pic")}
                   onChange={(fileUrl) => {
                     setFormFields({ ...formFields, fileKtp: fileUrl });
                     if (fileUrl) {
