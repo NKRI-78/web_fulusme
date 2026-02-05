@@ -45,6 +45,7 @@ interface FileInputProps {
   onChange: (e: string) => void;
   errorText?: string;
   accept?: string;
+  disabled?: boolean;
 }
 
 const FileInput: React.FC<FileInputProps> = ({
@@ -54,6 +55,7 @@ const FileInput: React.FC<FileInputProps> = ({
   onChange,
   errorText,
   accept,
+  disabled = false,
 }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -133,8 +135,10 @@ const FileInput: React.FC<FileInputProps> = ({
     <div className="space-y-2">
       <label
         className={clsx(
-          "relative inline-flex items-center gap-2 px-2 md:px-6 py-2 rounded-lg cursor-pointer font-semibold text-[12px] text-white overflow-hidden",
-          loading ? "bg-gray-400" : "bg-gray-700 hover:bg-gray-800",
+          "relative inline-flex items-center gap-2 px-2 md:px-6 py-2 rounded-lg font-semibold text-[12px] text-white overflow-hidden",
+          loading || disabled
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-gray-700 hover:bg-gray-800 cursor-pointer",
         )}
       >
         {loading && (
@@ -156,7 +160,7 @@ const FileInput: React.FC<FileInputProps> = ({
             ref={fileInputRef}
             onChange={handleFileChange}
             accept={accept ?? ".pdf,.doc,.docx"}
-            disabled={loading}
+            disabled={disabled || loading}
           />
         </div>
 

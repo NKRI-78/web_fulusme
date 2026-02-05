@@ -115,6 +115,10 @@ const FormPenerbit: React.FC<Props> = ({
     setTimeout(() => setIsClearing(false), 500);
   };
 
+  const disabledFormWhenUpdate = (formId: string): boolean => {
+    return isUpdate && formId !== formKey;
+  };
+
   const {
     control,
     handleSubmit,
@@ -148,8 +152,8 @@ const FormPenerbit: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    if (isUpdate && profile?.company) {
-      const c = profile.company;
+    const c = profile?.company;
+    if (isUpdate && c) {
       reset({
         sk_kumham_terahkir: c.sk_kumham_terahkir,
 
@@ -184,7 +188,7 @@ const FormPenerbit: React.FC<Props> = ({
           fileKTP: k.ktp_path ?? "",
           fileNPWP: k.npwp_path ?? "",
         })) || [emptyKomisaris()],
-        agree: false,
+        agree: true,
       });
       console.log("Prefilled form from profile (update mode)");
     }
@@ -371,10 +375,15 @@ const FormPenerbit: React.FC<Props> = ({
     setLoading(false);
   };
 
-  const onSubmit = handleSubmit(async (values, e) => {
-    if (isUpdate) return handleUpdateRegister(values);
-    return handleRegisterCompany(values);
-  });
+  const onSubmit = handleSubmit(
+    async (values, e) => {
+      if (isUpdate) return handleUpdateRegister(values);
+      return handleRegisterCompany(values);
+    },
+    (e) => {
+      console.log(e);
+    },
+  );
 
   useEffect(() => {
     const draft = localStorage.getItem(FORM_PENERBIT_2_CACHE_KEY);
@@ -493,6 +502,7 @@ const FormPenerbit: React.FC<Props> = ({
                   <FileInput
                     fileName="SK Kumham Terakhir"
                     accept=".pdf"
+                    disabled={disabledFormWhenUpdate("sk-kumham-terakhir")}
                     fileUrl={watch("sk_kumham_terahkir")}
                     onChange={(fileUrl) => {
                       setValue("sk_kumham_terahkir", fileUrl, {
@@ -521,6 +531,7 @@ const FormPenerbit: React.FC<Props> = ({
                     fileName="SIUP"
                     accept=".pdf"
                     fileUrl={watch("siup")}
+                    disabled={disabledFormWhenUpdate("siup")}
                     onChange={(fileUrl) => {
                       setValue("siup", fileUrl, {
                         shouldValidate: true,
@@ -548,6 +559,7 @@ const FormPenerbit: React.FC<Props> = ({
                     fileName="TDP"
                     accept=".pdf"
                     fileUrl={watch("tdp")}
+                    disabled={disabledFormWhenUpdate("tdp")}
                     onChange={(fileUrl) => {
                       setValue("tdp", fileUrl, {
                         shouldValidate: true,
@@ -575,6 +587,7 @@ const FormPenerbit: React.FC<Props> = ({
                     fileName="NPWP"
                     accept=".pdf"
                     fileUrl={watch("fileNpwp")}
+                    disabled={disabledFormWhenUpdate("npwp")}
                     onChange={(fileUrl) => {
                       setValue("fileNpwp", fileUrl, {
                         shouldValidate: true,
@@ -603,6 +616,7 @@ const FormPenerbit: React.FC<Props> = ({
                     fileName="NIB"
                     accept=".pdf"
                     fileUrl={watch("company_nib_path")}
+                    disabled={disabledFormWhenUpdate("nib")}
                     onChange={(fileUrl) => {
                       setValue("company_nib_path", fileUrl, {
                         shouldValidate: true,
@@ -634,6 +648,9 @@ const FormPenerbit: React.FC<Props> = ({
                     fileName="Akte Pendirian Perusahaan"
                     accept=".pdf"
                     fileUrl={watch("akta_pendirian")}
+                    disabled={disabledFormWhenUpdate(
+                      "akta-pendirian-perusahaan",
+                    )}
                     onChange={(fileUrl) => {
                       setValue("akta_pendirian", fileUrl, {
                         shouldValidate: true,
@@ -662,6 +679,7 @@ const FormPenerbit: React.FC<Props> = ({
                     fileName="SK Kumham Pendirian"
                     accept=".pdf"
                     fileUrl={watch("sk_kumham_path")}
+                    disabled={disabledFormWhenUpdate("sk-kumham-pendirian")}
                     onChange={(fileUrl) => {
                       setValue("sk_kumham_path", fileUrl, {
                         shouldValidate: true,
@@ -695,6 +713,7 @@ const FormPenerbit: React.FC<Props> = ({
                     fileName="Akte Perubahan Terakhir"
                     accept=".pdf"
                     fileUrl={watch("akta_perubahan_terahkir_path")}
+                    disabled={disabledFormWhenUpdate("akta-perubahan-terakhir")}
                     onChange={(fileUrl) => {
                       setValue("akta_perubahan_terahkir_path", fileUrl, {
                         shouldValidate: true,
@@ -716,6 +735,7 @@ const FormPenerbit: React.FC<Props> = ({
                   {...methods.register("total_employees")}
                   type="text"
                   onChange={handleNumberChange}
+                  disabled={isUpdate}
                   className="px-3 py-2 outline-none flex-1"
                   placeholder="0"
                 />
@@ -751,6 +771,7 @@ const FormPenerbit: React.FC<Props> = ({
                       fileName="Laporan Keuangan"
                       accept=".pdf"
                       fileUrl={watch("laporanKeuangan")}
+                      disabled={disabledFormWhenUpdate("laporan-keuangan")}
                       onChange={(fileUrl) => {
                         setValue("laporanKeuangan", fileUrl, {
                           shouldValidate: true,
@@ -781,6 +802,7 @@ const FormPenerbit: React.FC<Props> = ({
                       fileName="Rekening Koran"
                       accept=".pdf"
                       fileUrl={watch("rekeningKoran")}
+                      disabled={disabledFormWhenUpdate("rekening-koran")}
                       onChange={(fileUrl) => {
                         setValue("rekeningKoran", fileUrl, {
                           shouldValidate: true,

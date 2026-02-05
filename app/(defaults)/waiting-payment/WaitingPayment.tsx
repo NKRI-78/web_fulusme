@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import moment from "moment";
 import { API_BACKEND } from "@/app/utils/constant";
-import { createSocket } from "@/app/utils/sockets";
 import { Socket as ClientSocket } from "socket.io-client";
 import Cookies from "js-cookie";
 import Link from "next/link";
@@ -20,6 +19,8 @@ import SkeletonWaitingPayment from "./components/SkeletonWaitingPayment";
 import { motion } from "framer-motion";
 import CaraPembayaran from "./components/HowToPayment";
 import { getUser } from "@/app/lib/auth";
+import { getSocket, onSocketReady } from "@/app/utils/sockets";
+import { getAuthUser } from "@/app/helper/getAuthUser";
 
 export interface PaymentMethod {
   id: number;
@@ -139,27 +140,42 @@ const WaitingPayment = () => {
 
   // Socket listener
   useEffect(() => {
-    const user = getUser();
-    const userId = user?.id;
-    const socket: ClientSocket = createSocket(userId ?? "-");
+    // const socket = getSocket();
 
-    socket.on("payment-update", () => {
-      if (hasPaidRef.current) return;
-      hasPaidRef.current = true;
-      setStatusLoading(true);
+    // socket.on("payment-update", () => {
+    //   if (hasPaidRef.current) return;
+    //   hasPaidRef.current = true;
+    //   setStatusLoading(true);
 
-      setTimeout(() => {
-        setStatusLoading(false);
-        setWaitingPayment((prev) => ({ ...prev!, payment_status: "PAID" }));
+    //   setTimeout(() => {
+    //     setStatusLoading(false);
+    //     setWaitingPayment((prev) => ({ ...prev!, payment_status: "PAID" }));
+    //     setTimeout(() => {
+    //       router.push("/dashboard/investor-transaction");
+    //     }, 2000);
+    //   }, 1500);
+    // });
+
+    onSocketReady((socket) => {
+      console.log("[waiting payment] socket ready", socket.id);
+
+      socket.on("payment-update", async () => {
+        console.log("payment-update", socket.id);
+        if (hasPaidRef.current) return;
+        hasPaidRef.current = true;
+        setStatusLoading(true);
+
+        await fetchDetailPayment();
+
         setTimeout(() => {
-          router.push("/dashboard/investor-transaction");
-        }, 2000);
-      }, 1500);
+          setStatusLoading(false);
+          setWaitingPayment((prev) => ({ ...prev!, payment_status: "PAID" }));
+          setTimeout(() => {
+            router.push("/dashboard/investor-transaction");
+          }, 2000);
+        }, 1500);
+      });
     });
-
-    return () => {
-      socket.disconnect();
-    };
   }, [orderId]);
 
   // Fetch detail

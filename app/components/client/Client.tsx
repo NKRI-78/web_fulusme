@@ -9,6 +9,8 @@ import FooterV2 from "@components/footer/FooterV2";
 import NavbarV2 from "../navbar/NavbarV2";
 
 import localFont from "next/font/local";
+import { getAuthUser } from "@/app/helper/getAuthUser";
+import { SocketProvider } from "@/app/providers/socket-provider";
 
 const geistSans = localFont({
   src: "../../fonts/GeistVF.woff",
@@ -29,9 +31,11 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const isViewer = pathname.startsWith("/viewer");
+  const user = getAuthUser();
 
   return (
     <Provider store={store}>
+      <SocketProvider userId={user?.id ?? ""} />
       <div
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
