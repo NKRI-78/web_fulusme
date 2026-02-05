@@ -16,11 +16,12 @@ import { getUser } from "@/app/lib/auth";
 import InboxCard from "../InboxCard";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchInboxThunk, updateInboxes } from "@/redux/slices/inboxSlice";
+import { getSocket, initSocket, onSocketReady } from "@/app/utils/sockets";
 
 const Inbox = () => {
   // data hook
   const [selectedInbox, setSelectedInbox] = useState<InboxResponse | null>(
-    null
+    null,
   );
 
   const dispatch = useDispatch<AppDispatch>();
@@ -31,10 +32,26 @@ const Inbox = () => {
   } = useSelector((state: RootState) => state.inbox);
   const user = getUser();
 
+  async function initializeSocket() {
+    onSocketReady((socket) => {
+      console.log("[inbox] socket ready", socket.id);
+
+      socket.on("inbox-update", async () => {
+        const inboxes = await dispatch(fetchInboxThunk(user?.token ?? "-"));
+
+        dispatch(
+          setBadge(
+            Array.isArray(inboxes?.payload)
+              ? inboxes.payload.filter((i) => !i.is_read).length
+              : 0,
+          ),
+        );
+      });
+    });
+  }
+
   useEffect(() => {
-    if (user?.token) {
-      dispatch(fetchInboxThunk(user?.token));
-    }
+    initializeSocket();
   }, [user?.token, dispatch]);
 
   // state hook
@@ -73,7 +90,7 @@ const Inbox = () => {
   //* set badge to reducer
   useEffect(() => {
     dispatch(
-      setBadge(inboxes.filter((inbox) => inbox.is_read == false).length)
+      setBadge(inboxes.filter((inbox) => inbox.is_read == false).length),
     );
   }, [inboxes]);
 
@@ -107,11 +124,11 @@ const Inbox = () => {
   //* navigate to additional document
   const navigateToAddAditionalDocument = (
     projectId: string | undefined,
-    inboxId: number
+    inboxId: number,
   ) => {
     if (projectId) {
       router.push(
-        `/dokumen-pelengkap?projectId=${projectId}&inboxId=${inboxId}`
+        `/dokumen-pelengkap?projectId=${projectId}&inboxId=${inboxId}`,
       );
     }
   };
@@ -167,13 +184,13 @@ const Inbox = () => {
         <InboxModalDialog
           role={user.role}
           inbox={selectedInbox}
-          onAccept={() => {
+          onAccept={async () => {
             if (selectedInbox.field_3 === "reupload-document") {
               if (updateKey) {
                 if (roleUser === "investor institusi") {
                   if (["photo_ktp", "surat-kuasa"].includes(updateKey)) {
                     router.push(
-                      `/form-pemodal-perusahaan?update=true&form=${updateKey}`
+                      `/form-pemodal-perusahaan?update=true&form=${updateKey}`,
                     );
                   } else if (
                     [
@@ -185,11 +202,11 @@ const Inbox = () => {
                     ].includes(updateKey)
                   ) {
                     router.push(
-                      `/form-data-pemodal-perusahaan?update=true&form=${updateKey}`
+                      `/form-data-pemodal-perusahaan?update=true&form=${updateKey}`,
                     );
                   } else {
                     router.push(
-                      `/form-pemodal-perusahaan?update=true&form=${updateKey}`
+                      `/form-pemodal-perusahaan?update=true&form=${updateKey}`,
                     );
                   }
                 } else if (roleUser === "investor") {
@@ -200,7 +217,7 @@ const Inbox = () => {
                   }
                 } else {
                   router.push(
-                    `/form-penerbit?update=true&form=${updateKey}&inbox-id=${selectedInbox.id}`
+                    `/form-penerbit?update=true&form=${updateKey}&inbox-id=${selectedInbox.id}`,
                   );
                 }
               }
@@ -210,7 +227,7 @@ const Inbox = () => {
                 router.push(
                   `/form-signature?pdf=${encodeURIComponent(pdfUrl)}&inboxId=${
                     selectedInbox.id
-                  }&field5=${selectedInbox.field_5}`
+                  }&field5=${selectedInbox.field_5}`,
                 );
               }
             }

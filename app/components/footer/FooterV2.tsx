@@ -170,6 +170,10 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <div className="w-full flex items-center justify-center mt-6">
+        <p className="text-white/50 text-sm">@FulusmeV3/2025</p>
+      </div>
     </footer>
   );
 };
