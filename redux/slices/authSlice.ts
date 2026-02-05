@@ -10,12 +10,13 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
+import { AuthDataResponse, AuthResponse } from "@/app/interfaces/auth/auth";
 
 export const loginAsync = createAsyncThunk<AuthResponse, { login: LoginModel }>(
   "auth/login",
   async ({ login }) => {
     return await LoginUser(login);
-  }
+  },
 );
 
 export const registerAsync = createAsyncThunk<
@@ -50,7 +51,7 @@ const initialState: AuthState = {
 const handleAuthAsyncThunk = <Returned, ThunkArg>(
   builder: any,
   asyncThunk: AsyncThunk<Returned, ThunkArg, object>,
-  onFulfilled?: (state: AuthState, action: PayloadAction<Returned>) => void
+  onFulfilled?: (state: AuthState, action: PayloadAction<Returned>) => void,
 ) => {
   builder
     .addCase(asyncThunk.pending, (state: AuthState) => {
@@ -62,7 +63,7 @@ const handleAuthAsyncThunk = <Returned, ThunkArg>(
         state.loading = false;
         state.isAuthenticated = true;
         if (onFulfilled) onFulfilled(state, action);
-      }
+      },
     )
     .addCase(asyncThunk.rejected, (state: AuthState) => {
       state.loading = false;

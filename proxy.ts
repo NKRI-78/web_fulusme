@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { AuthDataResponse } from "./app/interfaces/auth/auth";
 
 export function proxy(request: NextRequest) {
   const userCookie = request.cookies.get("user")?.value;

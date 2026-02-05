@@ -15,6 +15,7 @@ import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
 import { useSearchParams } from "next/navigation";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 interface FormSchema {
   photo: string;
@@ -181,7 +182,7 @@ const FormPemodalPerusahaan: React.FC = () => {
               headers: {
                 Authorization: `Bearer ${userData.token}`,
               },
-            }
+            },
           );
 
           setCookie(
@@ -189,7 +190,7 @@ const FormPemodalPerusahaan: React.FC = () => {
             JSON.stringify({
               ...userData,
               role: "investor institusi",
-            })
+            }),
           );
 
           await Swal.fire({
@@ -219,7 +220,7 @@ const FormPemodalPerusahaan: React.FC = () => {
 
   function mapFormToDataType(
     form: string | null,
-    data: any
+    data: any,
   ): {
     dataType: string;
     val: string;
@@ -274,7 +275,7 @@ const FormPemodalPerusahaan: React.FC = () => {
               headers: {
                 Authorization: `Bearer ${userData.token}`,
               },
-            }
+            },
           );
 
           setCookie(
@@ -282,7 +283,7 @@ const FormPemodalPerusahaan: React.FC = () => {
             JSON.stringify({
               ...userData,
               role: "investor institusi",
-            })
+            }),
           );
 
           await Swal.fire({
@@ -411,7 +412,7 @@ const FormPemodalPerusahaan: React.FC = () => {
     try {
       const res = await axios.post(
         `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData
+        formData,
       );
       return res.data?.data?.path ?? "";
     } catch (error) {

@@ -14,6 +14,7 @@ import { API_BACKEND } from "@/app/utils/constant";
 import FileViewerModal from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
 import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 export const pemodalKeys: string[] = ["ktp-upload", "npwp-upload"];
 
@@ -131,8 +132,8 @@ const FormPemodal: React.FC = () => {
               data.gender === "L"
                 ? "Laki-Laki"
                 : data.gender === "P"
-                ? "Perempuan"
-                : "",
+                  ? "Perempuan"
+                  : "",
             statusPernikahan: data.status_marital || "",
             pendidikanTerakhir: data.last_education || "",
             pekerjaan: data.occupation || "",
@@ -208,7 +209,7 @@ const FormPemodal: React.FC = () => {
       } catch (error: any) {
         console.error(
           "Gagal mengambil profil:",
-          error.response?.data || error.message
+          error.response?.data || error.message,
         );
       } finally {
         setIsLoading(false);
@@ -220,7 +221,7 @@ const FormPemodal: React.FC = () => {
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewFileUrl, setPreviewFileUrl] = useState<string | undefined>(
-    undefined
+    undefined,
   );
 
   function getFormIndex(form: string | null): number {
@@ -241,10 +242,10 @@ const FormPemodal: React.FC = () => {
   }
 
   const [selectedIndex, setSelectedIndex] = useState(
-    isUpdate ? getFormIndex(form) : 0
+    isUpdate ? getFormIndex(form) : 0,
   );
   const [errorsPribadi, setErrorsPribadi] = useState<Record<string, string[]>>(
-    {}
+    {},
   );
   const [errorsPekerjaan, setErrorsPekerjaan] = useState<
     Record<string, string[]>
@@ -341,7 +342,7 @@ const FormPemodal: React.FC = () => {
       {
         message: "Pekerjaan lainnya wajib diisi",
         path: ["pekerjaanLainnya"],
-      }
+      },
     );
 
   const schemaDataPekerjaan = z
@@ -587,7 +588,7 @@ const FormPemodal: React.FC = () => {
   const handleChangeDataPribadi = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
 
@@ -729,7 +730,7 @@ const FormPemodal: React.FC = () => {
   const handleChangeDataPekerjaan = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
 
@@ -932,7 +933,7 @@ const FormPemodal: React.FC = () => {
 
   function mapFormToDataType(
     form: string | null,
-    data: any
+    data: any,
   ): {
     dataType: string;
     val: string;
@@ -1040,7 +1041,7 @@ const FormPemodal: React.FC = () => {
             headers: {
               Authorization: `Bearer ${user?.token}`,
             },
-          }
+          },
         );
 
         console.log("Payload akan dikirim:", payload);
@@ -1050,7 +1051,7 @@ const FormPemodal: React.FC = () => {
           JSON.stringify({
             ...user,
             role: "investor",
-          } as AuthDataResponse)
+          } as AuthDataResponse),
         );
       } else {
         const { dataType, val } = mapFormToDataType(form, data);
@@ -1067,7 +1068,7 @@ const FormPemodal: React.FC = () => {
             headers: {
               Authorization: `Bearer ${user?.token}`,
             },
-          }
+          },
         );
       }
 

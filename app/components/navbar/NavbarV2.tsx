@@ -27,6 +27,7 @@ import { fetchInboxThunk } from "@/redux/slices/inboxSlice";
 import { API_BACKEND } from "@/app/utils/constant";
 import { setBadge } from "@/redux/slices/badgeSlice";
 import CircularProgressIndicator from "../CircularProgressIndicator";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 const PRIMARY_COLOR = "#10565C";
 const ON_PRIMARY_COLOR = "#FFFFFF";
