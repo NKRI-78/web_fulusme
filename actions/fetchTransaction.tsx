@@ -1,26 +1,29 @@
-"use server";
-
+import axios from "axios";
 import { TransactionResponse } from "@/app/interfaces/transaction/transaction";
+import { API_BACKEND } from "@/app/utils/constant";
 
 export async function getTransactions(
   token: string,
   page: number = 1,
-  limit: number = 5
+  limit: number = 5,
 ) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BACKEND}/api/v1/transaction/project/list?page=${page}&limit=${limit}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
+  try {
+    const res = await axios.get<TransactionResponse>(
+      `${API_BACKEND}/api/v1/transaction/project/list`,
+      {
+        params: {
+          page,
+          limit,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-      cache: "no-store", // biar selalu fresh
-    }
-  );
+    );
 
-  if (!res.ok) {
+    return res.data.data;
+  } catch (error: any) {
+    console.error("getTransactions error:", error?.response || error);
     throw new Error("Gagal mengambil transaksi");
   }
-
-  const data: TransactionResponse = await res.json();
-  return data.data;
 }
