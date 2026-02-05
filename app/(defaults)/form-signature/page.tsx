@@ -5,8 +5,8 @@ import FormSignature from "@/app/components/signature/FormSignature";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Form Signature | CapBridge",
-  description: "Form Signature",
+  title: "Tanda Tangan Akad | Fulusme",
+  description: "Tanda Tangan Akad",
 };
 
 const FormSignaturePage: React.FC = () => {

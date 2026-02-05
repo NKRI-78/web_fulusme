@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import Transaction from "@/app/components/notif/transaction/Transaction";
 
 export const metadata: Metadata = {
-  title: "Transaction | FuLusme",
-  description: "Transaction",
+  title: "Transaksi | FuLusme",
+  description: "Transaksi",
 };
 
 const TransactionPage: React.FC = () => {

@@ -6,7 +6,7 @@ import { FileViewerProvider } from "./hooks/useFileViewerModal";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Fulusme.id – Platform Investasi",
+  title: "Fulusme.id",
   description:
     "FuLusme adalah platform crowdfunding yang mendukung berbagai proyek melalui investasi sukuk yang aman, transparan, dan sesuai prinsip syariah.",
   icons: {
