@@ -91,8 +91,8 @@ const shareOptions: ShareOption[] = [
         className="h-10 w-10"
       />
     ),
-    action: () => {
-      navigator.clipboard.writeText(shareUrl);
+    action: async () => {
+      await navigator.clipboard.writeText(shareUrl);
       Swal.fire({
         toast: true,
         position: "top-end",

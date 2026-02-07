@@ -9,6 +9,7 @@ import { API_BACKEND } from "@app/utils/constant";
 import { setCookie } from "@/app/helper/cookie";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
+import { AuthResponse } from "@/app/interfaces/auth/auth";
 
 const schema = z
   .object({
@@ -73,7 +74,7 @@ export default function RegisterForm({
 
       const response = await axios.post(
         `${API_BACKEND}/api/v1/auth/register`,
-        payload
+        payload,
       );
 
       const result: AuthResponse = response.data;
@@ -87,8 +88,12 @@ export default function RegisterForm({
       let errorMessage = "Terjadi kesalahan. Silakan coba lagi.";
       if (axios.isAxiosError(err)) {
         if (err.response) {
-          errorMessage =
+          const msg =
             err.response.data?.message || JSON.stringify(err.response.data);
+          if (msg === "USER_ALREADY_EXIST") {
+            errorMessage =
+              "Email sudah digunakan. Silakan masuk atau gunakan email lain.";
+          }
         } else if (err.request) {
           errorMessage = "Tidak ada respon dari server.";
         } else {

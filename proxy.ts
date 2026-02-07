@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { AuthDataResponse } from "./app/interfaces/auth/auth";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const userCookie = request.cookies.get("user")?.value;
   const { pathname } = request.nextUrl;
 
@@ -9,6 +10,7 @@ export function middleware(request: NextRequest) {
     !userCookie &&
     (pathname.startsWith("/dashboard") ||
       pathname.startsWith("/create-project") ||
+      pathname.startsWith("/profile") ||
       pathname.startsWith("/dokumen-pelengkap"))
   ) {
     return NextResponse.redirect(new URL("/", request.url));
@@ -30,5 +32,11 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard/:path*", "/create-project", "/dokumen-pelengkap"],
+  matcher: [
+    "/",
+    "/dashboard/:path*",
+    "/create-project",
+    "/dokumen-pelengkap",
+    "/profile",
+  ],
 };

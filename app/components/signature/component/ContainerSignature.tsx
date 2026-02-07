@@ -4,9 +4,10 @@ import React, { useRef, useState, useEffect } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 function getSignatureDataUrlWithWhiteBackground(
-  canvas: HTMLCanvasElement
+  canvas: HTMLCanvasElement,
 ): string {
   const tempCanvas = document.createElement("canvas");
   tempCanvas.width = canvas.width;
@@ -40,17 +41,15 @@ const ContainerSignature: React.FC<Props> = ({ formData, onSignatureSave }) => {
 
   const uploadSignature = async (dataUrl: string): Promise<string | null> => {
     const blob = await (await fetch(dataUrl)).blob();
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", "signature");
-    formData.append("media", blob, "signature.png");
+
+    const file = new File([blob], "signature.png", {
+      type: blob.type,
+    });
 
     try {
-      const res = await axios.post(
-        "https://api-media.inovatiftujuh8.com/api/v1/media/upload",
-        formData
-      );
-      const fileUrl = res.data?.data?.path;
+      const uploadMediaResult = await uploadMediaService(file);
+
+      const fileUrl = uploadMediaResult.data?.path;
 
       if (fileUrl) {
         Swal.fire({

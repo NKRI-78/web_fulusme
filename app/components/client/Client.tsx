@@ -5,12 +5,12 @@ import { Provider } from "react-redux";
 import { usePathname } from "next/navigation";
 
 import ModalLogout from "@components/modal/logout/Logout";
-import Footer from "@components/footer/Footer";
 import FooterV2 from "@components/footer/FooterV2";
-import Navbar from "@components/navbar/Navbar";
 import NavbarV2 from "../navbar/NavbarV2";
 
 import localFont from "next/font/local";
+import { getAuthUser } from "@/app/helper/getAuthUser";
+import { SocketProvider } from "@/app/providers/socket-provider";
 
 const geistSans = localFont({
   src: "../../fonts/GeistVF.woff",
@@ -31,9 +31,11 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const isViewer = pathname.startsWith("/viewer");
+  const user = getAuthUser();
 
   return (
     <Provider store={store}>
+      <SocketProvider userId={user?.id ?? ""} />
       <div
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -49,7 +51,6 @@ export default function ClientLayout({
             </div>
             {pathname === "/form-pemodal" ||
             pathname === "/form-penerbit" ||
-            // pathname === "/terms-conditions" ||
             pathname === "/dashboard" ||
             pathname === "/form-signature" ||
             pathname === "/form-pemodal-perusahaan" ||

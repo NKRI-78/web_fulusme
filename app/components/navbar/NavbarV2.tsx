@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Tooltip from "../Tooltip";
 import { BellRing, Menu, X } from "lucide-react";
 import { AppDispatch, RootState } from "@redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +14,6 @@ import RegisterOtp from "../auth/register/RegisterOtp";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
 import Cookies from "js-cookie";
 import axios from "axios";
-import Tippy from "@tippyjs/react";
 import { User } from "@/app/interfaces/user/IUser";
 import {
   FORM_INDEX_CACHE_KEY,
@@ -22,11 +22,13 @@ import {
   FORM_PIC_CACHE_KEY,
 } from "@/app/(defaults)/form-penerbit/form-cache-key";
 import { getUser } from "@/app/lib/auth";
-import { createSocket } from "@/app/utils/sockets";
 import { fetchInboxThunk } from "@/redux/slices/inboxSlice";
 import { API_BACKEND } from "@/app/utils/constant";
 import { setBadge } from "@/redux/slices/badgeSlice";
-import Image from "next/image";
+import CircularProgressIndicator from "../CircularProgressIndicator";
+import { getSocket } from "@/app/utils/sockets";
+import { getAuthUser } from "@/app/helper/getAuthUser";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 const PRIMARY_COLOR = "#10565C";
 const ON_PRIMARY_COLOR = "#FFFFFF";
@@ -57,16 +59,8 @@ const NavbarV2: React.FC = () => {
   const badgeCount = useSelector((state: RootState) => state.badge.badgeCount);
 
   useEffect(() => {
-    const user = getUser();
-    console.log("user token");
-    console.log(user?.id);
-
-    const socket = createSocket(user?.id ?? "-");
-
-    socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
-      console.log("Socket connected user id :", user?.id ?? "-");
-    });
+    const socket = getSocket();
+    const user = getAuthUser();
 
     socket.on("inbox-update", async () => {
       console.log("Test");
@@ -76,8 +70,8 @@ const NavbarV2: React.FC = () => {
         setBadge(
           Array.isArray(inboxes?.payload)
             ? inboxes.payload.filter((inbox) => !inbox.is_read).length
-            : 0
-        )
+            : 0,
+        ),
       );
     });
 
@@ -99,8 +93,8 @@ const NavbarV2: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setHydrated(true);
     setLoadingUser(true);
+    setHydrated(true);
     const user = getUser();
 
     try {
@@ -138,8 +132,8 @@ const NavbarV2: React.FC = () => {
         setBadge(
           Array.isArray(inboxes?.payload)
             ? inboxes.payload.filter((inbox) => !inbox.is_read).length
-            : 0
-        )
+            : 0,
+        ),
       );
     }
   };
@@ -189,8 +183,8 @@ const NavbarV2: React.FC = () => {
         <NavLayout>
           <NavLogo sticky={isSticky} />
 
-          {loadingUser ? (
-            <div className="text-white">loading</div>
+          {(loadingUser && userData == null) || !hydrated ? (
+            <CircularProgressIndicator size={32} />
           ) : (
             <>
               {hydrated && userData !== null ? (
@@ -667,19 +661,16 @@ const NotifIcon: React.FC<{ className?: string; badgeCount: number }> = ({
   badgeCount = 0,
 }) => {
   return (
-    <Tippy
-      content="Inbox"
-      className="bg-black/50 text-sm font-medium backdrop-blur-md px-4 py-1 rounded-md text-white"
-    >
-      <Link href="/inbox" className="relative inline-block">
+    <Link href="/inbox" className="relative inline-block">
+      <Tooltip label="Notifikasi">
         <BellRing size={18} className={className} />
         {badgeCount > 0 && (
           <span className="absolute -top-2 -right-1 bg-red-500 text-white text-[10px] min-w-[14px] h-[14px] rounded-full flex items-center justify-center">
             {badgeCount}
           </span>
         )}
-      </Link>
-    </Tippy>
+      </Tooltip>
+    </Link>
   );
 };
 

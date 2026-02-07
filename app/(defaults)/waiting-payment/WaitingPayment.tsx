@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import moment from "moment";
 import { API_BACKEND } from "@/app/utils/constant";
-import { createSocket } from "@/app/utils/sockets";
 import { Socket as ClientSocket } from "socket.io-client";
 import Cookies from "js-cookie";
 import Link from "next/link";
@@ -20,6 +19,8 @@ import SkeletonWaitingPayment from "./components/SkeletonWaitingPayment";
 import { motion } from "framer-motion";
 import CaraPembayaran from "./components/HowToPayment";
 import { getUser } from "@/app/lib/auth";
+import { getSocket, onSocketReady } from "@/app/utils/sockets";
+import { getAuthUser } from "@/app/helper/getAuthUser";
 
 export interface PaymentMethod {
   id: number;
@@ -57,7 +58,7 @@ export interface PaymentData {
 
 const WaitingPayment = () => {
   const [waitingPayment, setWaitingPayment] = useState<PaymentData | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
@@ -89,7 +90,7 @@ const WaitingPayment = () => {
       try {
         const response = await axios.get(
           `${API_BACKEND}/api/v1/transaction/project/detail/${orderId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
 
         const data = response.data.data;
@@ -139,27 +140,42 @@ const WaitingPayment = () => {
 
   // Socket listener
   useEffect(() => {
-    const user = getUser();
-    const userId = user?.id;
-    const socket: ClientSocket = createSocket(userId ?? "-");
+    // const socket = getSocket();
 
-    socket.on("payment-update", () => {
-      if (hasPaidRef.current) return;
-      hasPaidRef.current = true;
-      setStatusLoading(true);
+    // socket.on("payment-update", () => {
+    //   if (hasPaidRef.current) return;
+    //   hasPaidRef.current = true;
+    //   setStatusLoading(true);
 
-      setTimeout(() => {
-        setStatusLoading(false);
-        setWaitingPayment((prev) => ({ ...prev!, payment_status: "PAID" }));
+    //   setTimeout(() => {
+    //     setStatusLoading(false);
+    //     setWaitingPayment((prev) => ({ ...prev!, payment_status: "PAID" }));
+    //     setTimeout(() => {
+    //       router.push("/dashboard/investor-transaction");
+    //     }, 2000);
+    //   }, 1500);
+    // });
+
+    onSocketReady((socket) => {
+      console.log("[waiting payment] socket ready", socket.id);
+
+      socket.on("payment-update", async () => {
+        console.log("payment-update", socket.id);
+        if (hasPaidRef.current) return;
+        hasPaidRef.current = true;
+        setStatusLoading(true);
+
+        await fetchDetailPayment();
+
         setTimeout(() => {
-          router.push("/dashboard/investor-transaction");
-        }, 2000);
-      }, 1500);
+          setStatusLoading(false);
+          setWaitingPayment((prev) => ({ ...prev!, payment_status: "PAID" }));
+          setTimeout(() => {
+            router.push("/dashboard/investor-transaction");
+          }, 2000);
+        }, 1500);
+      });
     });
-
-    return () => {
-      socket.disconnect();
-    };
   }, [orderId]);
 
   // Fetch detail
@@ -181,6 +197,11 @@ const WaitingPayment = () => {
       expireMoment && expireMoment.isValid()
         ? expireMoment.toDate().getTime()
         : moment(waitingPayment.created_at).toDate().getTime() + 30 * 60 * 1000;
+
+    console.log("expireMoment & expireTime", {
+      expireMoment,
+      expireTime,
+    });
 
     const createdTime = moment(waitingPayment.created_at).toDate().getTime();
     const duration = Math.floor((expireTime - createdTime) / 1000);
@@ -325,17 +346,6 @@ const WaitingPayment = () => {
         </div>
       </motion.div>
 
-      {/* Detail PENDING */}
-      {waitingPayment.payment_status === "PENDING" && !expired && (
-        <DetailPembayaran
-          invoice={invoice}
-          waitingPayment={waitingPayment}
-          showQRVA={true}
-          handleCopy={handleCopy}
-          note={null}
-        />
-      )}
-
       {/* Detail PAID */}
       {waitingPayment.payment_status === "PAID" && (
         <DetailPembayaran
@@ -346,6 +356,19 @@ const WaitingPayment = () => {
           note=""
         />
       )}
+
+      {/* Detail PENDING */}
+      {waitingPayment.payment_status === "PENDING" &&
+        !expired &&
+        !statusLoading && (
+          <DetailPembayaran
+            invoice={invoice}
+            waitingPayment={waitingPayment}
+            showQRVA={true}
+            handleCopy={handleCopy}
+            note={null}
+          />
+        )}
 
       {/* Detail REFUNDED */}
       {waitingPayment.payment_status === "REFUNDED" && (
@@ -387,8 +410,8 @@ const DetailPembayaran = ({
         {waitingPayment.payment_status === "REFUNDED"
           ? "Detail Pembayaran (Refunded)"
           : waitingPayment.payment_status === "PAID"
-          ? "Detail Pembayaran (Lunas)"
-          : "Metode Pembayaran"}
+            ? "Detail Pembayaran (Lunas)"
+            : "Metode Pembayaran"}
       </h3>
 
       {note && (
@@ -487,7 +510,7 @@ const DetailPembayaran = ({
             method={inv.payment_method}
             vaNumber={inv.vaNumber}
           />
-        ) : null
+        ) : null,
       )}
 
     {/* Tombol balik dashboard buat PAID / REFUNDED */}

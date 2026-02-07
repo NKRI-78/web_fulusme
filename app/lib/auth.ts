@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { AuthDataResponse } from "../interfaces/auth/auth";
 
 export function getUser(): AuthDataResponse | null {
   const userCookie = Cookies.get("user");

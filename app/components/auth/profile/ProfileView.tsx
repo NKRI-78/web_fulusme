@@ -10,6 +10,7 @@ import CircularProgressIndicator from "../../CircularProgressIndicator";
 import ProfilePenerbitView from "./ProfilePenerbitView";
 import ProfilePemodalPribadi from "./ProfilePemodalPribadiView";
 import ProfilePemodalPerusahaan from "./ProfilePemodalPerusahaanView";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 const ProfileView: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);

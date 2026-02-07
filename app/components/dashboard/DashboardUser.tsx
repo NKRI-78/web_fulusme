@@ -5,6 +5,7 @@ import { PanelContent } from "./PanelContent";
 import Modal from "@/app/helper/Modal";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
 import RegisterOtp from "../auth/register/RegisterOtp";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 const DashboardUser: React.FC<{
   user: AuthDataResponse | null;

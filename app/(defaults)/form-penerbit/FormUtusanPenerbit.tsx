@@ -16,6 +16,8 @@ import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PIC_CACHE_KEY } from "./form-cache-key";
 import { UpdateFieldValue } from "./PenerbitParent";
 import { setCookie } from "@/app/helper/cookie";
+import { uploadMediaService } from "@/app/helper/mediaService";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 interface FormSchema {
   photo: string;
@@ -47,6 +49,7 @@ const getFormCache = (): FormSchema | null => {
 interface FormUtusanPenerbitProps {
   isUpdate: boolean;
   profile: ProfileUpdate | null;
+  loadingUpdate: boolean;
   onSubmitCallback: () => void;
   onUpdateCallback: (val: UpdateFieldValue) => void;
 }
@@ -54,6 +57,7 @@ interface FormUtusanPenerbitProps {
 const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
   isUpdate,
   profile,
+  loadingUpdate,
   onSubmitCallback,
   onUpdateCallback,
 }) => {
@@ -124,6 +128,11 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
     localStorage.setItem(FORM_PIC_CACHE_KEY, JSON.stringify(formFields));
   }, [formFields]);
 
+  //* check form ini apakah update atau engga
+  const disabledFormWhenUpdate = (formId: string): boolean => {
+    return isUpdate && formId !== formKey;
+  };
+
   //* onSubmit
   const onSubmitEvent = async () => {
     setLoading(true);
@@ -151,7 +160,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
-          }
+          },
         );
 
         setCookie(
@@ -159,7 +168,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
           JSON.stringify({
             ...user,
             role: "emiten",
-          } as AuthDataResponse)
+          } as AuthDataResponse),
         );
 
         await Swal.fire({
@@ -237,10 +246,14 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
       newErrors.noKtp = "No KTP kurang dari 16 digit";
     }
     if (!formFields.suratKuasa) {
-      newErrors.suratKuasa = "Surat Kuasa wajib disertakan";
+      if (!disabledFormWhenUpdate("surat-kuasa")) {
+        newErrors.suratKuasa = "Surat Kuasa wajib disertakan";
+      }
     }
-    if (!formFields.fileKtp) {
-      newErrors.fileKtp = "File KTP wajib disertakan";
+    if (!formFields.fileKtp || formFields.fileKtp === "-") {
+      if (!disabledFormWhenUpdate("upload-ktp-pic")) {
+        newErrors.fileKtp = "File KTP wajib disertakan";
+      }
     }
 
     setErrors(newErrors);
@@ -273,18 +286,11 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
 
     const photoFile = new File([u8arr], "Foto Selfie", { type: mime });
 
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", "Foto Selfie");
-    formData.append("media", photoFile);
+    const uploadPhotoResult = await uploadMediaService(photoFile);
 
-    try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData
-      );
-      return res.data?.data?.path ?? "";
-    } catch (error) {
+    if (uploadPhotoResult.ok && uploadPhotoResult.data) {
+      return uploadPhotoResult.data.path;
+    } else {
       return "-";
     }
   };
@@ -311,6 +317,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
           resetPhotoResult={() => {
             setFormFields({ ...formFields, photo: "" });
           }}
+          disabled={isUpdate}
           photoResult={(photoSelfie) => {
             if (photoSelfie) {
               setFormFields({ ...formFields, photo: photoSelfie });
@@ -342,6 +349,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
           <TextField
             placeholder="Jabatan"
             value={formFields.jabatan}
+            disabled={isUpdate}
             onChange={(val) => {
               setFormFields({ ...formFields, jabatan: val.target.value });
               if (val) {
@@ -358,6 +366,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
             placeholder="Nomor KTP"
             type="number"
             maxLength={16}
+            disabled={isUpdate}
             value={formFields.noKtp}
             onChange={(val) => {
               setFormFields({ ...formFields, noKtp: val.target.value });
@@ -386,6 +395,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
                   fileName="Surat Kuasa"
                   accept=".pdf,.word"
                   fileUrl={formFields.suratKuasa}
+                  disabled={disabledFormWhenUpdate("surat-kuasa")}
                   onChange={(fileUrl) => {
                     setFormFields({ ...formFields, suratKuasa: fileUrl });
                     if (fileUrl) {
@@ -408,6 +418,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
                   fileName="File KTP"
                   accept=".pdf,.jpg,.jpeg,.png"
                   fileUrl={formFields.fileKtp}
+                  disabled={disabledFormWhenUpdate("upload-ktp-pic")}
                   onChange={(fileUrl) => {
                     setFormFields({ ...formFields, fileKtp: fileUrl });
                     if (fileUrl) {
@@ -423,8 +434,15 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
           <div className="my-10"></div>
 
           <div className="w-full flex justify-end gap-4 mt-6">
-            <FormButton disabled={loading} onClick={handleSubmit}>
-              {loading ? "Loading..." : isUpdate ? "Update" : "Lanjutkan"}
+            <FormButton
+              disabled={loading || loadingUpdate}
+              onClick={handleSubmit}
+            >
+              {loading || loadingUpdate
+                ? "Loading..."
+                : isUpdate
+                  ? "Update"
+                  : "Lanjutkan"}
             </FormButton>
           </div>
         </div>

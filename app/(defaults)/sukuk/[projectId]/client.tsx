@@ -12,7 +12,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Cookies from "js-cookie";
 import axios from "axios";
-import defaultImage from "/public/images/default-image.png";
 import { API_BACKEND } from "@/app/utils/constant";
 import Custom404 from "@/app/not-found";
 import ProgressBar from "../components/ProgressBar";
@@ -31,10 +30,10 @@ import { fetchDashboardClient } from "@/redux/slices/dashboardSlice";
 import InputNominalLot from "../components/InputNominal";
 
 type Props = {
-  id: string;
+  projectId: string;
 };
 
-const SukukClient = ({ id }: Props) => {
+const SukukClient = ({ projectId }: Props) => {
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
 
@@ -81,11 +80,11 @@ const SukukClient = ({ id }: Props) => {
 
   //* fetch project detail by id
   useEffect(() => {
-    if (id) {
+    if (projectId) {
       const fetchProject = async () => {
         try {
           const response = await axios.get(
-            `${API_BACKEND}/api/v1/project/detail/${id}`,
+            `${API_BACKEND}/api/v1/project/detail/${projectId}`,
           );
           setProject(response.data.data);
         } catch (error: any) {
@@ -113,7 +112,7 @@ const SukukClient = ({ id }: Props) => {
 
   const handleConfirm = (val: Record<string, any>) => {
     localStorage.setItem("invest_amount", JSON.stringify(val));
-    router.push(`/payment-method/${id}`);
+    router.push(`/payment-method/${projectId}`);
   };
 
   return isNotFound ? (
@@ -146,7 +145,7 @@ const SukukClient = ({ id }: Props) => {
                           src={
                             item.path && item.path.startsWith("https")
                               ? item.path
-                              : defaultImage.src
+                              : "/images/default-image.png"
                           }
                           alt={`Slide ${idx + 1}`}
                           className="w-full h-64 object-cover"
@@ -416,8 +415,10 @@ const SukukClient = ({ id }: Props) => {
                 className="bg-transparent w-full outline-none text-black"
               />
               <button
-                onClick={() => {
-                  navigator.clipboard.writeText(project?.location.url ?? "-");
+                onClick={async () => {
+                  await navigator.clipboard.writeText(
+                    project?.location.url ?? "-",
+                  );
                   Swal.fire({
                     toast: true,
                     position: "top-end",

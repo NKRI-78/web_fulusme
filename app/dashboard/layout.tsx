@@ -18,6 +18,7 @@ import { getTransactions } from "@/actions/fetchTransaction";
 import axios from "axios";
 import { API_BACKEND } from "../utils/constant";
 import { InboxResponse } from "../components/notif/inbox-interface";
+import { AuthDataResponse } from "../interfaces/auth/auth";
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -45,7 +46,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
             });
             const list = res.data["data"] as InboxResponse[];
             const filteredTransactions = list.filter(
-              (inbox: InboxResponse) => inbox.type === "transaction"
+              (inbox: InboxResponse) => inbox.type === "transaction",
             );
             setTransactionCount(filteredTransactions.length);
           } catch (error) {
@@ -72,7 +73,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
                 headers: {
                   Authorization: `Bearer ${user.token}`,
                 },
-              }
+              },
             );
             const portfolios: any[] = res.data.data.portfolio;
             setPortfolioCount(portfolios.length);
@@ -182,7 +183,7 @@ const Sidebar: React.FC<{
       className={clsx(
         "fixed top-0 pt-28 left-0 h-screen z-60 bg-white text-gray-900 shadow-xl flex flex-col transition-all duration-300",
         "hidden md:flex",
-        expand ? "md:w-44 lg:w-60" : "md:w-20"
+        expand ? "md:w-44 lg:w-60" : "md:w-20",
       )}
     >
       {children}
@@ -198,7 +199,7 @@ const DashboardContent: React.FC<{
     <div
       className={clsx(
         "min-h-screen w-full pt-28 px-4 transition-all duration-300",
-        expand ? "md:ml-48 lg:ml-64" : "md:ml-24"
+        expand ? "md:ml-48 lg:ml-64" : "md:ml-24",
       )}
     >
       {children}
@@ -215,7 +216,7 @@ const SidebarHeader: React.FC<{
     <div
       className={clsx(
         "flex px-4 pb-4 border-b border-gray-700",
-        expand ? "justify-between" : "justify-center"
+        expand ? "justify-between" : "justify-center",
       )}
     >
       <span className={clsx("font-bold text-lg", !expand && "hidden")}>
@@ -246,7 +247,7 @@ const SidebarMenu: React.FC<{
     <div
       className={clsx(
         "flex flex-col flex-1 mt-4 space-y-1",
-        !expand ? "items-center" : ""
+        !expand ? "items-center" : "",
       )}
     >
       {children}
@@ -280,7 +281,7 @@ const SidebarMenuItem: React.FC<{
       <div
         className={clsx(
           "relative flex items-center gap-3 px-4 py-3 text-sm transition-color hover:bg-gray-100",
-          active ? "bg-gray-100" : "bg-white"
+          active ? "bg-gray-100" : "bg-white",
         )}
       >
         <Icon className="w-5 h-5" />

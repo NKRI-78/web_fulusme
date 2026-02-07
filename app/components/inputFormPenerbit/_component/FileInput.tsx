@@ -5,6 +5,38 @@ import Swal from "sweetalert2";
 import clsx from "clsx";
 import { API_BACKEND_MEDIA } from "@/app/utils/constant";
 import { compressImage } from "@/app/helper/CompressorImage";
+import { getAuthUser } from "@/app/helper/getAuthUser";
+import { getMediaService, uploadMediaService } from "@/app/helper/mediaService";
+
+const IMAGE_MIME = ["image/png", "image/jpeg"];
+const DOC_MIME = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+
+const IMAGE_EXT = ["png", "jpg", "jpeg"];
+const DOC_EXT = ["pdf", "doc", "docx"];
+
+function getFileExtension(file: File) {
+  return file.name.split(".").pop()?.toLowerCase();
+}
+
+function isAllowedFile(file: File) {
+  const ext = getFileExtension(file);
+  console.log("getFileExtension", ext);
+  if (!ext) return false;
+
+  const isImage = IMAGE_EXT.includes(ext) && IMAGE_MIME.includes(file.type);
+  const isDoc = DOC_EXT.includes(ext) && DOC_MIME.includes(file.type);
+
+  console.log("isImage & isDoc", {
+    isImage,
+    isDoc,
+  });
+
+  return isDoc || isImage;
+}
 
 interface FileInputProps {
   fileName: string;
@@ -13,6 +45,7 @@ interface FileInputProps {
   onChange: (e: string) => void;
   errorText?: string;
   accept?: string;
+  disabled?: boolean;
 }
 
 const FileInput: React.FC<FileInputProps> = ({
@@ -22,6 +55,7 @@ const FileInput: React.FC<FileInputProps> = ({
   onChange,
   errorText,
   accept,
+  disabled = false,
 }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -44,12 +78,20 @@ const FileInput: React.FC<FileInputProps> = ({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (loading) return;
 
-    setLoading(true);
-    console.log("loading? " + loading);
-
     const file = e.target.files?.[0];
     if (!file) {
       setLoading(false);
+      return;
+    }
+
+    if (!isAllowedFile(file)) {
+      Swal.fire({
+        title: "Gagal",
+        text: "Tipe file tidak didukung. Hanya PDF/DOC atau PNG/JPG.",
+        icon: "warning",
+        timer: 3000,
+      });
+      e.target.value = "";
       return;
     }
 
@@ -64,60 +106,39 @@ const FileInput: React.FC<FileInputProps> = ({
       return;
     }
 
-    const isImage = file.type.startsWith("image/");
-    const compressedFile = isImage ? await compressImage(file) : file;
+    setLoading(true);
 
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", fileName);
-    formData.append("media", compressedFile);
+    const uploadMediaResponse = await uploadMediaService(file, (progress) => {
+      const total = progress.total ?? 1;
+      const percentCompleted = Math.round((progress.loaded * 100) / total);
+      setUploadProgress(percentCompleted);
+    });
 
-    try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData,
-        {
-          onUploadProgress: (progress) => {
-            const total = progress.total ?? 1;
-            const percentCompleted = Math.round(
-              (progress.loaded * 100) / total
-            );
-            console.log("Progress:", percentCompleted, "%");
-            setUploadProgress(percentCompleted);
-          },
-        }
-      );
-
-      const url = res.data?.data?.path;
-      if (url) {
-        onChange(url);
-      } else {
-        Swal.fire({
-          title: "Gagal",
-          text: "Upload gagal, tidak ada URL yang diterima.",
-          icon: "warning",
-          timer: 3000,
-        });
-      }
-    } catch (error) {
-      console.error("Gagal upload:", error);
+    if (uploadMediaResponse.ok && uploadMediaResponse.data) {
+      onChange(uploadMediaResponse.data.path);
+    } else {
       Swal.fire({
-        title: "Gagal",
-        text: "Upload gagal. Silakan coba lagi.",
         icon: "warning",
+        title: "Gagal",
+        text:
+          uploadMediaResponse.error_code === "unauthorized"
+            ? "Silakan login kembali untuk melanjutkan upload."
+            : "Upload gagal. Silakan coba lagi.",
         timer: 3000,
       });
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (
     <div className="space-y-2">
       <label
         className={clsx(
-          "relative inline-flex items-center gap-2 px-2 md:px-6 py-2 rounded-lg cursor-pointer font-semibold text-[12px] text-white overflow-hidden",
-          loading ? "bg-gray-400" : "bg-gray-700 hover:bg-gray-800"
+          "relative inline-flex items-center gap-2 px-2 md:px-6 py-2 rounded-lg font-semibold text-[12px] text-white overflow-hidden",
+          loading || disabled
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-gray-700 hover:bg-gray-800 cursor-pointer",
         )}
       >
         {loading && (
@@ -138,8 +159,8 @@ const FileInput: React.FC<FileInputProps> = ({
             className="hidden"
             ref={fileInputRef}
             onChange={handleFileChange}
-            accept={accept}
-            disabled={loading}
+            accept={accept ?? ".pdf,.doc,.docx"}
+            disabled={disabled || loading}
           />
         </div>
 

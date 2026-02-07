@@ -70,6 +70,8 @@ export default function MultiStepFormWrapper() {
   const [loadingGetFormIndex, setLoadingGetFormIndex] = useState<boolean>(true);
   const [formIndex, setFormIndex] = useState<number>(0);
 
+  const [loadingUpdateDoc, setLoadingUpdateDoc] = useState<boolean>(false);
+
   const userCookie = getUser();
 
   //* load cache form index
@@ -104,10 +106,6 @@ export default function MultiStepFormWrapper() {
             },
           });
 
-          console.log("update profile? " + isUpdate);
-          console.log("profile = ");
-          console.log(res.data["data"]);
-
           setUserProfile({ ...res.data["data"], form_key: formKey });
         }
       } catch (error) {
@@ -122,6 +120,8 @@ export default function MultiStepFormWrapper() {
 
   //* update data register
   const onUpdateDataRegister = async (updateFieldValue: UpdateFieldValue) => {
+    setLoadingUpdateDoc(true);
+
     const isKTP = formKey?.endsWith("upload-ktp") ?? false;
     const isNPWP = formKey?.endsWith("upload-npwp") ?? false;
     const isSusunanManajemen = isKTP || isNPWP;
@@ -148,7 +148,7 @@ export default function MultiStepFormWrapper() {
           payload,
           {
             headers: { Authorization: `Bearer ${userCookie.token}` },
-          }
+          },
         );
 
         localStorage.removeItem(FORM_INDEX_CACHE_KEY);
@@ -177,6 +177,8 @@ export default function MultiStepFormWrapper() {
         timer: 3000,
         timerProgressBar: true,
       });
+    } finally {
+      setLoadingUpdateDoc(false);
     }
   };
 
@@ -192,6 +194,7 @@ export default function MultiStepFormWrapper() {
             <FormUtusanPenerbit
               profile={userProfile}
               isUpdate={isUpdate !== null}
+              loadingUpdate={loadingUpdateDoc}
               onUpdateCallback={(val) => {
                 onUpdateDataRegister(val);
               }}

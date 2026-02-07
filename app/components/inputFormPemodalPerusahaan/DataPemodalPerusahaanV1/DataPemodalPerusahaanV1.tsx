@@ -11,6 +11,7 @@ import { FaFileAlt } from "react-icons/fa";
 import { fetchJenisPerusahaan } from "@/app/utils/fetchJenisPerusahaan";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { useSearchParams } from "next/navigation";
+import { uploadMediaService } from "@/app/helper/mediaService";
 
 interface Props {
   formData: {
@@ -57,7 +58,7 @@ interface Props {
   onChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => void;
   onCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
@@ -95,7 +96,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
     useState<any>(null);
 
   const [uploadStatus, setUploadStatus] = useState<{ [key: string]: boolean }>(
-    {}
+    {},
   );
 
   type OptionValue = {
@@ -144,7 +145,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
     const fetchBank = async () => {
       try {
         const response = await axios.get(
-          `https://api.gateway.langitdigital78.com/v1/bank`
+          `https://api.gateway.langitdigital78.com/v1/bank`,
         );
         setBank(response.data.data.beneficiary_banks);
       } catch (error) {
@@ -163,7 +164,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
     const matchedOption = optionsBussines.find(
       (option) =>
         String(option.value) === String(formData.jenisPerusahaan) ||
-        String(option.label) === String(formData.jenisPerusahaan)
+        String(option.label) === String(formData.jenisPerusahaan),
     );
 
     if (matchedOption) {
@@ -184,7 +185,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
       setSelectedDistrictPemodalPerusahaan(formData.districtPemodalPerusahaan);
     if (formData.subDistrictPemodalPerusahaan)
       setSelectedSubDistrictPemodalPerusahaan(
-        formData.subDistrictPemodalPerusahaan
+        formData.subDistrictPemodalPerusahaan,
       );
     if (formData.namaBank) setSelectedBank(formData.namaBank);
     if (formData.namaBank_efek) setSelectedBankEfek(formData.namaBank_efek);
@@ -281,28 +282,28 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
     (province: { code: string; nama: string }) => ({
       value: province.code,
       label: province.nama,
-    })
+    }),
   );
 
   const customOptionsCity = city?.map(
     (city: { code: string; nama: string }) => ({
       value: city.code,
       label: city.nama,
-    })
+    }),
   );
 
   const customOptionsDistrict = district?.map(
     (district: { code: string; nama: string }) => ({
       value: district.code,
       label: district.nama,
-    })
+    }),
   );
 
   const customOptionsSubDistrict = subDistrict?.map(
     (subDistrict: { code: string; nama: string }) => ({
       value: subDistrict.code,
       label: subDistrict.nama,
-    })
+    }),
   );
 
   const customOptionsBank = useMemo(() => {
@@ -341,20 +342,10 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
       return;
     }
 
-    const compressedFile = await compressImage(file);
-    const formDataUpload = new FormData();
-    formDataUpload.append("folder", "web");
-    formDataUpload.append("subfolder", keyName);
-    formDataUpload.append("media", compressedFile);
-
     setUploadStatus((prev) => ({ ...prev, [keyName]: true }));
     try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formDataUpload
-      );
-
-      const fileUrl = res.data?.data?.path;
+      const uploadMediaResult = await uploadMediaService(file);
+      const fileUrl = uploadMediaResult.data?.path;
       if (fileUrl) {
         const labelMap: { [key: string]: string } = {
           aktaPerubahanTerakhirUrl: "Akta Perubahan Terakhir",
@@ -415,8 +406,8 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
       backgroundColor: state.isSelected
         ? "#14b8a6"
         : state.isFocused
-        ? "#ccfbf1"
-        : "white",
+          ? "#ccfbf1"
+          : "white",
       color: state.isSelected ? "white" : "black",
       cursor: "pointer",
     }),

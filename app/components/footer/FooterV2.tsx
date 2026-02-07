@@ -61,7 +61,7 @@ const Footer: React.FC = () => {
               </a>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <a href="/pasar-sekunder" className="hover:underline">
                 Pasar Sekunder
               </a>
             </li>
@@ -169,6 +169,10 @@ const Footer: React.FC = () => {
             </a>
           </div>
         </div>
+      </div>
+
+      <div className="w-full flex items-center justify-center mt-6">
+        <p className="text-white/50 text-sm">@FulusmeV3/2025</p>
       </div>
     </footer>
   );
