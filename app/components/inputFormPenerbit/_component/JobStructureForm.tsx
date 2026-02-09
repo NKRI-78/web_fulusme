@@ -19,8 +19,15 @@ interface JobStructureFormProps {
   isKomisaris?: boolean;
   hasDirekturUtama?: boolean;
   hasKomisarisUtama?: boolean;
+  isUpdate: boolean;
   updateIdentity: string;
   updateFormKey?: string;
+}
+
+function capitalizeFullName(name: string): string {
+  return name
+    .replace(/\s+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 const JobStructureForm: React.FC<JobStructureFormProps> = ({
@@ -32,6 +39,7 @@ const JobStructureForm: React.FC<JobStructureFormProps> = ({
   isKomisaris = false,
   hasDirekturUtama = false,
   hasKomisarisUtama = false,
+  isUpdate,
   updateIdentity,
   updateFormKey,
 }) => {
@@ -72,7 +80,11 @@ const JobStructureForm: React.FC<JobStructureFormProps> = ({
               <TextField
                 placeholder="Nama"
                 value={field.value ?? ""}
-                onChange={(e) => field.onChange(e.target.value)}
+                disabled={isUpdate}
+                onChange={(e) => {
+                  const parsed = capitalizeFullName(e.target.value);
+                  return field.onChange(parsed);
+                }}
                 className="flex-[1]"
                 errorText={fieldState.error?.message}
               />
@@ -118,6 +130,7 @@ const JobStructureForm: React.FC<JobStructureFormProps> = ({
                   onChange={(val) => field.onChange(val?.value)}
                   placeholder="Jabatan"
                   className="text-sm"
+                  isDisabled={isUpdate}
                   styles={{
                     control: (base) => ({
                       ...base,
@@ -144,6 +157,7 @@ const JobStructureForm: React.FC<JobStructureFormProps> = ({
               placeholder="No KTP"
               value={field.value ?? ""}
               type="text"
+              disabled={isUpdate}
               maxLength={16}
               onChange={(e) => {
                 const onlyDigits = e.target.value
@@ -175,6 +189,7 @@ const JobStructureForm: React.FC<JobStructureFormProps> = ({
               <FileInput
                 fileName="Upload KTP"
                 placeholder="Upload KTP"
+                disabled={isUpdate}
                 fileUrl={field.value ?? ""}
                 onChange={(fileUrl) => field.onChange(fileUrl)}
                 errorText={fieldState.error?.message}
@@ -196,6 +211,7 @@ const JobStructureForm: React.FC<JobStructureFormProps> = ({
                 fileName="Upload NPWP"
                 placeholder="Upload NPWP"
                 fileUrl={field.value ?? ""}
+                disabled={isUpdate}
                 onChange={(fileUrl) => field.onChange(fileUrl)}
                 errorText={fieldState.error?.message}
                 accept=".pdf,.jpg,.jpeg,.png,.heic,.heif"

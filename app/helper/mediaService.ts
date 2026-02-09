@@ -12,9 +12,14 @@ export interface MediaServiceResponse<T extends object> {
 
 /// =========[ UPLOAD MEDIA SERVICE ]===========
 
+type UploadMediaOptions = {
+  timeout?: number;
+  onUploadProgress?: (progress: AxiosProgressEvent) => void;
+};
+
 export async function uploadMediaService(
   file: File,
-  onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
+  { timeout = 15000, onUploadProgress = () => {} }: UploadMediaOptions = {},
 ): Promise<MediaServiceResponse<UploadMediaData>> {
   const isImage = file.type.startsWith("image/");
   const compressedImage = await compressImage(file);
@@ -38,6 +43,7 @@ export async function uploadMediaService(
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
+          timeout: timeout,
           onUploadProgress: onUploadProgress,
         },
       );

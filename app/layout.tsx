@@ -4,6 +4,7 @@ import "reactjs-tiptap-editor/style.css";
 import ClientLayout from "@components/client/Client";
 import { FileViewerProvider } from "./hooks/useFileViewerModal";
 import { Metadata } from "next";
+import { BASE_URL } from "./utils/constant";
 
 export const metadata: Metadata = {
   title: "Fulusme.id",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+  metadataBase: BASE_URL,
   openGraph: {
     title: "Fulusme.id",
     description:
