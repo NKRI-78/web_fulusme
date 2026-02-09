@@ -380,8 +380,14 @@ const FormPenerbit: React.FC<Props> = ({
       if (isUpdate) return handleUpdateRegister(values);
       return handleRegisterCompany(values);
     },
-    (e) => {
-      console.log(e);
+    () => {
+      Swal.fire({
+        title: "Data Tidak Lengkap / Tidak Valid",
+        text: "Beberapa kolom berisi data yang tidak valid atau belum diisi. Harap koreksi sebelum melanjutkan.",
+        icon: "warning",
+        timer: 10000,
+        showConfirmButton: false,
+      });
     },
   );
 
@@ -827,6 +833,7 @@ const FormPenerbit: React.FC<Props> = ({
                   key={field._id}
                   namePrefix="direktur"
                   index={index}
+                  isUpdate={isUpdate}
                   isKomisaris={false}
                   hasDirekturUtama={hasDirekturUtama}
                   updateFormKey={formKey}
@@ -839,8 +846,9 @@ const FormPenerbit: React.FC<Props> = ({
                 label="+ Tambah Direktur"
                 errorText={(errors.direktur?.message as string) || undefined}
                 message="Anda hanya dapat menambahkan maksimal 3 Direktur."
-                disabled={!canAddDirektur}
+                disabled={!canAddDirektur || isUpdate}
                 onClick={() => {
+                  if (isUpdate) return;
                   if (!canAddDirektur) {
                     setError("direktur", {
                       type: "max",
@@ -861,6 +869,7 @@ const FormPenerbit: React.FC<Props> = ({
                   namePrefix="komisaris"
                   index={index}
                   isKomisaris
+                  isUpdate={isUpdate}
                   hasKomisarisUtama={hasKomisarisUtama}
                   updateFormKey={formKey}
                   updateIdentity={`${index}-komisaris`}
@@ -872,8 +881,9 @@ const FormPenerbit: React.FC<Props> = ({
                 label="+ Tambah Komisaris"
                 errorText={(errors.komisaris?.message as string) || undefined}
                 message="Anda hanya dapat menambahkan maksimal 3 Komisaris."
-                disabled={!canAddKomisaris}
+                disabled={!canAddKomisaris || isUpdate}
                 onClick={() => {
+                  if (isUpdate) return;
                   if (!canAddKomisaris) {
                     setError("komisaris", {
                       type: "max",

@@ -439,7 +439,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
               onClick={handleSubmit}
             >
               {loading || loadingUpdate
-                ? "Loading..."
+                ? "Memuat.."
                 : isUpdate
                   ? "Update"
                   : "Lanjutkan"}

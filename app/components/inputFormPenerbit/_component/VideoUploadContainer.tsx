@@ -32,9 +32,8 @@ const VideoUploaderContainer: React.FC<VideoUploaderContainerProps> = ({
 
   const uploadFile = async (file: File): Promise<string | null> => {
     try {
-      const uploadMediaResult = await uploadMediaService(
-        file,
-        (progressEvent) => {
+      const uploadMediaResult = await uploadMediaService(file, {
+        onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
             const percent = Math.round(
               (progressEvent.loaded * 100) / progressEvent.total,
@@ -42,7 +41,7 @@ const VideoUploaderContainer: React.FC<VideoUploaderContainerProps> = ({
             setProgress(percent);
           }
         },
-      );
+      });
 
       const photoUrl = uploadMediaResult.data?.path;
       if (!photoUrl) return null;

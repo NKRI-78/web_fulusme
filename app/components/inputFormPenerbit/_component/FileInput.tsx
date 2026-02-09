@@ -108,10 +108,12 @@ const FileInput: React.FC<FileInputProps> = ({
 
     setLoading(true);
 
-    const uploadMediaResponse = await uploadMediaService(file, (progress) => {
-      const total = progress.total ?? 1;
-      const percentCompleted = Math.round((progress.loaded * 100) / total);
-      setUploadProgress(percentCompleted);
+    const uploadMediaResponse = await uploadMediaService(file, {
+      onUploadProgress: (progress) => {
+        const total = progress.total ?? 1;
+        const percentCompleted = Math.round((progress.loaded * 100) / total);
+        setUploadProgress(percentCompleted);
+      },
     });
 
     if (uploadMediaResponse.ok && uploadMediaResponse.data) {
