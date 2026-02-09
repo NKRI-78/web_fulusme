@@ -12,6 +12,7 @@ import { compressImage } from "@/app/helper/CompressorImage";
 import UpdateRing from "../component/UpdateRing";
 import ContainerSelfie from "../component/ContainerSelfie";
 import { uploadMediaService } from "@/app/helper/mediaService";
+import FileInput from "../../inputFormPenerbit/_component/FileInput";
 
 interface Props {
   formData: {
@@ -183,75 +184,13 @@ const ComponentDataPribadi: React.FC<Props> = ({
   const urlWilayah = "https://api.wilayah.site";
 
   const today = new Date();
-
-  // get tahun dikurang 17
   const maxDate = new Date(
     today.getFullYear() - 17,
     today.getMonth(),
     today.getDate(),
   );
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-
-    const keyName = e.target.getAttribute("data-keyname");
-    if (!file || !keyName) return;
-
-    if (file.size > 10 * 1024 * 1024) {
-      Swal.fire({
-        title: "Warning",
-        text: `Ukuran file maksimal 10MB!`,
-        icon: "warning",
-        timer: 3000,
-        timerProgressBar: true,
-        showConfirmButton: false,
-      });
-      return;
-    }
-
-    try {
-      const uploadMediaResult = await uploadMediaService(file);
-
-      const fileUrl = uploadMediaResult.data?.path;
-
-      if (fileUrl) {
-        const labelMap: { [key: string]: string } = {
-          ktpUrl: "KTP",
-          npwpUrl: "NPWP Perusahaan",
-        };
-
-        const formattedKey = labelMap[keyName] || keyName;
-
-        Swal.fire({
-          title: "Berhasil",
-          text: `Upload ${formattedKey} berhasil!`,
-          icon: "success",
-          timer: 3000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-        });
-
-        onUploadKTP(fileUrl, keyName ?? "");
-      } else {
-        alert("Upload gagal, tidak ada URL yang diterima.");
-      }
-    } catch (error) {
-      console.error("Gagal upload KTP:", error);
-      Swal.fire({
-        title: "Gagal",
-        text: `Upload ${keyName} gagal. Silakan coba lagi.`,
-        icon: "warning",
-        timer: 3000,
-      });
-    } finally {
-      setUploadStatus((prev) => ({ ...prev, [keyName]: false }));
-    }
-  };
-
   const handleFotoChange = async (file: File, keyName: string) => {
-    // const file = e.target.files?.[0];
-
-    // const keyName = e.target.getAttribute("data-keyname");
     if (!file || !keyName) return;
 
     if (file.size > 10 * 1024 * 1024) {
@@ -276,26 +215,8 @@ const ComponentDataPribadi: React.FC<Props> = ({
       }
 
       onUploadSelfie(fileUrl);
-      console.log(fileUrl, "fileUrl");
 
       if (fileUrl) {
-        const labelMap: { [key: string]: string } = {
-          ktpUrl: "KTP",
-          npwpUrl: "NPWP Perusahaan",
-          fotoPemodalUrl: "Foto",
-        };
-
-        const formattedKey = labelMap[keyName] || keyName;
-
-        Swal.fire({
-          title: "Berhasil",
-          text: `Upload ${formattedKey} berhasil!`,
-          icon: "success",
-          timer: 3000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-        });
-
         onUploadKTP(fileUrl, keyName ?? "");
       } else {
         alert("Upload gagal, tidak ada URL yang diterima.");
@@ -611,6 +532,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
           </div> */}
           <ContainerSelfie
             defaultPhoto={formData.fotoPemodalUrlPribadi}
+            disabled={isUpdate}
             photoResult={(file) => {
               if (file) {
                 handleFotoChange(file, "fotoPemodalUrl");
@@ -656,6 +578,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
             <input
               type="text"
               name="nik"
+              disabled={isUpdate}
               value={formData.nik}
               onChange={onChange}
               placeholder="NIK KTP"
@@ -673,7 +596,8 @@ const ComponentDataPribadi: React.FC<Props> = ({
             <input
               type="text"
               name="npwp"
-              value={formData.noNpwpFormatted || ""}
+              disabled={isUpdate}
+              value={formData.npwp || ""}
               onChange={(e) => {
                 const rawValue = e.target.value.replace(/\D/g, "");
                 let formattedValue = rawValue;
@@ -735,6 +659,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
               </label>
               <input
                 type="text"
+                disabled={isUpdate}
                 name="tempatLahir"
                 value={formData.tempatLahir}
                 onChange={onChange}
@@ -753,6 +678,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                 Tanggal Lahir <span className="text-red-500">*</span>
               </label>
               <Flatpickr
+                disabled={isUpdate}
                 options={{
                   dateFormat: "d-m-Y",
                   maxDate: maxDate,
@@ -768,7 +694,6 @@ const ComponentDataPribadi: React.FC<Props> = ({
                     );
                     const day = String(selectedDate.getDate()).padStart(2, "0");
 
-                    // const formatted = selectedDate.toISOString().split("T")[0];
                     const formatted = `${year}-${month}-${day}`;
 
                     onChange({
@@ -804,6 +729,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                   type="radio"
                   name="jenisKelamin"
                   value={gender}
+                  disabled={isUpdate}
                   checked={formData.jenisKelamin === gender}
                   onChange={() => onGenderChange(gender)}
                   className="form-radio text-[#4821C2]"
@@ -833,6 +759,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                   type="radio"
                   name="statusPernikahan"
                   value={wedding}
+                  disabled={isUpdate}
                   checked={formData.statusPernikahan === wedding}
                   onChange={() => onWeddingChange(wedding)}
                   className="form-radio text-[#4821C2]"
@@ -861,49 +788,17 @@ const ComponentDataPribadi: React.FC<Props> = ({
 
           <UpdateRing
             identity={`${dataProfile?.form}`}
-            // formKey={dataProfile?.form}
             formKey="upload-ktp-pic"
           >
-            {/* Input File yang disembunyikan */}
-            <input
-              type="file"
-              id="ktpUpload"
-              className="hidden"
-              onChange={handleFileChange}
-              disabled={uploadStatus["ktpUrl"] === true}
-              accept="image/*"
-              data-keyname="ktpUrl"
+            <FileInput
+              fileName="KTP"
+              accept=".pdf,.jpg,.png"
+              fileUrl={formData.ktpUrl}
+              onChange={(fileUrl) => {
+                onUploadKTP(fileUrl, "ktpUrl");
+              }}
+              errorText={errors?.ktpUrl?.[0] ?? ""}
             />
-
-            {/* Label sebagai tombol */}
-            <label
-              htmlFor="ktpUpload"
-              className="inline-flex text-sm items-center gap-2 py-2 px-4 bg-gray-800 text-white rounded-lg cursor-pointer hover:bg-gray-800 transition"
-              // className={`inline-flex items-center gap-2 px-4 py-2 ${
-              //   uploadStatus["ktpUrl"]
-              //     ? "bg-gray-400 cursor-not-allowed"
-              //     : "bg-[#505050] hover:bg-gray-800"
-              // } text-white rounded-md transition`}
-            >
-              <>
-                <FaFileAlt />
-                Upload Dokumen
-              </>
-            </label>
-            <>
-              {isClient && formData.ktpUrl && (
-                <button
-                  type="button"
-                  onClick={onLihatKTP}
-                  className="text-blue-600 underline text-sm block mt-2 mb-2"
-                >
-                  Lihat KTP
-                </button>
-              )}
-            </>
-            {errors?.ktpUrl && (
-              <p className="text-red-500 text-sm mt-1">{errors.ktpUrl[0]}</p>
-            )}
           </UpdateRing>
         </div>
 
@@ -920,6 +815,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                 <input
                   type="radio"
                   name="pendidikanTerakhir"
+                  disabled={isUpdate}
                   value={education}
                   checked={formData.pendidikanTerakhir === education}
                   onChange={() => onEducationChange(education)}
@@ -950,6 +846,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                   type="radio"
                   name="pekerjaan"
                   value={option}
+                  disabled={isUpdate}
                   checked={formData.pekerjaan === option}
                   onChange={() => onPekerjaanChange(option)}
                   className="form-radio text-purple-600"
@@ -963,6 +860,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
             <input
               type="text"
               name="pekerjaanLainnya"
+              disabled={isUpdate}
               value={formData.pekerjaanLainnya}
               onChange={onChange}
               placeholder="Lainnya"
@@ -991,6 +889,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                 value={selectedProvincePribadi}
                 options={customOptions}
                 formatOptionLabel={formatOptionLabel}
+                isDisabled={isUpdate}
                 onChange={(e) => {
                   setSelectedProvincePribadi(e);
                   setSelectedCityPribadi(null);
@@ -1020,7 +919,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                   setPosCode("");
                 }}
                 placeholder="Pilih Kota"
-                isDisabled={!selectedProvincePribadi}
+                isDisabled={!selectedProvincePribadi || isUpdate}
               />
               {errors?.cityPribadi && (
                 <p className="text-red-500 text-sm mt-1">
@@ -1040,7 +939,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                   setPosCode("");
                 }}
                 placeholder="Pilih Kecamatan"
-                isDisabled={!selectedCityPribadi}
+                isDisabled={!selectedCityPribadi || isUpdate}
               />
               {errors?.districtPribadi && (
                 <p className="text-red-500 text-sm mt-1">
@@ -1059,7 +958,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
                   setPosCode("");
                 }}
                 placeholder="Pilih Kelurahan"
-                isDisabled={!selectedDistrictPribadi}
+                isDisabled={!selectedDistrictPribadi || isUpdate}
               />
               {errors?.subDistrictPribadi && (
                 <p className="text-red-500 text-sm mt-1">
@@ -1073,6 +972,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
               type="number"
               name="posCode"
               placeholder="Kode Pos"
+              disabled={isUpdate}
               value={posCode || formData.posCode || ""}
               onChange={onChange}
               className="border rounded p-2 w-full mb-2 placeholder:text-sm"
@@ -1089,6 +989,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
             name="addres"
             value={formData.addres}
             onChange={onChange}
+            disabled={isUpdate}
             placeholder="Alamat sesuai KTP dan alamat domisili"
             className="border p-2 w-full rounded resize-none placeholder:text-sm"
             rows={4}
@@ -1105,6 +1006,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
               type="text"
               name="nama_ahli_waris"
               value={formData.nama_ahli_waris}
+              disabled={isUpdate}
               onChange={onChange}
               placeholder="Nama ahli waris"
               className="border p-2 w-full rounded mb-0 placeholder:text-sm"
@@ -1124,6 +1026,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
               type="text"
               name="phone_ahli_waris"
               value={formData.phone_ahli_waris}
+              disabled={isUpdate}
               onChange={onChange}
               placeholder="Nomor telepon ahli waris"
               className="border p-2 w-full rounded mb-0 placeholder:text-sm"
@@ -1146,6 +1049,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
             className="mt-0"
             value={selectedBank || null}
             options={customOptionsBank}
+            isDisabled={isUpdate}
             formatOptionLabel={formatOptionLabel}
             onChange={(e) => {
               setSelectedBank(e);
@@ -1166,6 +1070,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
             name="nomorRekening"
             inputMode="numeric"
             pattern="[0-9]*"
+            disabled={isUpdate}
             placeholder="Masukkan Nomor Rekening"
             value={formData.nomorRekening}
             onChange={onChange}
@@ -1205,6 +1110,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
             name="cabangBank"
             placeholder="Masukkan Cabang Bank"
             value={formData.cabangBank}
+            disabled={isUpdate}
             onChange={onChange}
             className="border rounded p-2 w-full placeholder:text-sm"
           />
