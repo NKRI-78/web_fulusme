@@ -8,6 +8,7 @@ import { compressImage } from "@/app/helper/CompressorImage";
 import UpdateRing from "../component/UpdateRing";
 import { NumericFormat } from "react-number-format";
 import { uploadMediaService } from "@/app/helper/mediaService";
+import FileInput from "../../inputFormPenerbit/_component/FileInput";
 
 interface Props {
   formData: {
@@ -492,6 +493,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
             name="namaPerusahaan"
             value={formData.namaPerusahaan}
             onChange={onChange}
+            disabled={isUpdate}
             placeholder="Masukan Nama Perusahaan"
             className="border p-2 w-full rounded mb-0"
           />
@@ -513,6 +515,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
             name="jabatan"
             value={formData.jabatan}
             onChange={onChange}
+            disabled={isUpdate}
             placeholder="Masukan Jabatan"
             className="border p-2 w-full rounded mb-0"
           />
@@ -533,6 +536,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
               <Select
                 className="mt-0"
                 value={selectedProvincePekerjaan}
+                isDisabled={isUpdate}
                 options={customOptions}
                 formatOptionLabel={formatOptionLabel}
                 onChange={(e) => {
@@ -563,7 +567,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
                   setPosCode("");
                 }}
                 placeholder="Pilih Kota"
-                isDisabled={!selectedProvincePekerjaan}
+                isDisabled={!selectedProvincePekerjaan || isUpdate}
               />
               {errors?.cityPekerjaan && (
                 <p className="text-red-500 text-sm mt-1">
@@ -583,7 +587,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
                   setPosCode("");
                 }}
                 placeholder="Pilih Kecamatan"
-                isDisabled={!selectedCityPekerjaan}
+                isDisabled={!selectedCityPekerjaan || isUpdate}
               />
               {errors?.districtPekerjaan && (
                 <p className="text-red-500 text-sm mt-1">
@@ -602,7 +606,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
                   setPosCode("");
                 }}
                 placeholder="Pilih Kelurahan"
-                isDisabled={!selectedDistrictPekerjaan}
+                isDisabled={!selectedDistrictPekerjaan || isUpdate}
               />
               {errors?.subDistrictPekerjaan && (
                 <p className="text-red-500 text-sm mt-1">
@@ -616,6 +620,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
               type="number"
               name="posCodePekerjaan"
               placeholder="Kode Pos"
+              disabled={isUpdate}
               value={formData.posCodePekerjaan || ""}
               onChange={onChange}
               className="border rounded p-2 w-full mb-2 placeholder:text-sm"
@@ -631,6 +636,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
             name="alamatPerusahaan"
             value={formData.alamatPerusahaan}
             onChange={onChange}
+            disabled={isUpdate}
             placeholder="Masukan Alamat Perusahaan"
             className="border p-2 w-full rounded resize-none"
             rows={4}
@@ -653,6 +659,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
             decimalSeparator=","
             prefix="Rp "
             placeholder="Rp ..."
+            disabled={isUpdate}
             value={formData.penghasilanTahunan}
             onValueChange={(values) => {
               onPenghasilanTahunan(values.value);
@@ -680,42 +687,15 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
             File maksimal berukuran 10mb
           </p>
           <UpdateRing identity={`${dataProfile?.form}`} formKey="slip-gaji">
-            {/* Input File yang disembunyikan */}
-            <input
-              type="file"
-              id="slipGajiUrlUpload"
-              className="hidden"
-              onChange={handleFileChange}
-              disabled={uploadStatus["slipGajiUrl"] === true}
-              accept="application/pdf"
-              data-keyname="slipGajiUrl"
+            <FileInput
+              fileName="Slip Gaji"
+              accept=".pdf,.jpg,.png"
+              fileUrl={formData.slipGajiUrl}
+              onChange={(fileUrl) => {
+                onUploadKTP(fileUrl, "slipGajiUrl");
+              }}
+              errorText={errors?.slipGajiUrl?.[0] ?? ""}
             />
-
-            {/* Label sebagai tombol */}
-            <label
-              htmlFor="slipGajiUrlUpload"
-              className="inline-flex text-sm items-center gap-2 py-2 px-4 bg-gray-800 text-white rounded-lg cursor-pointer hover:bg-gray-800 transition"
-            >
-              <>
-                <FaFileAlt />
-                Upload Dokumen
-              </>
-            </label>
-            {typeof window !== "undefined" && formData.slipGajiUrl && (
-              <button
-                type="button"
-                onClick={onLihatSlipGaji}
-                className="text-blue-600 underline text-sm block mt-2 mb-2"
-              >
-                Lihat Slip Gaji
-              </button>
-            )}
-
-            {errors?.slipGajiUrl && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.slipGajiUrl[0]}
-              </p>
-            )}
           </UpdateRing>
         </div>
 
@@ -735,6 +715,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
                   type="radio"
                   name="tujuanInvestasi"
                   value={option}
+                  disabled={isUpdate}
                   checked={formData.tujuanInvestasi === option}
                   onChange={() => onTujuanInvetasi(option)}
                   className="form-radio text-purple-600"
@@ -749,6 +730,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
               name="tujuanInvestasiLainnya"
               value={formData.tujuanInvestasiLainnya}
               onChange={onChange}
+              disabled={isUpdate}
               placeholder="Lainnya"
               className="mt-3 border p-2 w-full rounded text-sm"
             />
@@ -781,6 +763,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
                 <input
                   type="radio"
                   name="toleransiResiko"
+                  disabled={isUpdate}
                   value={item}
                   checked={formData.toleransiResiko === item}
                   onChange={() => onToleransiResiko(item)}
@@ -812,6 +795,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
                   type="radio"
                   name="pengalamanInvestasi"
                   value={item}
+                  disabled={isUpdate}
                   checked={formData.pengalamanInvestasi === item}
                   onChange={() => onPengalamanInvestasi(item)}
                   className="form-radio text-[#4821C2]"
@@ -841,6 +825,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
                 <input
                   type="radio"
                   name="pengetahuanPasarModal"
+                  disabled={isUpdate}
                   value={item}
                   checked={formData.pengetahuanPasarModal === item}
                   onChange={() => onPengetahuanPasarModal(item)}
@@ -875,6 +860,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
               className="mt-0"
               value={selectedBank || null}
               options={customOptionsBank}
+              isDisabled={isUpdate}
               formatOptionLabel={formatOptionLabel}
               onChange={(e) => {
                 setSelectedBank(e);
@@ -894,6 +880,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
               type="text"
               name="nomorRekening_efek"
               inputMode="numeric"
+              disabled={isUpdate}
               pattern="[0-9]*"
               placeholder="Masukkan Nomor Rekening"
               value={formData.nomorRekening_efek}
@@ -913,6 +900,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
             </label>
             <input
               type="text"
+              disabled={isUpdate}
               name="namaPemilik_efek"
               placeholder="Masukkan Nama Pemilik Rekening"
               value={formData.namaPemilik_efek}

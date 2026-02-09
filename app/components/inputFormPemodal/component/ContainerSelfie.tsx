@@ -9,12 +9,14 @@ interface Props {
   photoResult: (result: File | null) => void;
   errorText?: string;
   defaultPhoto?: string;
+  disabled?: boolean;
 }
 
 const ContainerSelfie: React.FC<Props> = ({
   photoResult,
   errorText,
   defaultPhoto,
+  disabled = false,
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -161,11 +163,15 @@ const ContainerSelfie: React.FC<Props> = ({
 
       <div
         onClick={() => {
+          if (disabled) return;
           if (!isCameraActive) {
             startCamera();
           }
         }}
-        className="flex-1 flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-black cursor-pointer overflow-hidden"
+        className={[
+          "flex-1 flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-black overflow-hidden",
+          disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
+        ].join(" ")}
       >
         {photo ? (
           <div className="w-full relative flex flex-col items-center">

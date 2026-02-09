@@ -10,7 +10,7 @@ import { useSearchParams } from "next/navigation";
 
 import ComponentDataPribadi from "./informasiPribadi/DataPribadi";
 import ComponentDataPekerjaan from "./informasiPekerjaan/DataPekerjaan";
-import { API_BACKEND } from "@/app/utils/constant";
+import { API_BACKEND, IS_DEV, IS_PROD } from "@/app/utils/constant";
 import FileViewerModal from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
 import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
@@ -115,8 +115,6 @@ const FormPemodal: React.FC = () => {
           namaPemilik: data.fullname,
         }));
 
-        console.log("data && isUpdate", data && isUpdate);
-
         if (data && isUpdate) {
           localStorage.setItem("dataProfile", JSON.stringify(data));
           const placeDateBirth = `${data.investor.ktp?.place_datebirth}, ${data.investor.ktp?.place_datebirth}`;
@@ -195,7 +193,7 @@ const FormPemodal: React.FC = () => {
             setujuKebenaranData: true,
             setujuRisikoInvestasi: true,
             signature: data.signature_path || "",
-            slipGajiUrl: data.slip_gaji || "",
+            slipGajiUrl: (data.slip_gaji && data.slip_gaji !== "-") || "",
             namaBank_efek: data.profile_security_account?.account_bank
               ? {
                   value: data.profile_security_account.account_bank,
@@ -223,6 +221,18 @@ const FormPemodal: React.FC = () => {
   const [previewFileUrl, setPreviewFileUrl] = useState<string | undefined>(
     undefined,
   );
+
+  //* handle alert ketika halaman di reload / close
+  useEffect(() => {
+    if (IS_DEV) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
 
   function getFormIndex(form: string | null): number {
     if (!form) return 0;
@@ -900,7 +910,6 @@ const FormPemodal: React.FC = () => {
     const result = schemaDataPribadi.safeParse(dataPribadi);
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
-      console.log("errors =", errors);
       setErrorsPribadi(errors);
       return false;
     }
@@ -921,10 +930,13 @@ const FormPemodal: React.FC = () => {
   };
 
   const handleNext = () => {
-    console.log("next");
+    if (isUpdate) {
+      handleSubmit();
+      return;
+    }
+
     if (selectedIndex === 0) {
       const isValid = validateStep0();
-      console.log(isValid, "isValid");
       if (!isValid) return;
     }
 
@@ -965,8 +977,29 @@ const FormPemodal: React.FC = () => {
       return;
     }
 
-    const isValid = await validateStep1();
-    if (!isValid) return;
+    if (isUpdate) {
+      let formIsValid = false;
+      if (selectedIndex === 0) {
+        formIsValid = validateStep0();
+      }
+
+      if (selectedIndex === 1) {
+        formIsValid = await validateStep1();
+      }
+      if (!formIsValid) {
+        Swal.fire({
+          title: "Data Tidak Lengkap / Tidak Valid",
+          text: "Beberapa kolom berisi data yang tidak valid atau belum diisi. Harap koreksi sebelum melanjutkan.",
+          icon: "warning",
+          timer: 10000,
+          showConfirmButton: false,
+        });
+        return;
+      }
+    } else {
+      const isValid = await validateStep1();
+      if (!isValid && IS_PROD) return;
+    }
 
     try {
       const data = JSON.parse(savedData);
@@ -1029,22 +1062,16 @@ const FormPemodal: React.FC = () => {
                 ? data.tujuanInvestasiLainnya
                 : data.tujuanInvestasi,
             tolerance: data.toleransiResiko,
-            experience: data.pengalamanInvestasi,
+            experience: data.pengalamanvInvestasi,
             pengetahuan_pasar_modal: data.pengetahuanPasarModal,
           },
         };
 
-        const response = await axios.post(
-          `${API_BACKEND}/api/v1/auth/assign/role`,
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${user?.token}`,
-            },
+        await axios.post(`${API_BACKEND}/api/v1/auth/assign/role`, payload, {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
           },
-        );
-
-        console.log("Payload akan dikirim:", payload);
+        });
 
         setCookie(
           "user",
@@ -1057,11 +1084,7 @@ const FormPemodal: React.FC = () => {
         const { dataType, val } = mapFormToDataType(form, data);
         const payload = { val };
 
-        console.log("Payload update:", {
-          payload,
-        });
-
-        const response = await axios.put(
+        await axios.put(
           `${API_BACKEND}/api/v1/document/update/user/${dataType}`,
           payload,
           {
@@ -1086,7 +1109,7 @@ const FormPemodal: React.FC = () => {
         timerProgressBar: true,
       }).then(() => {
         setSelectedIndex(0);
-        router.push("/dashboard");
+        router.replace("/dashboard");
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -1214,13 +1237,15 @@ const FormPemodal: React.FC = () => {
 
       {/* Navigation Buttons */}
       <div className="flex justify-end gap-5 mt-10">
-        <button
-          onClick={() => setSelectedIndex((prev) => prev - 1)}
-          disabled={selectedIndex === 0}
-          className="px-4 py-2 bg-gray-800 text-white rounded disabled:opacity-50"
-        >
-          Kembali
-        </button>
+        {!isUpdate && (
+          <button
+            onClick={() => setSelectedIndex((prev) => prev - 1)}
+            disabled={selectedIndex === 0}
+            className="px-4 py-2 bg-gray-800 text-white rounded disabled:opacity-50"
+          >
+            Kembali
+          </button>
+        )}
 
         {selectedIndex < 1 ? (
           <button
@@ -1238,7 +1263,7 @@ const FormPemodal: React.FC = () => {
                 : "bg-[#3C2B90] hover:bg-[#2e2176]"
             }`}
           >
-            Selanjutnya
+            {isUpdate ? "Update Data" : "Selanjutnya"}
           </button>
         ) : (
           <button
