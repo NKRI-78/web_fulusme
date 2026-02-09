@@ -182,6 +182,17 @@ export default function MultiStepFormWrapper() {
     }
   };
 
+  //* handle alert ketika halaman di reload / close
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
   return (
     <div className="py-28 bg-white">
       {loadingGetFormIndex ? (
@@ -219,7 +230,7 @@ export default function MultiStepFormWrapper() {
                 onUpdateDataRegister(val);
               }}
               onSubmidCallback={() => {
-                router.push("/dashboard");
+                router.replace("/dashboard");
               }}
             />
           )}
