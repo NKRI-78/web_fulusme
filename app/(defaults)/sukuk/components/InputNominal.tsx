@@ -268,7 +268,7 @@ export default function InputNominalLot({
           </div>
 
           <div className="flex justify-between text-xs text-gray-600">
-            <div className="flex gap-x-1">
+            <div className="flex gap-x-1 font-semibold">
               <span>Sisa Kuota</span>
               <span>Rp {formatRupiah(quota - numericValue)}</span>
             </div>

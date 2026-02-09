@@ -22,11 +22,13 @@ import {
   FORM_PIC_CACHE_KEY,
 } from "@/app/(defaults)/form-penerbit/form-cache-key";
 import { getUser } from "@/app/lib/auth";
-import { createSocket } from "@/app/utils/sockets";
 import { fetchInboxThunk } from "@/redux/slices/inboxSlice";
 import { API_BACKEND } from "@/app/utils/constant";
 import { setBadge } from "@/redux/slices/badgeSlice";
 import CircularProgressIndicator from "../CircularProgressIndicator";
+import { getSocket } from "@/app/utils/sockets";
+import { getAuthUser } from "@/app/helper/getAuthUser";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 const PRIMARY_COLOR = "#10565C";
 const ON_PRIMARY_COLOR = "#FFFFFF";
@@ -57,16 +59,8 @@ const NavbarV2: React.FC = () => {
   const badgeCount = useSelector((state: RootState) => state.badge.badgeCount);
 
   useEffect(() => {
-    const user = getUser();
-    console.log("user token");
-    console.log(user?.id);
-
-    const socket = createSocket(user?.id ?? "-");
-
-    socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
-      console.log("Socket connected user id :", user?.id ?? "-");
-    });
+    const socket = getSocket();
+    const user = getAuthUser();
 
     socket.on("inbox-update", async () => {
       console.log("Test");

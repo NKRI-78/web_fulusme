@@ -13,6 +13,7 @@ import TransactionInvestorPage from "../../dashboard/pemodal/TransactionInvestor
 import Center from "../../Center";
 import CircularProgressIndicator from "../../CircularProgressIndicator";
 import { AnimatedWrapper } from "../../AnimatedWrapper";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 const Transaction = () => {
   // data hook

@@ -65,7 +65,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewFileUrl, setPreviewFileUrl] = useState<string | undefined>(
-    undefined
+    undefined,
   );
 
   const [errorsPemodalPerusahaan, setErrorsPemodalPerusahaan] = useState<
@@ -75,7 +75,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({ ...prev, [name]: value }));
@@ -435,13 +435,13 @@ const FormDataPemodalPerusahaan: React.FC = () => {
       };
 
       const response = await axios.post(
-        `https://api-capbridge.langitdigital78.com/api/v1/auth/assign/role`,
+        `${API_BACKEND}/api/v1/auth/assign/role`,
         payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       Swal.fire({
         title: "Berhasil",
@@ -460,7 +460,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
         JSON.stringify({
           ...userData,
           role: "investor institusi",
-        })
+        }),
       );
 
       router.push("/dashboard");
@@ -489,7 +489,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
 
   function mapFormToDataType(
     form: string | null,
-    data: any
+    data: any,
   ): {
     dataType: string;
     val: string;
@@ -565,7 +565,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
               headers: {
                 Authorization: `Bearer ${userData.token}`,
               },
-            }
+            },
           );
 
           setCookie(
@@ -573,7 +573,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
             JSON.stringify({
               ...userData,
               role: "investor institusi",
-            })
+            }),
           );
 
           await Swal.fire({

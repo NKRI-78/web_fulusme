@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import Countdown from "react-countdown";
 import { getCookie, setCookie } from "@/app/helper/cookie";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
 interface RoleModalProps {
   open: boolean;
@@ -81,7 +82,7 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const result: AuthDataResponse = response.data;
@@ -95,7 +96,7 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
             "Content-Type": "application/json",
             Authorization: `${response.data["data"]["otp"]}`, // Ganti yourToken dengan token-mu
           },
-        }
+        },
       );
 
       console.log("✅ Success:", response.data["data"]);
@@ -118,7 +119,7 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
       };
       const { data } = await axios.post(
         `${API_BACKEND}/api/v1/verify-otp`,
-        payloads
+        payloads,
       );
     } catch (err: any) {
       setIsLoading(false);
@@ -141,7 +142,7 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
       };
       const { data } = await axios.post(
         `${API_BACKEND}/api/v1/auth/verify-email`,
-        payloads
+        payloads,
       );
 
       setOtpErrorMessage("");
