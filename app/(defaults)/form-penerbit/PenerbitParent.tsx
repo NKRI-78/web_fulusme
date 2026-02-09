@@ -5,7 +5,7 @@ import PublisherForm from "./FormPenerbit";
 import FormPenerbit from "@/app/components/inputFormPenerbit/FormPenerbit";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
+import { API_BACKEND, IS_DEV } from "@/app/utils/constant";
 import { penerbitUpdateKeys } from "./IUpdateRegistrationKey";
 import FormUtusanPenerbit from "./FormUtusanPenerbit";
 import { getUser } from "@/app/lib/auth";
@@ -184,6 +184,7 @@ export default function MultiStepFormWrapper() {
 
   //* handle alert ketika halaman di reload / close
   useEffect(() => {
+    if (IS_DEV) return;
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
       e.returnValue = "";

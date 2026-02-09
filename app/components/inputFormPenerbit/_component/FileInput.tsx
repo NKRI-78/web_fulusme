@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import { FileText } from "lucide-react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import clsx from "clsx";
-import { API_BACKEND_MEDIA } from "@/app/utils/constant";
-import { compressImage } from "@/app/helper/CompressorImage";
-import { getAuthUser } from "@/app/helper/getAuthUser";
-import { getMediaService, uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@/app/helper/mediaService";
+import path from "path";
 
 const IMAGE_MIME = ["image/png", "image/jpeg"];
 const DOC_MIME = [
@@ -24,16 +21,10 @@ function getFileExtension(file: File) {
 
 function isAllowedFile(file: File) {
   const ext = getFileExtension(file);
-  console.log("getFileExtension", ext);
   if (!ext) return false;
 
   const isImage = IMAGE_EXT.includes(ext) && IMAGE_MIME.includes(file.type);
   const isDoc = DOC_EXT.includes(ext) && DOC_MIME.includes(file.type);
-
-  console.log("isImage & isDoc", {
-    isImage,
-    isDoc,
-  });
 
   return isDoc || isImage;
 }
@@ -62,18 +53,7 @@ const FileInput: React.FC<FileInputProps> = ({
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
-  function getFileNameFromUrl(url?: string | null): string | null {
-    if (!url) return null;
-
-    try {
-      const parsedUrl = new URL(url);
-      const pathname = parsedUrl.pathname;
-      const fileName = pathname.substring(pathname.lastIndexOf("/") + 1);
-      return fileName || null;
-    } catch (error) {
-      return null;
-    }
-  }
+  const [innerFileUrl, setInnerFileUrl] = useState<string | null>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (loading) return;
@@ -117,7 +97,9 @@ const FileInput: React.FC<FileInputProps> = ({
     });
 
     if (uploadMediaResponse.ok && uploadMediaResponse.data) {
-      onChange(uploadMediaResponse.data.path);
+      const pathUrl = uploadMediaResponse.data.path;
+      setInnerFileUrl(pathUrl);
+      onChange(pathUrl);
     } else {
       Swal.fire({
         icon: "warning",
@@ -132,6 +114,8 @@ const FileInput: React.FC<FileInputProps> = ({
 
     setLoading(false);
   };
+
+  const outputFileUrl = innerFileUrl ?? fileUrl ?? null;
 
   return (
     <div className="space-y-2">
@@ -175,15 +159,15 @@ const FileInput: React.FC<FileInputProps> = ({
         )}
       </label>
 
-      {fileUrl && (
+      {outputFileUrl && (
         <div className="flex items-center gap-2 text-xs text-blue-500 font-semibold">
           <a
-            href={fileUrl}
+            href={innerFileUrl?.toString() ?? fileUrl?.toString()}
             target="_blank"
             rel="noopener noreferrer"
             className="truncate max-w-[130px] text-inherit no-underline"
           >
-            {getFileNameFromUrl(fileUrl)}
+            {path.basename(outputFileUrl)}
           </a>
         </div>
       )}
