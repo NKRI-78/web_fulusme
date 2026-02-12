@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 import type { Swiper as SwiperType } from "swiper";
@@ -63,8 +63,6 @@ type Props = {
 };
 
 const Sukuk = ({ id }: Props) => {
-  console.log(id, "id");
-
   const [showModal, setShowModal] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
 
@@ -110,8 +108,6 @@ const Sukuk = ({ id }: Props) => {
         );
         setProject(response.data.data);
       } catch (error: any) {
-        console.error("Gagal ambil data project:", error);
-
         // Cek jika error 404
         if (error.response?.status === 400) {
           setIsNotFound(true);
@@ -145,9 +141,7 @@ const Sukuk = ({ id }: Props) => {
       try {
         const parsedUser = JSON.parse(storedUser);
         setUserData(parsedUser);
-      } catch (err) {
-        console.error("Gagal parsing user dari localStorage", err);
-      }
+      } catch {}
     }
   }, []);
 
@@ -471,9 +465,7 @@ const Sukuk = ({ id }: Props) => {
                   .writeText(window.location.href)
                   .then(() => {
                     alert("Link berhasil disalin!");
-                    setTimeout(() => {
-                      console.log("Alert selesai");
-                    }, 2000);
+                    setTimeout(() => {}, 2000);
                   })
                   .catch(() => {
                     alert("Gagal menyalin link");

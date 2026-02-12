@@ -14,10 +14,9 @@ export const GetProfile = async () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
     const data = response.data;
-    console.log("response data get profile" + data);
     return data;
   } catch (e: any) {
     Swal.fire({
@@ -45,7 +44,7 @@ export const UpdateProfile = async (fullname: string) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
     const data = response.data;
     return data;

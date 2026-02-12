@@ -26,7 +26,6 @@ export async function uploadMediaService(
   const compressedFile = isImage ? compressedImage : file;
 
   const sizeInMB = file.size / (1024 * 1024);
-  console.log(`File size: ${sizeInMB.toFixed(2)} MB`);
 
   const formData = new FormData();
   formData.append("folder", "web");

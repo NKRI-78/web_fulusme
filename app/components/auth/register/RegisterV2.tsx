@@ -10,6 +10,7 @@ import { setCookie } from "@/app/helper/cookie";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
 import { AuthResponse } from "@/app/interfaces/auth/auth";
+import { logger } from "@/utils/logger";
 
 const schema = z
   .object({
@@ -70,8 +71,6 @@ export default function RegisterForm({
 
     setLoading(true);
     try {
-      console.log("Data yang dikirim:", data);
-
       const response = await axios.post(
         `${API_BACKEND}/api/v1/auth/register`,
         payload,
@@ -79,12 +78,9 @@ export default function RegisterForm({
 
       const result: AuthResponse = response.data;
 
-      console.log("Respon backend:", result.data);
       setCookie("user", JSON.stringify(result.data));
       onNext?.();
     } catch (err: any) {
-      console.error("Failed to fetch:", err);
-
       let errorMessage = "Terjadi kesalahan. Silakan coba lagi.";
       if (axios.isAxiosError(err)) {
         if (err.response) {

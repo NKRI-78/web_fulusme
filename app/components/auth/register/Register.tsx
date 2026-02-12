@@ -43,13 +43,11 @@ const Register: React.FC = () => {
             password,
             role: userType === "Individu" ? "1" : "2",
           },
-        })
+        }),
       ).unwrap();
 
       router.push("/");
-    } catch (error: any) {
-      console.error("Register failed:", error);
-    }
+    } catch {}
   };
 
   return (

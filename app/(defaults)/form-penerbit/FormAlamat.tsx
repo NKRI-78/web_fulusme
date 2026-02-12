@@ -58,14 +58,14 @@ const FormAlamat = ({
   useEffect(() => {
     if (watchProvinsi)
       fetchOptions("api/v1/administration/city", watchProvinsi).then((res) =>
-        setKotaList((prev) => ({ ...prev, [index]: res }))
+        setKotaList((prev) => ({ ...prev, [index]: res })),
       );
   }, [watchProvinsi]);
 
   useEffect(() => {
     if (watchKota)
       fetchOptions("api/v1/administration/district", watchKota).then((res) =>
-        setKecamatanList((prev) => ({ ...prev, [index]: res }))
+        setKecamatanList((prev) => ({ ...prev, [index]: res })),
       );
   }, [watchKota]);
 
@@ -74,9 +74,8 @@ const FormAlamat = ({
       fetchOptions("api/v1/administration/subdistrict", watchKecamatan).then(
         (res: any) => {
           const data = res.data || [];
-          console.log("Data ", data);
           setKelurahanList((prev) => ({ ...prev, [index]: res }));
-        }
+        },
       );
   }, [watchKecamatan]);
 
@@ -121,7 +120,7 @@ const FormAlamat = ({
                   if (opt?.value) {
                     const cities = await fetchOptions(
                       "api/v1/administration/city",
-                      opt.label
+                      opt.label,
                     );
                     setKotaList((prev) => ({ ...prev, [index]: cities || [] }));
                   }
@@ -163,7 +162,7 @@ const FormAlamat = ({
                     if (opt?.value) {
                       const dists = await fetchOptions(
                         "api/v1/administration/district",
-                        opt.label
+                        opt.label,
                       );
                       setKecamatanList((prev) => ({
                         ...prev,
@@ -209,7 +208,7 @@ const FormAlamat = ({
                     if (opt?.value) {
                       const subs = await fetchOptions(
                         "api/v1/administration/subdistrict",
-                        opt.label
+                        opt.label,
                       );
                       setKelurahanList((prev) => ({
                         ...prev,
@@ -248,7 +247,7 @@ const FormAlamat = ({
                     // isi otomatis kode pos
                     setValue(
                       `address.${index}.postal_code`,
-                      opt?.zip_code || ""
+                      opt?.zip_code || "",
                     );
                   }}
                 />

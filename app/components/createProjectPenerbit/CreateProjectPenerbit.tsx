@@ -103,9 +103,7 @@ const CreateProjectPenerbit: React.FC = () => {
           ...defaultValues,
           ...parsedCache,
         });
-      } catch (err) {
-        console.error("Cache tidak valid:", err);
-      }
+      } catch {}
     }
   }, [reset]);
 
@@ -148,8 +146,7 @@ const CreateProjectPenerbit: React.FC = () => {
         label: item.name,
         zip_code: item.zip_code,
       }));
-    } catch (error) {
-      console.error("Failed to fetch options:", error);
+    } catch {
       return [];
     }
   };
@@ -236,8 +233,6 @@ const CreateProjectPenerbit: React.FC = () => {
       skipCacheWrite.current = true;
       reset(defaultValues);
 
-      console.log("FORM_CACHE_KEY dihapus = " + FORM_CACHE_KEY);
-
       router.back(); // back to dashboard
     } catch (error) {
       Swal.fire({
@@ -264,7 +259,6 @@ const CreateProjectPenerbit: React.FC = () => {
       if (types) {
         setJenisProyek(types);
       } else {
-        console.log("!types " + !types);
         setJenisProyek([]);
       }
     } catch (error) {
@@ -287,7 +281,6 @@ const CreateProjectPenerbit: React.FC = () => {
       if (types) {
         setJenisInstansiPemberiProyek(types);
       } else {
-        console.log("!types " + !types);
         setJenisInstansiPemberiProyek([]);
       }
     } catch (error) {
@@ -307,10 +300,8 @@ const CreateProjectPenerbit: React.FC = () => {
       const user = res.data["data"];
       if (user) {
         const companyId = user.company.id ?? "";
-        console.log("company id? " + companyId);
         setCompanyId(companyId);
       } else {
-        console.log("!user " + !user);
         setCompanyId(null);
       }
     } catch (error) {
@@ -808,8 +799,6 @@ const CreateProjectPenerbit: React.FC = () => {
                   className="w-full h-[210px] border border-gray-500"
                   cacheMap={field.value}
                   onAddressChange={(data) => {
-                    console.log("lokasi dipilih ");
-                    console.log(data);
                     field.onChange(data);
                   }}
                   errorText={errors.lokasiProyek?.message}
@@ -819,12 +808,7 @@ const CreateProjectPenerbit: React.FC = () => {
           />
 
           <div className="w-full flex justify-end mt-8">
-            <FormButton
-              disabled={loading}
-              onClick={handleSubmit(onSubmit, (errors) => {
-                console.error("VALIDATION ERRORS:", errors);
-              })}
-            >
+            <FormButton disabled={loading} onClick={handleSubmit(onSubmit)}>
               {loading ? "Membuat Project" : "Submit"}
             </FormButton>
           </div>

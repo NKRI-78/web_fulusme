@@ -28,30 +28,23 @@ export function useFormPenerbit() {
 
   useEffect(() => {
     const draftStr = localStorage.getItem("formPenerbitDraft");
-    console.log(`draftStr ${draftStr}`);
-    console.log(`getItem dipanggil`);
     if (draftStr) {
       try {
         const draft = JSON.parse(draftStr);
         setState(draft);
-      } catch (error) {
-        console.error("Gagal memuat draft dari localStorage:", error);
-      }
+      } catch {}
     }
   }, []);
 
   useEffect(() => {
     try {
       localStorage.setItem("formPenerbitDraft", JSON.stringify(state));
-      console.log(`setItem dipanggil`);
-    } catch (error) {
-      console.error("Gagal menyimpan draft ke localStorage:", error);
-    }
+    } catch {}
   }, [state]);
 
   const updateField = <K extends keyof FormPenerbitState>(
     key: K,
-    value: FormPenerbitState[K]
+    value: FormPenerbitState[K],
   ) => {
     setState((prev) => ({
       ...prev,
@@ -62,12 +55,12 @@ export function useFormPenerbit() {
   const updateDirektur = (
     id: string,
     field: keyof JobStructureFormData,
-    updated: string
+    updated: string,
   ) => {
     setState((prev) => ({
       ...prev,
       direktur: prev.direktur.map((item) =>
-        item.id === id ? { ...item, [field]: updated } : item
+        item.id === id ? { ...item, [field]: updated } : item,
       ),
     }));
   };
@@ -99,18 +92,18 @@ export function useFormPenerbit() {
   const updateKomisaris = (
     id: string,
     field: keyof JobStructureFormData,
-    updated: string
+    updated: string,
   ) => {
     setState((prev) => ({
       ...prev,
       komisaris: prev.komisaris.map((item) =>
-        item.id === id ? { ...item, [field]: updated } : item
+        item.id === id ? { ...item, [field]: updated } : item,
       ),
     }));
   };
 
   const addKomisaris = (
-    newKomisarisFromParam?: JobStructureFormData | null
+    newKomisarisFromParam?: JobStructureFormData | null,
   ) => {
     if (state.komisaris.length >= maxStructure) return;
     const newId = `${Date.now()}`;

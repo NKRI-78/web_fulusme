@@ -17,9 +17,7 @@ export default function TakePicturePage() {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
-    } catch (err) {
-      console.error("Gagal mengakses kamera:", err);
-    }
+    } catch (err) {}
   };
 
   const takePhoto = () => {

@@ -87,7 +87,6 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
 
       const result: AuthDataResponse = response.data;
 
-      console.log("TOKEN ", result.token);
       await axios.post(
         `${API_BACKEND}/api/v1/resend-otp`,
         { val: data.email },
@@ -99,11 +98,9 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
         },
       );
 
-      console.log("✅ Success:", response.data["data"]);
       setCookie("user", JSON.stringify(response.data["data"]));
       setStep("otpRegister");
     } catch (error: any) {
-      console.error("❌ Gagal submit:", error);
       alert(error.response.data.message);
     } finally {
       setLoading(false);
@@ -149,13 +146,6 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
       window.location.reload();
     } catch (err: any) {
       setOtpErrorMessage(err.response.data.message);
-      // Swal.fire({
-      //   title: "Permintaan Gagal!",
-      //   text: err.response.data.message,
-      //   icon: "error",
-      //   confirmButtonText: "Ok",
-      // });
-      console.log(err);
     }
   };
 

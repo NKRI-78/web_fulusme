@@ -1,17 +1,16 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { compressImage } from "@/app/helper/CompressorImage";
 import axios from "axios";
-import { API_BACKEND_MEDIA } from "@/app/utils/constant";
 import Swal from "sweetalert2";
-import { fetchJenisUsaha, TypeOption } from "@/app/utils/fetchJenisUsaha";
+import { TypeOption } from "@/app/utils/fetchJenisUsaha";
 import Select from "react-select";
-import { FaFileAlt } from "react-icons/fa";
 import { fetchJenisPerusahaan } from "@/app/utils/fetchJenisPerusahaan";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { useSearchParams } from "next/navigation";
 import { uploadMediaService } from "@/app/helper/mediaService";
+import FileInput from "../../inputFormPenerbit/_component/FileInput";
+import { PhoneInput } from "@/app/(defaults)/form-penerbit/components/PhoneInput";
 
 interface Props {
   formData: {
@@ -132,14 +131,12 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
   const [bank, setBank] = useState<any[]>([]);
 
   const searchParams = useSearchParams();
-  const isUpdate = searchParams.get("update") === "true";
   const formType = searchParams.get("form");
+  const isUpdate = searchParams.get("update") === "true";
 
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const disabledFormWhenUpdate = (formId: string): boolean => {
+    return isUpdate && formId !== formType;
+  };
 
   useEffect(() => {
     const fetchBank = async () => {
@@ -148,9 +145,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           `https://api.gateway.langitdigital78.com/v1/bank`,
         );
         setBank(response.data.data.beneficiary_banks);
-      } catch (error) {
-        console.error("Gagal ambil bank:", error);
-      }
+      } catch {}
     };
 
     fetchBank();
@@ -197,9 +192,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
       try {
         const response = await axios.get(`${urlWilayah}/wilayah/province`);
         setProvince(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil province:", error);
-      }
+      } catch {}
     };
 
     fetchProvince();
@@ -215,9 +208,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           },
         });
         setCity(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil city:", error);
-      }
+      } catch {}
     };
 
     fetchCity();
@@ -233,9 +224,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           },
         });
         setDistrict(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil district:", error);
-      }
+      } catch {}
     };
 
     fetchDistrict();
@@ -251,9 +240,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           },
         });
         setSubDistrict(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil subdistrict:", error);
-      }
+      } catch {}
     };
 
     fetchSubDistrict();
@@ -270,9 +257,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           },
         });
         setPosCode(response?.data?.data?.postal_code || "");
-      } catch (error) {
-        console.error("Gagal ambil kode pos:", error);
-      }
+      } catch {}
     };
 
     fetchPosCode();
@@ -327,9 +312,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    fetchJenisPerusahaan()
-      .then(setOptionsBussines)
-      .catch((err) => console.error(err));
+    fetchJenisPerusahaan().then(setOptionsBussines);
   }, []);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -369,8 +352,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
       } else {
         alert("Upload gagal, tidak ada URL yang diterima.");
       }
-    } catch (error) {
-      console.error("Gagal upload KTP:", error);
+    } catch {
       Swal.fire({
         title: "Gagal",
         text: `Upload ${keyName} gagal. Silakan coba lagi.`,
@@ -466,6 +448,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             options={optionsBussines}
             placeholder="Pilih Jenis Perusahaan"
             value={selectedJenisPerusahaan || null}
+            isDisabled={isUpdate}
             className="text-gray-600"
             classNamePrefix="react-select"
             onChange={(selectedOption) => {
@@ -496,6 +479,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             name="nomorAktaPerubahanTerakhir"
             value={formData.nomorAktaPerubahanTerakhir}
             onChange={onChange}
+            disabled={isUpdate}
             placeholder="Masukkan Nomor Akta Perubahan Terakhir"
             className="border p-2 w-full rounded mb-0 text-gray-700"
           />
@@ -511,44 +495,23 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             3. Upload Dokumen Akta Perubahan Terakhir{" "}
             <span className="text-red-500">*</span>
           </h3>
-          <UpdateRing formKey={formType} identity="akta-perubahan-terakhir">
-            <input
-              type="file"
-              id="aktaPerubahanTerakhirUrl"
-              className="hidden"
-              onChange={handleFileChange}
-              disabled={uploadStatus["aktaPerubahanTerakhirUrl"] === true}
+          <UpdateRing
+            formKey={formType}
+            identity="akta-perubahan-terakhir-path"
+          >
+            <FileInput
+              fileName="Akta-Perubahan-Terakhir"
               accept=".pdf,.doc,.docx"
-              data-keyname="aktaPerubahanTerakhirUrl"
+              fileUrl={formData.aktaPerubahanTerakhirUrl}
+              disabled={disabledFormWhenUpdate("akta-perubahan-terakhir-path")}
+              onChange={(fileUrl) => {
+                onUploadAktaPendirianPerusahaan(
+                  fileUrl,
+                  "aktaPerubahanTerakhirUrl",
+                );
+              }}
+              errorText={errors?.aktaPerubahanTerakhirUrl?.[0]}
             />
-
-            <label
-              htmlFor="aktaPerubahanTerakhirUrl"
-              className="inline-flex text-sm items-center gap-2 py-2 px-4 bg-gray-800 text-white rounded-lg cursor-pointer hover:bg-gray-800 transition"
-            >
-              <>
-                <FaFileAlt />
-                {isClient && formData.aktaPerubahanTerakhirUrl
-                  ? "Update Dokumen"
-                  : "Upload Dokumen"}
-              </>
-            </label>
-
-            {isClient && formData.aktaPerubahanTerakhirUrl && (
-              <button
-                type="button"
-                onClick={onLihatAktaPerubahanTerakhir}
-                className="text-blue-600 underline text-sm block mt-2"
-              >
-                Lihat Dokumen Akta Perubahan Terakhir
-              </button>
-            )}
-
-            {errors?.aktaPerubahanTerakhirUrl && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.aktaPerubahanTerakhirUrl[0]}
-              </p>
-            )}
           </UpdateRing>
         </div>
 
@@ -559,43 +522,19 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           </h3>
 
           <UpdateRing formKey={formType} identity="akta-pendirian-perusahaan">
-            <input
-              type="file"
-              id="aktaPendirianPerusahaanUrl"
-              className="hidden"
-              onChange={handleFileChange}
-              disabled={uploadStatus["aktaPendirianPerusahaanUrl"] === true}
+            <FileInput
+              fileName="Akta-Pendirian-Perusahaan"
               accept=".pdf,.doc,.docx"
-              data-keyname="aktaPendirianPerusahaanUrl"
+              disabled={disabledFormWhenUpdate("akta-pendirian-perusahaan")}
+              fileUrl={formData.aktaPendirianPerusahaanUrl}
+              onChange={(fileUrl) => {
+                onUploadAktaPendirianPerusahaan(
+                  fileUrl,
+                  "aktaPendirianPerusahaanUrl",
+                );
+              }}
+              errorText={errors?.aktaPendirianPerusahaanUrl?.[0]}
             />
-
-            <label
-              htmlFor="aktaPendirianPerusahaanUrl"
-              className="inline-flex text-sm items-center gap-2 py-2 px-4 bg-gray-800 text-white rounded-lg cursor-pointer hover:bg-gray-800 transition"
-            >
-              <>
-                <FaFileAlt />
-                {isClient && formData.aktaPendirianPerusahaanUrl
-                  ? "Update Dokumen"
-                  : "Upload Dokumen"}
-              </>
-            </label>
-
-            {isClient && formData.aktaPendirianPerusahaanUrl && (
-              <button
-                type="button"
-                onClick={onLihatAktaPendirianPerusahaan}
-                className="text-blue-600 underline text-sm block mt-2"
-              >
-                Lihat Dokumen Akta Pendirian Perusahaan
-              </button>
-            )}
-
-            {errors?.aktaPendirianPerusahaanUrl && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.aktaPendirianPerusahaanUrl[0]}
-              </p>
-            )}
           </UpdateRing>
         </div>
         <div>
@@ -605,43 +544,16 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           </h3>
 
           <UpdateRing formKey={formType} identity="sk-pendirian-perusahaan">
-            <input
-              type="file"
-              id="skPendirianUrl"
-              className="hidden"
-              onChange={handleFileChange}
-              disabled={uploadStatus["skPendirianUrl"] === true}
+            <FileInput
+              fileName="SK-Pendirian-Perusahaan"
               accept=".pdf,.doc,.docx"
-              data-keyname="skPendirianUrl"
+              fileUrl={formData.skPendirianUrl}
+              disabled={disabledFormWhenUpdate("sk-pendirian-perusahaan")}
+              onChange={(fileUrl) => {
+                onUploadAktaPendirianPerusahaan(fileUrl, "skPendirianUrl");
+              }}
+              errorText={errors?.skPendirianUrl?.[0]}
             />
-
-            <label
-              htmlFor="skPendirianUrl"
-              className="inline-flex text-sm items-center gap-2 py-2 px-4 bg-gray-800 text-white rounded-lg cursor-pointer hover:bg-gray-800 transition"
-            >
-              <>
-                <FaFileAlt />
-                {isClient && formData.skPendirianUrl
-                  ? "Update Dokumen"
-                  : "Upload Dokumen"}
-              </>
-            </label>
-
-            {isClient && formData.skPendirianUrl && (
-              <button
-                type="button"
-                onClick={onLihatSkPendirianPerusahaan}
-                className="text-blue-600 underline text-sm block mt-2"
-              >
-                Lihat Dokumen SK Pendirian Perusahaan
-              </button>
-            )}
-
-            {errors?.skPendirianUrl && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.skPendirianUrl[0]}
-              </p>
-            )}
           </UpdateRing>
         </div>
         <div>
@@ -651,42 +563,19 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           </h3>
 
           <UpdateRing formKey={formType} identity="sk-kumham-path">
-            <input
-              type="file"
-              id="skKumhamPerusahaanUrl"
-              className="hidden"
-              onChange={handleFileChange}
-              disabled={uploadStatus["skKumhamPerusahaanUrl"] === true}
+            <FileInput
+              fileName="Akta-Kumham-Perusahaan"
               accept=".pdf,.doc,.docx"
-              data-keyname="skKumhamPerusahaanUrl"
+              fileUrl={formData.skKumhamPerusahaanUrl}
+              disabled={disabledFormWhenUpdate("sk-kumham-path")}
+              onChange={(fileUrl) => {
+                onUploadAktaPendirianPerusahaan(
+                  fileUrl,
+                  "skKumhamPerusahaanUrl",
+                );
+              }}
+              errorText={errors?.skKumhamPerusahaanUrl?.[0]}
             />
-
-            <label
-              htmlFor="skKumhamPerusahaanUrl"
-              className="inline-flex text-sm items-center gap-2 py-2 px-4 bg-gray-800 text-white rounded-lg cursor-pointer hover:bg-gray-800 transition"
-            >
-              <>
-                <FaFileAlt />
-                {isClient && formData.skKumhamPerusahaanUrl
-                  ? "Update Dokumen"
-                  : "Upload Dokumen"}
-              </>
-            </label>
-
-            {isClient && formData.skKumhamPerusahaanUrl && (
-              <button
-                type="button"
-                onClick={onLihatSkKumhamPerusahaan}
-                className="text-blue-600 underline text-sm block mt-2"
-              >
-                Lihat Dokumen SK Kumham Perusahaan
-              </button>
-            )}
-            {errors?.skKumhamPerusahaanUrl && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.skKumhamPerusahaanUrl[0]}
-              </p>
-            )}
           </UpdateRing>
         </div>
         <div>
@@ -695,42 +584,16 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             <span className="text-red-500">*</span>
           </h3>
           <UpdateRing formKey={formType} identity="npwp-perusahaan">
-            <input
-              type="file"
-              id="npwpPerusahaanUrl"
-              className="hidden"
-              onChange={handleFileChange}
-              disabled={uploadStatus["npwpPerusahaanUrl"] === true}
+            <FileInput
+              fileName="NPWP-Perusahaan"
               accept=".pdf,.doc,.docx"
-              data-keyname="npwpPerusahaanUrl"
+              disabled={disabledFormWhenUpdate("npwp-perusahaan")}
+              fileUrl={formData.npwpPerusahaanUrl}
+              onChange={(fileUrl) => {
+                onUploadAktaPendirianPerusahaan(fileUrl, "npwpPerusahaanUrl");
+              }}
+              errorText={errors?.npwpPerusahaanUrl?.[0]}
             />
-
-            <label
-              htmlFor="npwpPerusahaanUrl"
-              className="inline-flex text-sm items-center gap-2 py-2 px-4 bg-gray-800 text-white rounded-lg cursor-pointer hover:bg-gray-800 transition"
-            >
-              <>
-                <FaFileAlt />
-                {isClient && formData.npwpPerusahaanUrl
-                  ? "Update Dokumen"
-                  : "Upload Dokumen"}
-              </>
-            </label>
-
-            {isClient && formData.npwpPerusahaanUrl && (
-              <button
-                type="button"
-                onClick={onLihatNpwpPerusahaan}
-                className="text-blue-600 underline text-sm block mt-2"
-              >
-                Lihat Dokumen Npwp Perusahaan
-              </button>
-            )}
-            {errors?.npwpPerusahaanUrl && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.npwpPerusahaanUrl[0]}
-              </p>
-            )}
           </UpdateRing>
         </div>
         <div>
@@ -742,6 +605,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             name="nomorNpwpPerusahaan"
             value={formData.nomorNpwpPerusahaan}
             onChange={onChange}
+            disabled={isUpdate}
             placeholder="Masukkan Nomor NPWP Perusahaan"
             className="border p-2 w-full rounded mb-0 text-gray-700"
           />
@@ -762,6 +626,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
               className="mt-0"
               value={selectedProvincePemodalPerusahaan || null}
               options={customOptions}
+              isDisabled={isUpdate}
               formatOptionLabel={formatOptionLabel}
               onChange={(e) => {
                 setSelectedProvincePemodalPerusahaan(e);
@@ -793,7 +658,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
                 setPosCode("");
               }}
               placeholder="Pilih Kota"
-              isDisabled={!selectedProvincePemodalPerusahaan}
+              isDisabled={!selectedProvincePemodalPerusahaan || isUpdate}
             />
             {errors?.cityPemodalPerusahaan && (
               <p className="text-red-500 text-sm mt-1">
@@ -814,7 +679,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
                 setPosCode("");
               }}
               placeholder="Pilih Kecamatan"
-              isDisabled={!selectedCityPemodalPerusahaan}
+              isDisabled={!selectedCityPemodalPerusahaan || isUpdate}
             />
             {errors?.districtPemodalPerusahaan && (
               <p className="text-red-500 text-sm mt-1">
@@ -834,7 +699,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
                 setPosCode("");
               }}
               placeholder="Pilih Kelurahan"
-              isDisabled={!selectedDistrictPemodalPerusahaan}
+              isDisabled={!selectedDistrictPemodalPerusahaan || isUpdate}
             />
             {errors?.subDistrictPemodalPerusahaan && (
               <p className="text-red-500 text-sm mt-1">
@@ -850,6 +715,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             placeholder="Kode Pos"
             value={formData.posCode || ""}
             onChange={onChange}
+            disabled={isUpdate}
             className="border rounded p-2 w-full placeholder:text-sm text-black"
           />
           {errors?.posCode && (
@@ -863,6 +729,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             value={formData.addres}
             onChange={onChange}
             placeholder="Alamat Sesuai Tempat Usaha"
+            disabled={isUpdate}
             className="border p-2 w-full rounded resize-none placeholder:text-sm text-black"
             rows={4}
           ></textarea>
@@ -882,6 +749,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             type="text"
             name="noTeleponPerusahaan"
             value={formData.noTeleponPerusahaan}
+            disabled={isUpdate}
             onChange={(e) => {
               const onlyNums = e.target.value.replace(/[^0-9]/g, "");
               onChange({
@@ -905,6 +773,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             type="text"
             name="situsPerusahaan"
             value={formData.situsPerusahaan}
+            disabled={isUpdate}
             onChange={onChange}
             placeholder="Masukkan Situs Perusahaan"
             className="border p-2 w-full rounded mb-0 text-gray-700"
@@ -922,6 +791,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           <input
             type="text"
             name="emailPerusahaan"
+            disabled={isUpdate}
             value={formData.emailPerusahaan}
             onChange={onChange}
             placeholder="Masukkan Email Perusahaan"
@@ -947,6 +817,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             instanceId="bank"
             className="mt-0"
             value={selectedBank || null}
+            isDisabled={isUpdate}
             options={customOptionsBank}
             formatOptionLabel={formatOptionLabel}
             onChange={(e) => {
@@ -970,6 +841,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             name="nomorRekening"
             inputMode="numeric"
             pattern="[0-9]*"
+            disabled={isUpdate}
             placeholder="Masukkan Nomor Rekening"
             value={formData.nomorRekening}
             onChange={(e) => {
@@ -998,6 +870,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             name="namaPemilik"
             placeholder="Masukkan Nama Rekening Perusahaan"
             value={formData.namaPemilik}
+            disabled={isUpdate}
             onChange={onChange}
             className="border rounded p-2 w-full mt-1 placeholder:text-sm"
           />
@@ -1019,6 +892,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             className="mt-0"
             value={selectedBankEfek || null}
             options={customOptionsBankEfek}
+            isDisabled={isUpdate}
             formatOptionLabel={formatOptionLabel}
             onChange={(e) => {
               setSelectedBankEfek(e);
@@ -1042,6 +916,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             pattern="[0-9]*"
             placeholder="Masukkan Nomor Rekening"
             value={formData.nomorRekening_efek}
+            disabled={isUpdate}
             onChange={(e) => {
               const onlyNums = e.target.value.replace(/\D/g, "");
               onChange({
@@ -1067,6 +942,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
             placeholder="Masukkan Nama Pemilik Rekening"
             value={formData.namaPemilik_efek}
             onChange={onChange}
+            disabled={isUpdate}
             className="border rounded p-2 w-full mb-0 placeholder:text-sm"
           />
           {errors?.namaPemilik_efek && (
@@ -1080,14 +956,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           <h3 className="font-semibold text-gray-900 mb-2 mt-2">
             Pernyataan Kebenaran Data Perusahaan
           </h3>
-          <p className="text-sm text-gray-500 mb-3">
-            Dengan ini kami menyatakan bahwa seluruh data dan dokumen yang
-            diberikan terkait perusahaan adalah benar, akurat, dan sesuai dengan
-            kondisi saat ini. Pihak perusahaan bertanggung jawab penuh atas data
-            yang diinput serta memahami bahwa ketidaksesuaian informasi dapat
-            berdampak pada proses investasi.
-          </p>
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-x-4 cursor-pointer">
             <input
               type="checkbox"
               name="setujuKebenaranData"
@@ -1096,7 +965,11 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
               className="form-checkbox text-[#4821C2]"
             />
             <span className="text-sm font-medium text-gray-700">
-              Ya, perusahaan setuju
+              Dengan ini kami menyatakan bahwa seluruh data dan dokumen yang
+              diberikan terkait perusahaan adalah benar, akurat, dan sesuai
+              dengan kondisi saat ini. Pihak perusahaan bertanggung jawab penuh
+              atas data yang diinput serta memahami bahwa ketidaksesuaian
+              informasi dapat berdampak pada proses investasi.
             </span>
           </label>
         </div>
@@ -1105,12 +978,7 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
           <h3 className="font-semibold text-gray-900 mb-2">
             Pernyataan Pemahaman Risiko Investasi
           </h3>
-          <p className="text-sm text-gray-500 mb-3">
-            Kami memahami bahwa setiap investasi mengandung risiko, termasuk
-            kemungkinan kehilangan sebagian atau seluruh dana yang
-            diinvestasikan oleh perusahaan.
-          </p>
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-x-4 cursor-pointer">
             <input
               type="checkbox"
               name="setujuRisikoInvestasi"
@@ -1119,7 +987,9 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
               className="form-checkbox text-[#4821C2]"
             />
             <span className="text-sm font-medium text-gray-700">
-              Ya, perusahaan setuju
+              Kami memahami bahwa setiap investasi mengandung risiko, termasuk
+              kemungkinan kehilangan sebagian atau seluruh dana yang
+              diinvestasikan oleh perusahaan.
             </span>
           </label>
         </div>

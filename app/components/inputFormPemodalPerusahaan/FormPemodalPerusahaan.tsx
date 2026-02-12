@@ -1,6 +1,5 @@
 "use client";
 
-import FileInput from "@/app/components/inputFormPemodalPerusahaan/component/FileInput";
 import FormButton from "@/app/components/inputFormPemodalPerusahaan/component/FormButton";
 import SectionPoint from "@/app/components/inputFormPemodalPerusahaan/component/SectionPoint";
 import Subtitle from "@/app/components/inputFormPemodalPerusahaan/component/SectionSubtitle";
@@ -9,13 +8,15 @@ import ContainerSelfie from "./component/ContainerSelfie";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
-import { API_BACKEND, API_BACKEND_MEDIA } from "@/app/utils/constant";
+import { API_BACKEND } from "@/app/utils/constant";
 import { useRouter } from "next/navigation";
 import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
 import { useSearchParams } from "next/navigation";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import { uploadMediaService } from "@/app/helper/mediaService";
+import FileInput from "../inputFormPenerbit/_component/FileInput";
 
 interface FormSchema {
   photo: string;
@@ -56,6 +57,8 @@ const FormPemodalPerusahaan: React.FC = () => {
     return cache ? (JSON.parse(cache) as FormSchema) : null;
   };
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [errors, setErrors] = useState<ErrorSchema>({});
   const [profile, setProfile] = useState<any>(null);
   const [user, setUser] = useState<AuthDataResponse | null>(null);
@@ -63,6 +66,7 @@ const FormPemodalPerusahaan: React.FC = () => {
   const searchParams = useSearchParams();
   const isUpdate = searchParams.get("update") === "true";
   const formType = searchParams.get("form");
+  const inboxId = searchParams.get("inbox-id");
   const formatNpwp = (rawValue: string): string => {
     if (!rawValue) return "";
 
@@ -111,14 +115,15 @@ const FormPemodalPerusahaan: React.FC = () => {
         const remoteProfile = res.data?.data;
         setProfile(remoteProfile);
 
-        if (
-          (isUpdate && formType === "photo_ktp") ||
-          formType === "surat-kuasa"
-        ) {
+        if (isUpdate) {
           setFormFields({
             fullname: remoteProfile?.fullname || "",
             noKtp: remoteProfile?.no_ktp || "",
-            fileKtp: remoteProfile?.photo_ktp || "",
+            fileKtp:
+              remoteProfile?.photo_ktp && remoteProfile.photo_ktp !== "-"
+                ? remoteProfile.photo_ktp
+                : "",
+
             jabatan: remoteProfile?.position || "",
             noNpwp: remoteProfile?.npwp || "",
             noNpwpFormatted: formatNpwp(remoteProfile?.npwp || ""),
@@ -137,9 +142,7 @@ const FormPemodalPerusahaan: React.FC = () => {
             }));
           }
         }
-      } catch (error: any) {
-        console.error("Gagal fetch profile:", error.response?.data || error);
-      }
+      } catch {}
     };
 
     fetchProfile();
@@ -158,6 +161,7 @@ const FormPemodalPerusahaan: React.FC = () => {
     const isValid = validateForm();
 
     if (isValid) {
+      setLoading(true);
       try {
         const userData = getUser();
 
@@ -214,6 +218,8 @@ const FormPemodalPerusahaan: React.FC = () => {
           timer: 3000,
           timerProgressBar: true,
         });
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -228,10 +234,10 @@ const FormPemodalPerusahaan: React.FC = () => {
     if (!form) return { dataType: "", val: "" };
 
     switch (form.toLowerCase()) {
-      case "photo_ktp":
-        return { dataType: "photo_ktp", val: formFields.fileKtp };
+      case "upload-ktp-pic":
+        return { dataType: "upload-ktp-pic", val: formFields.fileKtp };
       case "surat-kuasa":
-        return { dataType: "surat_kuasa", val: formFields.suratKuasa };
+        return { dataType: "surat-kuasa", val: formFields.suratKuasa };
       default:
         return { dataType: "", val: "" };
     }
@@ -257,6 +263,8 @@ const FormPemodalPerusahaan: React.FC = () => {
 
           if (!userData) return;
 
+          setLoading(true);
+
           const userId = profile?.id || userData?.id;
           const companyId = profile?.company?.id;
 
@@ -266,9 +274,10 @@ const FormPemodalPerusahaan: React.FC = () => {
             val,
             user_id: userId,
             company_id: companyId,
+            inbox_id: inboxId ?? "-",
           };
 
-          const res = await axios.put(
+          await axios.put(
             `${API_BACKEND}/api/v1/document/update/${dataType}`,
             payload,
             {
@@ -295,9 +304,8 @@ const FormPemodalPerusahaan: React.FC = () => {
           });
 
           localStorage.removeItem("pemodalPerusahaanCache");
-          router.push("/dashboard");
+          router.replace("/dashboard");
         } catch (error: any) {
-          console.error("Update error detail:", error);
           Swal.fire({
             icon: "error",
             title: "Update gagal",
@@ -305,6 +313,8 @@ const FormPemodalPerusahaan: React.FC = () => {
               error.response?.data?.message ||
               "Terjadi kesalahan saat update data.",
           });
+        } finally {
+          setLoading(false);
         }
       }
     }
@@ -342,6 +352,11 @@ const FormPemodalPerusahaan: React.FC = () => {
     localStorage.setItem("pemodalPerusahaanCache", JSON.stringify(formFields));
   }, [formFields]);
 
+  //* check form ini apakah update atau engga
+  const disabledFormWhenUpdate = (formId: string): boolean => {
+    return isUpdate && formId !== formType;
+  };
+
   //* validate form
   const validateForm = (): boolean => {
     const newErrors: ErrorSchema = {};
@@ -369,10 +384,14 @@ const FormPemodalPerusahaan: React.FC = () => {
     }
 
     if (!formFields.suratKuasa) {
-      newErrors.suratKuasa = "Surat Kuasa wajib disertakan";
+      if (!disabledFormWhenUpdate("surat-kuasa")) {
+        newErrors.suratKuasa = "Surat Kuasa wajib disertakan";
+      }
     }
     if (!formFields.fileKtp) {
-      newErrors.fileKtp = "File KTP wajib disertakan";
+      if (!disabledFormWhenUpdate("upload-ktp-pic")) {
+        newErrors.fileKtp = "File KTP wajib disertakan";
+      }
     }
 
     setErrors(newErrors);
@@ -404,19 +423,11 @@ const FormPemodalPerusahaan: React.FC = () => {
 
     const photoFile = new File([u8arr], "Foto Selfie", { type: mime });
 
-    const formData = new FormData();
-    formData.append("folder", "web");
-    formData.append("subfolder", "Foto Selfie");
-    formData.append("media", photoFile);
-
     try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload`,
-        formData,
-      );
-      return res.data?.data?.path ?? "";
+      const res = await uploadMediaService(photoFile);
+      return res.data?.path ?? "";
     } catch (error) {
-      return "-";
+      return "";
     }
   };
 
@@ -441,6 +452,7 @@ const FormPemodalPerusahaan: React.FC = () => {
           resetPhotoResult={() => {
             setFormFields({ ...formFields, photo: "" });
           }}
+          disabled={isUpdate}
           photoResult={(photoSelfie) => {
             if (photoSelfie) {
               setFormFields({ ...formFields, photo: photoSelfie });
@@ -466,6 +478,7 @@ const FormPemodalPerusahaan: React.FC = () => {
           <TextField
             placeholder="Jabatan"
             value={formFields.jabatan}
+            disabled={isUpdate}
             onChange={(val) => {
               setFormFields({ ...formFields, jabatan: val.target.value });
               if (val) {
@@ -482,6 +495,7 @@ const FormPemodalPerusahaan: React.FC = () => {
             placeholder="Nomor KTP"
             type="number"
             maxLength={16}
+            disabled={isUpdate}
             value={formFields.noKtp}
             onChange={(val) => {
               setFormFields({ ...formFields, noKtp: val.target.value });
@@ -502,6 +516,7 @@ const FormPemodalPerusahaan: React.FC = () => {
           <TextField
             placeholder="Nomor NPWP"
             type="text"
+            disabled={isUpdate}
             value={formFields.noNpwpFormatted || ""}
             onChange={(val) => {
               const rawValue = val.target.value.replace(/\D/g, "");
@@ -540,6 +555,7 @@ const FormPemodalPerusahaan: React.FC = () => {
                   fileName="Surat-Kuasa"
                   accept=".pdf,.doc,.docx"
                   fileUrl={formFields.suratKuasa}
+                  disabled={disabledFormWhenUpdate("surat-kuasa")}
                   onChange={(fileUrl) => {
                     setFormFields({ ...formFields, suratKuasa: fileUrl });
                     if (fileUrl) {
@@ -550,7 +566,7 @@ const FormPemodalPerusahaan: React.FC = () => {
                 />
               </div>
             </UpdateRing>
-            <UpdateRing formKey={formType} identity="photo_ktp">
+            <UpdateRing formKey={formType} identity="upload-ktp-pic">
               <div>
                 <SectionPoint text="File KTP" />
                 <Subtitle
@@ -562,6 +578,7 @@ const FormPemodalPerusahaan: React.FC = () => {
                   fileName="File-KTP"
                   accept=".pdf,.doc,.docx"
                   fileUrl={formFields.fileKtp}
+                  disabled={disabledFormWhenUpdate("upload-ktp-pic")}
                   onChange={(fileUrl) => {
                     setFormFields({ ...formFields, fileKtp: fileUrl });
                     if (fileUrl) {
@@ -577,8 +594,8 @@ const FormPemodalPerusahaan: React.FC = () => {
           <div className="my-10"></div>
 
           <div className="w-full flex justify-end gap-4 mt-6">
-            <FormButton onClick={handleSubmit}>
-              {isUpdate ? "Update" : "Lanjutkan"}
+            <FormButton onClick={handleSubmit} disabled={loading}>
+              {loading ? "Memuat.." : isUpdate ? "Update" : "Lanjutkan"}
             </FormButton>
           </div>
         </div>

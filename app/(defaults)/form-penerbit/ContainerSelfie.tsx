@@ -32,7 +32,6 @@ const ContainerSelfie: React.FC<Props> = ({
   useEffect(() => {
     const checkCameraSupport = async () => {
       if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-        console.log("Device tidak mendukung kamera");
         setErrorMessage("Device tidak mendukung kamera");
         return;
       }
@@ -44,14 +43,9 @@ const ContainerSelfie: React.FC<Props> = ({
         );
 
         if (!hasCamera) {
-          console.log("Tidak ada kamera yang terdeteksi");
           setErrorMessage("Tidak ada kamera yang terdeteksi");
-        } else {
-          console.log("Kamera tersedia");
         }
-      } catch (err) {
-        console.error("Gagal memeriksa kamera:", err);
-      }
+      } catch (err) {}
     };
 
     checkCameraSupport();
@@ -70,7 +64,6 @@ const ContainerSelfie: React.FC<Props> = ({
       setIsCameraActive(true);
     } catch (err) {
       if (err instanceof DOMException) {
-        console.log(err);
         if (
           err.name === "NotAllowedError" ||
           err.name === "PermissionDeniedError"
@@ -131,13 +124,6 @@ const ContainerSelfie: React.FC<Props> = ({
   // *reset photo
   const resetPhoto = () => {
     if (disabled) return;
-    console.log("reset foto, has stream?", stream !== null);
-    console.log("has photo result?", photoResult !== null);
-    console.log("camera active?", isCameraActive !== null);
-    console.log("is stream?", stream !== null);
-
-    console.log("has photo?", photo !== null);
-    console.log("has photo url?", photoUrl !== null);
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
     }

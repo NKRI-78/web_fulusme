@@ -2,10 +2,19 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 
 type TooltipProps = {
   label: string;
+  showTooltip?: boolean;
   children: React.ReactNode;
 };
 
-const Tooltip = ({ label, children }: TooltipProps) => {
+const Tooltip = ({
+  label,
+  children,
+  showTooltip = true,
+}: TooltipProps) => {
+  if (!showTooltip || !label) {
+    return <>{children}</>;
+  }
+
   const id = `tooltip-${label.replace(/\s+/g, "-")}`;
 
   return (

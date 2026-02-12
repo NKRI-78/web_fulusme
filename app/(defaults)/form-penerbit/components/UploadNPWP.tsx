@@ -32,8 +32,6 @@ export default function NPWPOCR({ onUpload, onDetected, onFail }: NpwpProps) {
     try {
       await onUpload(e);
     } catch (err) {
-      // kalau parent melempar error, lanjut saja ke OCR
-      console.error(err);
     } finally {
       // kosongkan value input file agar bisa upload file yang sama lagi
       e.target.value = "";
@@ -53,7 +51,7 @@ export default function NPWPOCR({ onUpload, onDetected, onFail }: NpwpProps) {
     function makeVariant(
       src: HTMLCanvasElement,
       angle: number,
-      invert = false
+      invert = false,
     ) {
       const rad = (angle * Math.PI) / 180;
       const out = document.createElement("canvas");
@@ -100,7 +98,7 @@ export default function NPWPOCR({ onUpload, onDetected, onFail }: NpwpProps) {
             typeof m.progress === "number"
           ) {
             setProgress((p) =>
-              Math.min(99, Math.max(p, Math.round(m.progress * 100)))
+              Math.min(99, Math.max(p, Math.round(m.progress * 100))),
             );
           }
         },

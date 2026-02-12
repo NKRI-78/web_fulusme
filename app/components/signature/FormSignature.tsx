@@ -20,7 +20,6 @@ const FormSignature: React.FC = () => {
 
   const pdfUrl = searchParams.get("pdf");
   const projectPaymentId = searchParams.get("field5");
-  console.log("Project Payment ID:", projectPaymentId);
 
   const [formData, setFormData] = useState<FormData>({ signature: "" });
 
@@ -36,9 +35,7 @@ const FormSignature: React.FC = () => {
       try {
         const parsedUser = JSON.parse(userCookie);
         token = parsedUser.token;
-      } catch (e) {
-        console.error("Gagal parsing user cookie:", e);
-      }
+      } catch {}
     }
 
     if (!token) {

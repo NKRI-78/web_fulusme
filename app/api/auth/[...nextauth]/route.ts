@@ -22,7 +22,7 @@ const handler = NextAuth({
                 email: credentials?.email,
                 password: credentials?.password,
               }),
-            }
+            },
           );
 
           const data = await res.json();
@@ -38,7 +38,6 @@ const handler = NextAuth({
           }
           return null;
         } catch (err) {
-          console.error("Login error", err);
           return null;
         }
       },

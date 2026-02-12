@@ -181,8 +181,6 @@ export default function PembayaranBCAWithDetail({
         const parsed = parseDetail(json?.data?.data);
         setDetail(parsed);
       } catch (e) {
-        // opsi: tampilkan toast / swal
-        // console.error("Gagal fetch inbox detail:", e);
       } finally {
         setLoading(false);
       }

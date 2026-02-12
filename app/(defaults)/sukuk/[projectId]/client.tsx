@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 import type { Swiper as SwiperType } from "swiper";
 import Swal from "sweetalert2";
@@ -72,9 +72,7 @@ const SukukClient = ({ projectId }: Props) => {
     if (userCookie) {
       try {
         setRole(userCookie.role);
-      } catch (err) {
-        console.error("Failed to parse user cookie", err);
-      }
+      } catch (err) {}
     }
   }, []);
 
@@ -88,8 +86,6 @@ const SukukClient = ({ projectId }: Props) => {
           );
           setProject(response.data.data);
         } catch (error: any) {
-          console.error("Gagal ambil data project:", error);
-
           // Cek jika error 404
           if (error.response?.status === 400) {
             setIsNotFound(true);
@@ -114,6 +110,10 @@ const SukukClient = ({ projectId }: Props) => {
     localStorage.setItem("invest_amount", JSON.stringify(val));
     router.push(`/payment-method/${projectId}`);
   };
+
+  const isOpen = project?.funding_status === "OPEN";
+  const isCompleted = project?.funding_status === "CLOSED";
+  const isCancelled = project?.funding_status === "CANCELLED";
 
   return isNotFound ? (
     <>
@@ -215,9 +215,22 @@ const SukukClient = ({ projectId }: Props) => {
                 </div>
 
                 <div className="bg-white p-2 rounded-lg space-y-2 mt-3">
-                  <p className="text-sm font-semibold text-gray-800 mb-4">
-                    Status Investasi Saat Ini
-                  </p>
+                  <div className="w-full flex justify-between items-center">
+                    <p className="text-sm font-semibold text-gray-800">
+                      Status Investasi Saat Ini
+                    </p>
+
+                    {isCompleted && (
+                      <div className="flex items-center gap-2 bg-emerald-700 text-white px-3 py-[4px] rounded-full text-[11px] font-semibold">
+                        <div className="flex items-center justify-center w-4 h-4">
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        </div>
+                        Unit Terpenuhi
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="h-1"></div>
 
                   <ProgressBar percentage={percentage} bgColor="#f3f4f6" />
 
@@ -342,10 +355,13 @@ const SukukClient = ({ projectId }: Props) => {
                   hydrated && userData !== null ? (
                     quotaData?.verified_investor ? (
                       <button
-                        onClick={() => setShowModal(true)}
-                        className="w-full bg-[#10565c] hover:bg-[#104348] text-white font-semibold py-2 rounded-md mt-4 cursor-pointer"
+                        onClick={() => {
+                          if (!isOpen) return;
+                          return setShowModal(true);
+                        }}
+                        className={`w-full text-white font-semibold py-2 rounded-md mt-4 ${!isOpen ? "bg-[#10565c]/30 cursor-not-allowed" : "bg-[#10565c] hover:bg-[#104348] cursor-pointer"}`}
                       >
-                        Beli Efek
+                        {isCompleted ? "Project sudah terpenuhi" : "Beli Efek"}
                       </button>
                     ) : (
                       <button

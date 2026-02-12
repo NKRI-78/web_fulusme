@@ -89,7 +89,6 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
   //* inject fullname to field
   // mendapatkan data user untuk didambil value fullname-nya kemudian di-inject kedalam localstorage
   useEffect(() => {
-    console.log(`has profile ${profile !== null}`);
     if (profile) {
       const fullnameFromRemote = profile.fullname;
 
