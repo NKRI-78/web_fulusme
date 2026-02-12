@@ -32,10 +32,12 @@ const Inbox = () => {
   } = useSelector((state: RootState) => state.inbox);
   const user = getUser();
 
+  async function fetchInbox() {
+    await dispatch(fetchInboxThunk(user?.token ?? "-"));
+  }
+
   async function initializeSocket() {
     onSocketReady((socket) => {
-      console.log("[inbox] socket ready", socket.id);
-
       socket.on("inbox-update", async () => {
         const inboxes = await dispatch(fetchInboxThunk(user?.token ?? "-"));
 
@@ -52,6 +54,7 @@ const Inbox = () => {
 
   useEffect(() => {
     initializeSocket();
+    fetchInbox();
   }, [user?.token, dispatch]);
 
   // state hook
@@ -67,9 +70,7 @@ const Inbox = () => {
     try {
       const parsed = JSON.parse(roleCookie);
       role = parsed.role;
-    } catch (e) {
-      console.error("Gagal parsing roleCookie", e);
-    }
+    } catch {}
   }
 
   let roleUser = null;
@@ -78,9 +79,7 @@ const Inbox = () => {
     try {
       const parsed = JSON.parse(userRoleCookie);
       roleUser = parsed.role;
-    } catch (e) {
-      console.error("Gagal parsing roleCookie", e);
-    }
+    } catch {}
   }
 
   // update formKey liat: "app\(defaults)\form-penerbit\UpdateProfileInterface.ts" untuk detail key nya
@@ -188,13 +187,13 @@ const Inbox = () => {
             if (selectedInbox.field_3 === "reupload-document") {
               if (updateKey) {
                 if (roleUser === "investor institusi") {
-                  if (["photo_ktp", "surat-kuasa"].includes(updateKey)) {
+                  if (["upload-ktp-pic", "surat-kuasa"].includes(updateKey)) {
                     router.push(
-                      `/form-pemodal-perusahaan?update=true&form=${updateKey}`,
+                      `/form-pemodal-perusahaan?update=true&form=${updateKey}&inbox-id=${selectedInbox.id}`,
                     );
                   } else if (
                     [
-                      "akta-perubahan-terakhir",
+                      "akta-perubahan-terakhir-path",
                       "akta-pendirian-perusahaan",
                       "sk-pendirian-perusahaan",
                       "sk-kumham-path",
@@ -202,11 +201,11 @@ const Inbox = () => {
                     ].includes(updateKey)
                   ) {
                     router.push(
-                      `/form-data-pemodal-perusahaan?update=true&form=${updateKey}`,
+                      `/form-data-pemodal-perusahaan?update=true&form=${updateKey}&inbox-id=${selectedInbox.id}`,
                     );
                   } else {
                     router.push(
-                      `/form-pemodal-perusahaan?update=true&form=${updateKey}`,
+                      `/form-pemodal-perusahaan?update=true&form=${updateKey}&inbox-id=${selectedInbox.id}`,
                     );
                   }
                 } else if (roleUser === "investor") {
@@ -225,7 +224,7 @@ const Inbox = () => {
               const pdfUrl = selectedInbox.field_4;
               if (pdfUrl) {
                 router.push(
-                  `/form-signature?pdf=${encodeURIComponent(pdfUrl)}&inboxId=${
+                  `/form-signature?pdf=${encodeURIComponent(pdfUrl)}&inbox-id=${
                     selectedInbox.id
                   }&field5=${selectedInbox.field_5}`,
                 );

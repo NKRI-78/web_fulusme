@@ -105,8 +105,7 @@ const FileInput: React.FC<FileInputProps> = ({
       } else {
         alert("Upload gagal, tidak ada URL yang diterima.");
       }
-    } catch (error) {
-      console.error("Gagal upload:", error);
+    } catch {
       Swal.fire({
         title: "Gagal",
         text: "Upload gagal. Silakan coba lagi.",

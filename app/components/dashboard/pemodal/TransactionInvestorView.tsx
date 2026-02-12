@@ -67,8 +67,6 @@ export default function TransactionInvestorView() {
       const data = await getTransactions(user?.token ?? "", p, limit);
       setTransactions(data.items);
       setTotalItems(data.total_items);
-    } catch (err) {
-      console.error("Error fetch transaksi:", err);
     } finally {
       setLoading(false);
     }

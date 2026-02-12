@@ -9,7 +9,6 @@ export function getUser(): AuthDataResponse | null {
     const user: AuthDataResponse = JSON.parse(userCookie);
     return user;
   } catch (error) {
-    console.error("Invalid user cookie", error);
     return null;
   }
 }

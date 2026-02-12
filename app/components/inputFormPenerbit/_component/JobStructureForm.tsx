@@ -13,6 +13,7 @@ type NamePrefix = "direktur" | "komisaris";
 interface JobStructureFormProps {
   label?: string;
   namePrefix: NamePrefix;
+  formKey?: string;
   index: number;
   showDeleteButton?: boolean;
   onDelete?: () => void;
@@ -33,6 +34,7 @@ function capitalizeFullName(name: string): string {
 const JobStructureForm: React.FC<JobStructureFormProps> = ({
   label,
   namePrefix,
+
   index,
   onDelete,
   showDeleteButton = true,
@@ -40,6 +42,7 @@ const JobStructureForm: React.FC<JobStructureFormProps> = ({
   hasDirekturUtama = false,
   hasKomisarisUtama = false,
   isUpdate,
+  formKey,
   updateIdentity,
   updateFormKey,
 }) => {
@@ -50,6 +53,10 @@ const JobStructureForm: React.FC<JobStructureFormProps> = ({
     control,
     name: `${namePrefix}.${index}.jabatan` as const,
   });
+
+  const disabledFormWhenUpdate = (formId: string): boolean => {
+    return isUpdate && formId !== formKey;
+  };
 
   return (
     <div className="w-full flex flex-col mt-2 p-3 rounded-md bg-gray-50 border">
@@ -189,7 +196,9 @@ const JobStructureForm: React.FC<JobStructureFormProps> = ({
               <FileInput
                 fileName="Upload KTP"
                 placeholder="Upload KTP"
-                disabled={isUpdate}
+                disabled={disabledFormWhenUpdate(
+                  `${updateIdentity}-upload-ktp`,
+                )}
                 fileUrl={field.value ?? ""}
                 onChange={(fileUrl) => field.onChange(fileUrl)}
                 errorText={fieldState.error?.message}
@@ -211,7 +220,9 @@ const JobStructureForm: React.FC<JobStructureFormProps> = ({
                 fileName="Upload NPWP"
                 placeholder="Upload NPWP"
                 fileUrl={field.value ?? ""}
-                disabled={isUpdate}
+                disabled={disabledFormWhenUpdate(
+                  `${updateIdentity}-upload-npwp`,
+                )}
                 onChange={(fileUrl) => field.onChange(fileUrl)}
                 errorText={fieldState.error?.message}
                 accept=".pdf,.jpg,.jpeg,.png,.heic,.heif"

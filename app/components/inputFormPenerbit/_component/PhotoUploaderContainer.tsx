@@ -37,7 +37,6 @@ const PhotoUploaderContainer: React.FC<PhotoUploaderContainerProps> = ({
       if (!photoUrl) return null;
       return photoUrl;
     } catch (error) {
-      console.error("Upload gagal:", error);
       return null;
     }
   };

@@ -51,7 +51,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           left: `min(max(${labelLeft}, 0rem), calc(100% - ${labelWidthRem}rem))`,
         }}
       >
-        <Tooltip label={`${percentage.toFixed(3)}%`}>{labelText}</Tooltip>
+        <Tooltip label={`${percentage}%`}>{labelText}</Tooltip>
       </div>
     </div>
   );

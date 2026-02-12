@@ -7,11 +7,11 @@ export const penerbitUpdateKeys: string[] = [
   "sk-kumham-terakhir",
   "siup",
   "tdp",
-  "npwp",
+  "npwp-perusahaan",
   "nib",
   "akta-pendirian-perusahaan",
   "sk-kumham-pendirian",
-  "akta-perubahan-terakhir",
+  "akta-perubahan-terakhir-path",
   "laporan-keuangan",
   "rekening-koran",
 

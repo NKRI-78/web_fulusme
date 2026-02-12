@@ -21,6 +21,7 @@ import CaraPembayaran from "./components/HowToPayment";
 import { getUser } from "@/app/lib/auth";
 import { getSocket, onSocketReady } from "@/app/utils/sockets";
 import { getAuthUser } from "@/app/helper/getAuthUser";
+import { logger } from "@/utils/logger";
 
 export interface PaymentMethod {
   id: number;
@@ -122,7 +123,6 @@ const WaitingPayment = () => {
 
         setWaitingPayment(mapped);
       } catch (err) {
-        console.error("Failed to fetch payment detail:", err);
         setError(err);
       }
     }
@@ -133,34 +133,16 @@ const WaitingPayment = () => {
     try {
       await navigator.clipboard.writeText(textToCopy);
       alert("✅ Nomor berhasil disalin!");
-    } catch (err) {
-      console.error("Failed to copy: ", err);
-    }
+    } catch (err) {}
   };
 
   // Socket listener
   useEffect(() => {
-    // const socket = getSocket();
-
-    // socket.on("payment-update", () => {
-    //   if (hasPaidRef.current) return;
-    //   hasPaidRef.current = true;
-    //   setStatusLoading(true);
-
-    //   setTimeout(() => {
-    //     setStatusLoading(false);
-    //     setWaitingPayment((prev) => ({ ...prev!, payment_status: "PAID" }));
-    //     setTimeout(() => {
-    //       router.push("/dashboard/investor-transaction");
-    //     }, 2000);
-    //   }, 1500);
-    // });
-
     onSocketReady((socket) => {
-      console.log("[waiting payment] socket ready", socket.id);
+      logger.info("[waiting payment] socket ready", socket.id);
 
       socket.on("payment-update", async () => {
-        console.log("payment-update", socket.id);
+        logger.info("payment-update", socket.id);
         if (hasPaidRef.current) return;
         hasPaidRef.current = true;
         setStatusLoading(true);
@@ -197,11 +179,6 @@ const WaitingPayment = () => {
       expireMoment && expireMoment.isValid()
         ? expireMoment.toDate().getTime()
         : moment(waitingPayment.created_at).toDate().getTime() + 30 * 60 * 1000;
-
-    console.log("expireMoment & expireTime", {
-      expireMoment,
-      expireTime,
-    });
 
     const createdTime = moment(waitingPayment.created_at).toDate().getTime();
     const duration = Math.floor((expireTime - createdTime) / 1000);

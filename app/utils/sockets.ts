@@ -1,10 +1,11 @@
+import { logger } from "@/utils/logger";
 import { io, Socket } from "socket.io-client";
 
 let socket: Socket | null = null;
 
 export function initSocket(userId: string) {
   if (!socket) {
-    console.log("[socket] init → creating new connection", { userId });
+    logger.info("[socket] init → creating new connection", { userId });
 
     socket = io(process.env.NEXT_PUBLIC_API_SOCKET!, {
       transports: ["websocket"],
@@ -15,24 +16,24 @@ export function initSocket(userId: string) {
     });
 
     socket.on("connect", () => {
-      console.log("[socket] connected", {
+      logger.info("[socket] connected", {
         id: socket?.id,
       });
     });
 
     socket.on("disconnect", (reason) => {
-      console.log("[socket] disconnected", { reason });
+      logger.info("[socket] disconnected", { reason });
     });
 
     socket.on("reconnect_attempt", (attempt) => {
-      console.log("[socket] reconnect attempt", { attempt });
+      logger.info("[socket] reconnect attempt", { attempt });
     });
 
     socket.on("connect_error", (error) => {
-      console.error("[socket] connect error", error.message);
+      logger.error("[socket] connect error", error.message);
     });
   } else {
-    console.log("[socket] init skipped → existing connection", {
+    logger.info("[socket] init skipped → existing connection", {
       id: socket.id,
     });
   }
@@ -42,7 +43,7 @@ export function initSocket(userId: string) {
 
 export function getSocket(): Socket {
   if (!socket) {
-    console.error("[socket] getSocket failed → not initialized");
+    logger.error("[socket] getSocket failed → not initialized");
     throw new Error("Socket not initialized. Call initSocket() first.");
   }
 
@@ -61,7 +62,7 @@ export function onSocketReady(callback: (socket: Socket) => void) {
   }
 
   const handleConnect = () => {
-    console.log("[socket] ready via connect event", socket?.id);
+    logger.info("[socket] ready via connect event", socket?.id);
     callback(socket!);
     socket?.off("connect", handleConnect);
   };
@@ -71,12 +72,12 @@ export function onSocketReady(callback: (socket: Socket) => void) {
 
 export function disconnectSocket() {
   if (socket) {
-    console.log("[socket] disconnect → closing connection", {
+    logger.info("[socket] disconnect → closing connection", {
       id: socket.id,
     });
     socket.disconnect();
     socket = null;
   } else {
-    console.log("[socket] disconnect skipped → no active socket");
+    logger.info("[socket] disconnect skipped → no active socket");
   }
 }

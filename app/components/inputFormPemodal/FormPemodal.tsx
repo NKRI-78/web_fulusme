@@ -15,6 +15,7 @@ import FileViewerModal from "@/app/(defaults)/viewer/components/FilePreviewModal
 import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import Tooltip from "../Tooltip";
 
 export const pemodalKeys: string[] = ["ktp-upload", "npwp-upload"];
 
@@ -204,11 +205,6 @@ const FormPemodal: React.FC = () => {
             namaPemilik_efek: data.profile_security_account?.account_name || "",
           }));
         }
-      } catch (error: any) {
-        console.error(
-          "Gagal mengambil profil:",
-          error.response?.data || error.message,
-        );
       } finally {
         setIsLoading(false);
       }
@@ -657,7 +653,6 @@ const FormPemodal: React.FC = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("formPemodal");
-      console.log("const saved = localStorage.getItem(formPemodal);", saved);
       if (saved && !isUpdate) {
         const parsed = JSON.parse(saved);
         setDataPribadi({
@@ -720,9 +715,7 @@ const FormPemodal: React.FC = () => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      console.log("!submitted", submitted);
       if (!submitted) {
-        console.log("fulldata dataPribadi", dataPribadi);
         const fullData = {
           ...dataPribadi,
           ...dataPekerjaan,
@@ -899,7 +892,6 @@ const FormPemodal: React.FC = () => {
   };
 
   const handleUploadSelfie = (url: string) => {
-    console.log(url, "parent");
     setDataPribadi((prev) => ({
       ...prev,
       fotoPemodalUrlPribadi: url, // update hanya foto
@@ -921,7 +913,6 @@ const FormPemodal: React.FC = () => {
     const result = schemaDataPekerjaan.safeParse(dataPekerjaan);
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
-      console.log("Validation Errors:", errors);
       setErrorsPekerjaan(errors);
       return false;
     }
@@ -958,7 +949,7 @@ const FormPemodal: React.FC = () => {
       case "npwp":
         return { dataType: "npwp_path", val: data.npwpUrl };
       case "slip-gaji":
-        return { dataType: "slip_gaji", val: data.slipGajiUrl };
+        return { dataType: "ip_gaji", val: data.slipGajiUrl };
       default:
         return { dataType: "", val: "" };
     }
@@ -1081,39 +1072,49 @@ const FormPemodal: React.FC = () => {
           } as AuthDataResponse),
         );
       } else {
-        const { dataType, val } = mapFormToDataType(form, data);
-        const payload = { val };
+        const swalResult = await Swal.fire({
+          icon: "question",
+          title: "Konfirmasi Perubahan Data",
+          text: "Apakah Anda yakin dengan data yang Anda inputkan sudah benar? mohon cek kembali jika masih ragu.",
+          confirmButtonText: "Sudah Benar",
+          cancelButtonText: "Cek Kembali",
+          confirmButtonColor: "#13733b",
+          cancelButtonColor: "#eaeaea",
+        });
 
-        await axios.put(
-          `${API_BACKEND}/api/v1/document/update/user/${dataType}`,
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${user?.token}`,
+        if (swalResult.isConfirmed) {
+          const { dataType, val } = mapFormToDataType(form, data);
+          const payload = { val };
+
+          await axios.put(
+            `${API_BACKEND}/api/v1/document/update/user/${dataType}`,
+            payload,
+            {
+              headers: {
+                Authorization: `Bearer ${user?.token}`,
+              },
             },
-          },
-        );
+          );
+          localStorage.removeItem("formPemodal");
+          localStorage.removeItem("signature");
+          Cookies.remove("formPemodal");
+
+          setSubmitted(true);
+
+          Swal.fire({
+            title: "Berhasil",
+            text: "Data berhasil dikirim",
+            icon: "success",
+            timer: 3000,
+            timerProgressBar: true,
+          }).then(() => {
+            setSelectedIndex(0);
+            router.replace("/dashboard");
+          });
+        }
       }
-
-      localStorage.removeItem("formPemodal");
-      localStorage.removeItem("signature");
-      Cookies.remove("formPemodal");
-
-      setSubmitted(true);
-
-      Swal.fire({
-        title: "Berhasil",
-        text: "Data berhasil dikirim",
-        icon: "success",
-        timer: 3000,
-        timerProgressBar: true,
-      }).then(() => {
-        setSelectedIndex(0);
-        router.replace("/dashboard");
-      });
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error("Error submitting form:", error.response?.data?.message);
         Swal.fire({
           title: "Gagal",
           text:
@@ -1123,7 +1124,6 @@ const FormPemodal: React.FC = () => {
           timer: 3000,
         });
       } else {
-        console.error("Error submitting form:", error);
         Swal.fire({
           title: "Gagal",
           text: "Terjadi kesalahan yang tidak diketahui.",
@@ -1236,7 +1236,7 @@ const FormPemodal: React.FC = () => {
       )}
 
       {/* Navigation Buttons */}
-      <div className="flex justify-end gap-5 mt-10">
+      <div className="flex justify-end gap-5">
         {!isUpdate && (
           <button
             onClick={() => setSelectedIndex((prev) => prev - 1)}
@@ -1266,21 +1266,29 @@ const FormPemodal: React.FC = () => {
             {isUpdate ? "Update Data" : "Selanjutnya"}
           </button>
         ) : (
-          <button
-            onClick={handleSubmit}
-            disabled={
+          <Tooltip
+            label="Checklist Syarat & Ketentuan terlebih dahulu"
+            showTooltip={
               !dataPekerjaan.setujuKebenaranData ||
               !dataPekerjaan.setujuRisikoInvestasi
             }
-            className={`px-8 py-2 rounded text-white ${
-              !dataPekerjaan.setujuKebenaranData ||
-              !dataPekerjaan.setujuRisikoInvestasi
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#3C2B90] hover:bg-[#2e2176]"
-            }`}
           >
-            {isUpdate ? "Update Data" : "Kirim Data"}
-          </button>
+            <button
+              onClick={handleSubmit}
+              disabled={
+                !dataPekerjaan.setujuKebenaranData ||
+                !dataPekerjaan.setujuRisikoInvestasi
+              }
+              className={`px-8 py-2 rounded text-white ${
+                !dataPekerjaan.setujuKebenaranData ||
+                !dataPekerjaan.setujuRisikoInvestasi
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#3C2B90] hover:bg-[#2e2176]"
+              }`}
+            >
+              {isUpdate ? "Update Data" : "Kirim Data"}
+            </button>
+          </Tooltip>
         )}
       </div>
     </div>

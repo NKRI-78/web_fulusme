@@ -131,12 +131,9 @@ const ContainerSignature: React.FC<Props> = ({ formData, onSignatureSave }) => {
             ctx?.drawImage(img, 0, 0);
             signatureRef.current?.off();
             setIsSignatureSaved(true);
-            console.log("Tanda tangan tersimpan pada:", timestamp);
           };
         }
-      } catch (err) {
-        console.error("Gagal parsing signature dari localStorage:", err);
-      }
+      } catch {}
     }
   }, []);
 

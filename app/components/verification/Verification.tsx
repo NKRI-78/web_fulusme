@@ -24,8 +24,6 @@ export default function VerifikasiPage() {
 
     setError("");
 
-    console.log("Data dikirim:", { noKtp, noRekening });
-
     router.push("/verifikasi/sukses");
   };
 

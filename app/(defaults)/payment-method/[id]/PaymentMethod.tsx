@@ -53,9 +53,6 @@ const PaymentMethod = ({ id }: { id: string }) => {
         .then((response) => {
           setMethods(response.data.data);
         })
-        .catch((error) => {
-          console.error("Failed to fetch payment list:", error);
-        })
         .finally(() => setLoading(false));
     }
   }, []);
@@ -70,8 +67,6 @@ const PaymentMethod = ({ id }: { id: string }) => {
           );
           setProject(response.data.data);
         } catch (error: any) {
-          console.error("Gagal ambil data project:", error);
-
           if (error.response?.status === 400) {
             setIsNotFound(true);
           }

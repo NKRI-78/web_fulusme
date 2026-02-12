@@ -24,13 +24,13 @@ export default function VerifikasiPage() {
 
   const [dokumenLainFile, setDokumenLainFile] = useState<File | null>(null);
   const [dokumenLainPreview, setDokumenLainPreview] = useState<string | null>(
-    null
+    null,
   );
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFile: (file: File | null) => void,
-    setPreview: (url: string | null) => void
+    setPreview: (url: string | null) => void,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -59,13 +59,6 @@ export default function VerifikasiPage() {
     }
 
     setError("");
-
-    console.log("Data dikirim:", {
-      noKtp,
-      namaRekening,
-      noRekening,
-      pemilikRekening,
-    });
 
     router.push("/verifikasi/sukses");
   };
@@ -249,7 +242,7 @@ export default function VerifikasiPage() {
                           handleFileChange(
                             e,
                             setRekeningFile,
-                            setRekeningPreview
+                            setRekeningPreview,
                           )
                         }
                         className="w-full px-4 py-2 border rounded bg-white"
@@ -282,7 +275,7 @@ export default function VerifikasiPage() {
                           handleFileChange(
                             e,
                             setDokumenLainFile,
-                            setDokumenLainPreview
+                            setDokumenLainPreview,
                           )
                         }
                         className="w-full px-4 py-2 border rounded bg-white"

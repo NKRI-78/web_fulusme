@@ -68,9 +68,7 @@ const FormDokumenTambahanPage: React.FC = () => {
           ...defaultValues,
           ...parsedCache,
         });
-      } catch (err) {
-        console.error("Cache tidak valid:", err);
-      }
+      } catch {}
     }
   }, [reset]);
 
@@ -87,7 +85,7 @@ const FormDokumenTambahanPage: React.FC = () => {
 
   //* on submit (send data)
   const onSubmit: SubmitHandler<FormDokumenPelengkapPenerbitSchema> = async (
-    data
+    data,
   ) => {
     if (projectId) {
       try {
@@ -121,7 +119,7 @@ const FormDokumenTambahanPage: React.FC = () => {
           payload,
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
 
         const modalResult = await Swal.fire({
@@ -138,7 +136,6 @@ const FormDokumenTambahanPage: React.FC = () => {
           localStorage.removeItem(FORM_CACHE_KEY);
           skipCacheWrite.current = true;
           reset(defaultValues);
-          console.log("FORM_CACHE_KEY dihapus = " + FORM_CACHE_KEY);
 
           router.back();
         }
@@ -156,7 +153,7 @@ const FormDokumenTambahanPage: React.FC = () => {
 
   //* on invalid
   const onInvalid = async (
-    errors: FieldErrors<FormDokumenPelengkapPenerbitSchema>
+    errors: FieldErrors<FormDokumenPelengkapPenerbitSchema>,
   ): Promise<void> => {
     const fieldNames = Object.keys(errors);
 

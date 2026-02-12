@@ -63,7 +63,6 @@ const NavbarV2: React.FC = () => {
     const user = getAuthUser();
 
     socket.on("inbox-update", async () => {
-      console.log("Test");
       const inboxes = await dispatch(fetchInboxThunk(user?.token ?? "-"));
 
       dispatch(
@@ -100,7 +99,6 @@ const NavbarV2: React.FC = () => {
     try {
       setUserData(user);
     } catch (err) {
-      console.error("Failed to parse user cookie", err);
     } finally {
       setLoadingUser(false);
     }
@@ -116,9 +114,6 @@ const NavbarV2: React.FC = () => {
         })
         .then((res) => {
           setProfile(res.data.data);
-        })
-        .catch((err) => {
-          console.error("Failed to fetch profile", err);
         });
     }
   }, [userData]);
@@ -171,8 +166,8 @@ const NavbarV2: React.FC = () => {
 
   const getAvatar = (): string => {
     if (profile) {
-      if (profile.avatar !== "-") return profile.avatar;
-      if (profile.selfie !== "-") return profile.selfie;
+      if (profile.avatar) return profile.avatar;
+      if (profile.selfie) return profile.selfie;
     }
     return "/images/default-image.png";
   };

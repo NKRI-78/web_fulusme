@@ -78,7 +78,6 @@ const FormAlamat = ({
       fetchOptions("api/v1/administration/subdistrict", watchKecamatan).then(
         (res: any) => {
           const data = res.data || [];
-          console.log("Data ", data);
           setKelurahanList((prev) => ({ ...prev, [index]: res }));
         },
       );

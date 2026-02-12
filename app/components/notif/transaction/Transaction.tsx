@@ -36,7 +36,6 @@ const Transaction = () => {
     setLoading(true);
     try {
       const token = getUser()?.token;
-      console.log("hastoken ", token);
       if (token) {
         const res = await axios(`${API_BACKEND}/api/v1/inbox/list`, {
           headers: {

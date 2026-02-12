@@ -47,7 +47,6 @@ const VideoUploaderContainer: React.FC<VideoUploaderContainerProps> = ({
       if (!photoUrl) return null;
       return photoUrl;
     } catch (error) {
-      console.error("Upload gagal:", error);
       Swal.fire({
         title: "Upload gagal",
         text: "Terjadi kesalahan saat mengunggah video.",
