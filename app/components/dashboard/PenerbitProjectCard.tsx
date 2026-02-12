@@ -11,14 +11,16 @@ export const ProjectCard: React.FC<{
       <div className="relative h-40">
         <img
           src={
-            medias && medias.length !== 0 ? medias[0].path : "/images/img.jpg"
+            medias && medias.length !== 0
+              ? medias[0].path
+              : "/images/default-image.png"
           }
           alt={project.title}
           className="object-cover w-full h-full"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null; // mencegah infinite loop
-            target.src = "/images/img.jpg";
+            target.src = "/images/default-image.png";
           }}
         />
 

@@ -254,7 +254,7 @@ export default function RegisterForm({
         {/* Gambar */}
         <div className="hidden md:block md:w-1/2">
           <img
-            src="/images/modal-auth.png"
+            src="/images/modal-auth.webp"
             alt="Register"
             className="w-full h-full object-cover"
           />

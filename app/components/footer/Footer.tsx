@@ -3,7 +3,11 @@ const Footer: React.FC = () => {
     <footer className="w-full bg-[#4821C1] relative text-white py-12 rounded-t-5xl">
       <div className="container mx-auto px-6 md:px-20 grid grid-cols-1 md:grid-cols-5 gap-8">
         <div className="space-y-4">
-          <img src="/images/img.jpg" alt="FuLusme Logo" className="h-12" />
+          <img
+            src="/images/default-image.png"
+            alt="FuLusme Logo"
+            className="h-12"
+          />
           <ul className="space-y-2 text-sm">
             <li>
               <a href="#" className="hover:underline">

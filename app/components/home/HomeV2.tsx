@@ -254,7 +254,7 @@ const HomeV2: React.FC = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative grid grid-cols-1 md:grid-cols-2 items-center px-6 md:px-20 py-20 md:py-40 bg-[url(/images/bg-capbridge.png)] bg-cover bg-center bg-no-repeat">
+      <section className="relative grid grid-cols-1 md:grid-cols-2 items-center px-6 md:px-20 py-20 md:py-40 bg-[url(/images/bg-capbridge.webp)] bg-cover bg-center bg-no-repeat">
         <div className="absolute inset-0 bg-gradient-to-r from-[#218AC2]/70 to-[#10565C]/70 z-0" />
         {/* Left content */}
         <div className="space-y-6 z-10 relative text-center md:text-left">
@@ -297,14 +297,14 @@ const HomeV2: React.FC = () => {
           <div className="relative w-fit">
             {/* Mockup HP di atas */}
             <img
-              src="/images/IPHONEMOCKUP.png"
+              src="/images/fulusme-mobile-mockup.webp"
               alt="mockup"
               className="w-56 md:w-[72%] absolute -top-0 md:-top-10 left-1/2 -translate-x-1/2 z-20"
             />
 
             {/* Gambar investment di bawah */}
             <img
-              src="/images/investment.png"
+              src="/images/investment-illustration.webp"
               alt="investment"
               className="w-72 md:w-[150%] relative z-10"
             />
@@ -318,7 +318,7 @@ const HomeV2: React.FC = () => {
           <div className="basis-full md:basis-6/12">
             <img
               className="w-3/4 md:w-full mx-auto"
-              src="/images/secure-investment.png"
+              src="/images/secure-investment-illustration.webp"
               alt="Secure Investment"
             />
           </div>
@@ -764,37 +764,6 @@ const HomeV2: React.FC = () => {
           </div>
         </div>
       </section>
-      {/* <section className="bg-white text-black px-6 md:px-20 py-10">
-        <h2 className="text-2xl relative font-bold text-center mb-6">
-          DISCLAIMER
-        </h2>
-
-        <div className="h-[80vh] relative overflow-hidden p-2 border border-gray-300 rounded-lg space-y-4 text-justify text-sm leading-relaxed shadow-md">
-          <iframe
-            src="/document/disclaimer.html"
-            width="100%"
-            height="100%"
-            style={{
-              border: "none",
-              background: "white",
-              minHeight: "80vh",
-            }}
-            title="Disclaimer"
-          />
-        </div>
-      </section> */}
-
-      {/* <div className="fixed bottom-4 right-4 z-50">
-        <a
-          href="https://wa.me/6283814333442"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center bg-[#29a71a] text-white px-4 py-2 font-bold rounded-full shadow-lg"
-        >
-          <img src="/images/wa.png" alt="WA" className="w-5 h-5 mr-2" />
-          Butuh Bantuan?
-        </a>
-      </div> */}
       <HelpButtonPosition>
         <HelpButton />
       </HelpButtonPosition>
