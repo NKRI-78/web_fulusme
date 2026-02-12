@@ -25,7 +25,7 @@ const BroadcastDetailView = () => {
     const fetchBroadcast = async () => {
       try {
         const res = await axios.get(
-          `${API_BACKEND}/api/v1/broadcast/detail/${broadcastId}`
+          `${API_BACKEND}/api/v1/broadcast/detail/${broadcastId}`,
         );
         const broadcastData = res.data.data;
         setBroadcast(broadcastData);
@@ -61,8 +61,11 @@ const BroadcastDetailView = () => {
             className="w-full max-h-[350px] object-cover border border-gray-300 rounded-lg"
             onError={(e) => {
               const target = e.currentTarget as HTMLImageElement;
-              if (target.src !== window.location.origin + "/images/img.jpg") {
-                target.src = "/images/img.jpg";
+              if (
+                target.src !==
+                window.location.origin + "/images/default-image.png"
+              ) {
+                target.src = "/images/default-image.png";
               }
             }}
           />

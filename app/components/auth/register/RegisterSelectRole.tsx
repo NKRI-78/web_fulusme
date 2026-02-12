@@ -93,7 +93,7 @@ export default function RegisterSelectRole({
 
           <div className="md:w-1/2 relative hidden md:block">
             <img
-              src="/images/modal-auth.png"
+              src="/images/modal-auth.webp"
               alt="Professional Woman"
               className="object-cover h-full w-full"
             />
@@ -164,7 +164,7 @@ export default function RegisterSelectRole({
 
           <div className="md:w-1/2 relative hidden md:block">
             <img
-              src="/images/modal-auth.png"
+              src="/images/modal-auth.webp"
               alt="Professional Woman"
               className="object-cover h-full w-full"
             />

@@ -53,7 +53,11 @@ const Register: React.FC = () => {
   return (
     <div className="w-full md:w-1/2 bg-white px-6 md:px-20 py-10">
       <div className="flex justify-between items-center mb-10">
-        <img src="/images/img.jpg" alt="FuLusme Logo" className="w-20 h-20" />
+        <img
+          src="/images/default-image.png"
+          alt="FuLusme Logo"
+          className="w-20 h-20"
+        />
         <button
           onClick={() => router.push("/")}
           className="text-[#321B87] font-bold text-sm"

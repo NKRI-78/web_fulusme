@@ -24,7 +24,7 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
           src={
             project.medias.length !== 0
               ? project.medias[0].path
-              : "/images/img.jpg"
+              : "/images/default-image.png"
           }
           alt={project.title}
           className={`object-cover w-full h-full ${
@@ -33,7 +33,7 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null;
-            target.src = "/images/img.jpg";
+            target.src = "/images/default-image.png";
           }}
         />
         <div className="absolute inset-0 bg-opacity-60 bg-[#10565C]/40" />
