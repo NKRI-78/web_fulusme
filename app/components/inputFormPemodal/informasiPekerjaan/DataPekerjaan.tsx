@@ -211,7 +211,6 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
         alert("Upload gagal, tidak ada URL yang diterima.");
       }
     } catch (error) {
-      console.error("Gagal upload KTP:", error);
       Swal.fire({
         title: "Gagal",
         text: `Upload ${keyName} gagal. Silakan coba lagi.`,
@@ -228,9 +227,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
       try {
         const response = await axios.get(`${urlWilayah}/wilayah/province`);
         setProvince(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil province:", error);
-      }
+      } catch {}
     };
 
     fetchProvince();
@@ -246,9 +243,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
           },
         });
         setCity(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil city:", error);
-      }
+      } catch {}
     };
 
     fetchCity();
@@ -264,9 +259,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
           },
         });
         setDistrict(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil district:", error);
-      }
+      } catch {}
     };
 
     fetchDistrict();
@@ -282,9 +275,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
           },
         });
         setSubDistrict(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil subdistrict:", error);
-      }
+      } catch {}
     };
 
     fetchSubDistrict();
@@ -301,9 +292,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
         });
 
         setPosCode(response?.data?.data?.postal_code || "");
-      } catch (error) {
-        console.error("Gagal ambil subdistrict:", error);
-      }
+      } catch {}
     };
 
     fetchPosCode();
@@ -316,9 +305,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
           `https://api.gateway.langitdigital78.com/v1/bank`,
         );
         setBank(response.data.data.beneficiary_banks);
-      } catch (error) {
-        console.error("Gagal ambil bank:", error);
-      }
+      } catch {}
     };
 
     fetchBank();
@@ -477,7 +464,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
   }, [selectedBank]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 max-w-6xl mx-auto">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
       <div>
         <h2 className="text-lg md:text-xl font-bold mb-4">
           3. Informasi Pekerjaan (Jika Bekerja)
@@ -688,7 +675,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
           </p>
           <UpdateRing identity={`${dataProfile?.form}`} formKey="slip-gaji">
             <FileInput
-              fileName="Slip Gaji"
+              fileName="Slip-Gaji"
               accept=".pdf,.jpg,.png"
               fileUrl={formData.slipGajiUrl}
               onChange={(fileUrl) => {
@@ -919,18 +906,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
           <h3 className="font-semibold text-gray-900 mb-2">
             Pernyataan Kebenaran Data
           </h3>
-          <p className="text-sm text-gray-500 mb-3">
-            Dengan ini menyatakan dan menjamin kepada Penyelenggara bahwa dana
-            yang disetorkan oleh Pemodal ke dalam rekening virtual account
-            dan/atau escrow account Penyelenggara, dan yang digunakan oleh
-            Pemodal untuk melakukan pembelian Efek bersifat ekuitas maupun Efek
-            bersifat utang pada Penerbit merupakan milik Pemodal sendiri dan
-            diperoleh dengan cara yang tidak bertentangan dengan hukum dan
-            perundang-undangan yang berlaku di Negara Kesatuan Republik
-            Indonesia, termasuk namun tidak terbatas pada tindak pidana korupsi,
-            tindak pidana pencucian uang dan pendanaan terorisme
-          </p>
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-x-4 cursor-pointer">
             <input
               type="checkbox"
               name="setujuKebenaranData"
@@ -939,7 +915,15 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
               className="form-checkbox text-[#4821C2]"
             />
             <span className="text-sm font-medium text-gray-700">
-              Ya, saya setuju
+              Dengan ini menyatakan dan menjamin kepada Penyelenggara bahwa dana
+              yang disetorkan oleh Pemodal ke dalam rekening virtual account
+              dan/atau escrow account Penyelenggara, dan yang digunakan oleh
+              Pemodal untuk melakukan pembelian Efek bersifat ekuitas maupun
+              Efek bersifat utang pada Penerbit merupakan milik Pemodal sendiri
+              dan diperoleh dengan cara yang tidak bertentangan dengan hukum dan
+              perundang-undangan yang berlaku di Negara Kesatuan Republik
+              Indonesia, termasuk namun tidak terbatas pada tindak pidana
+              korupsi, tindak pidana pencucian uang dan pendanaan terorisme.
             </span>
           </label>
         </div>
@@ -948,12 +932,7 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
           <h3 className="font-semibold text-gray-900 mb-2">
             Pernyataan Memahami Risiko Investasi
           </h3>
-          <p className="text-sm text-gray-500 mb-3">
-            Saya memahami bahwa setiap investasi mengandung risiko, termasuk
-            kemungkinan kehilangan sebagian atau seluruh dana yang
-            diinvestasikan.
-          </p>
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-x-4 cursor-pointer">
             <input
               type="checkbox"
               name="setujuRisikoInvestasi"
@@ -962,7 +941,9 @@ const ComponentDataPekerjaan: React.FC<Props> = ({
               className="form-checkbox text-[#4821C2]"
             />
             <span className="text-sm font-medium text-gray-700">
-              Ya, saya setuju
+              Saya memahami bahwa setiap investasi mengandung risiko, termasuk
+              kemungkinan kehilangan sebagian atau seluruh dana yang
+              diinvestasikan.
             </span>
           </label>
         </div>

@@ -10,18 +10,14 @@ const useRole = (): number | null => {
     try {
       const parsed = JSON.parse(roleCookie);
       role = parsed.role ?? null;
-    } catch (e) {
-      console.error("Gagal parsing roleCookie", e);
-    }
+    } catch {}
   }
 
   if (!role && userRoleCookie) {
     try {
       const parsed = JSON.parse(userRoleCookie);
       role = parsed.role ?? null;
-    } catch (e) {
-      console.error("Gagal parsing userRoleCookie", e);
-    }
+    } catch {}
   }
 
   return role;

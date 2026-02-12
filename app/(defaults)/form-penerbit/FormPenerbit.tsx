@@ -147,10 +147,6 @@ const fetchOptions = async (url: string, parentId?: string) => {
     const response = await axios.get(
       `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`,
     );
-    console.log(
-      "URL",
-      `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`,
-    );
 
     return response.data?.data.map((item: any) => ({
       value: item.name,
@@ -158,7 +154,6 @@ const fetchOptions = async (url: string, parentId?: string) => {
       zip_code: item.zip_code,
     }));
   } catch (error) {
-    console.error("Failed to fetch options:", error);
     return [];
   }
 };
@@ -200,17 +195,17 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
   useEffect(() => {
     fetchJenisUsaha()
       .then(setOptionsBussines)
-      .catch((err) => console.error(err));
+      .catch((err) => {});
   }, []);
   useEffect(() => {
     fetchJenisPerusahaan()
       .then(setOptionsCompanyType)
-      .catch((err) => console.error(err));
+      .catch((err) => {});
   }, []);
   useEffect(() => {
     fetchStatusCompany()
       .then(setstatusCompany)
-      .catch((err) => console.error(err));
+      .catch((err) => {});
   }, []);
 
   const {
@@ -289,8 +284,6 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
           detail: addr.detail ?? "",
           name: addr.name ?? "",
         }));
-
-        console.log("Address ", mappedAddress);
 
         setValue("address", mappedAddress);
       }
@@ -377,9 +370,7 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
           `https://api.gateway.langitdigital78.com/v1/bank`,
         );
         setBank(response.data.data.beneficiary_banks);
-      } catch (error) {
-        console.error("Gagal ambil bank:", error);
-      }
+      } catch (error) {}
     };
 
     fetchBank();
@@ -406,10 +397,8 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      console.log("Data, ", data);
       onNext();
     } catch (err) {
-      console.error(err);
       alert("Gagal submit");
     }
   };
@@ -510,9 +499,7 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
   return (
     <section className="bg-white text-black items-center px-3 md:px-10">
       <form
-        onSubmit={handleSubmit(onSubmit, (errors) => {
-          console.error("VALIDATION ERRORS:", errors);
-        })}
+        onSubmit={handleSubmit(onSubmit, (errors) => {})}
         className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6 max-w-6xl mx-auto"
       >
         <div className="space-y-4">
@@ -588,15 +575,6 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
               Nomor Telepon Perusahaan{" "}
               <span className="text-red-500 ml-1">*</span>
             </label>
-            {/* <input
-              {...register("noPhoneCompany")}
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              onChange={phoneNumber}
-              className="border rounded p-2 w-full placeholder:text-sm"
-              placeholder="Masukkan Nomor Telepon Perusahaan"
-            /> */}
             <Controller
               control={control}
               name="noPhoneCompany"

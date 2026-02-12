@@ -47,6 +47,7 @@ export interface Project {
   unit_price: string;
   unit_total: string;
   jumlah_unit: string;
+  funding_status: "CLOSED" | "OPEN" | "CANCELLED";
   periode: string;
   type_of_project: string;
   nominal_value: string;

@@ -12,6 +12,7 @@ import { API_BACKEND } from "@/app/utils/constant";
 import { useSearchParams } from "next/navigation";
 import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
+import Tooltip from "../Tooltip";
 
 const FormDataPemodalPerusahaan: React.FC = () => {
   type OptionType = { value: string; label: string } | null;
@@ -19,8 +20,11 @@ const FormDataPemodalPerusahaan: React.FC = () => {
   const searchParams = useSearchParams();
   const isUpdate = searchParams.get("update") === "true";
   const formType = searchParams.get("form") ?? "";
+  const inboxId = searchParams.get("inbox-id");
 
   const [profile, setProfile] = useState<any>(null);
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [formData, setFormData] = useState<any>(() => {
     if (typeof window !== "undefined") {
@@ -137,16 +141,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
         const profile = res.data?.data;
         setProfile(profile);
 
-        if (
-          isUpdate &&
-          [
-            "akta-pendirian-perusahaan",
-            "sk-pendirian-perusahaan",
-            "sk-kumham-path",
-            "npwp-perusahaan",
-            "akta-perubahan-terakhir",
-          ].includes(formType)
-        ) {
+        if (isUpdate) {
           setFormData((prev: any) => ({
             ...prev,
 
@@ -216,13 +211,11 @@ const FormDataPemodalPerusahaan: React.FC = () => {
             posCode: profile?.company?.address?.[0]?.postal_code || "",
             addres: profile?.company?.address?.[0]?.detail || "",
 
-            setujuKebenaranData: false,
-            setujuRisikoInvestasi: false,
+            setujuKebenaranData: true,
+            setujuRisikoInvestasi: true,
           }));
         }
-      } catch (err) {
-        console.error("Gagal fetch profile:", err);
-      }
+      } catch {}
     };
 
     fetchProfile();
@@ -247,7 +240,10 @@ const FormDataPemodalPerusahaan: React.FC = () => {
     nomorRekening: z.string().min(1, "Nomor rekening harus diisi"),
     namaPemilik: z.string().min(1, "Nama rekening perusahaan harus diisi"),
 
-    aktaPendirianPerusahaanUrl: z.string().url("Akta harus diisi"),
+    aktaPendirianPerusahaanUrl: z.string().url("Akta Pendirian harus diisi"),
+    aktaPerubahanTerakhirUrl: z
+      .string()
+      .url("Akta Perubahan Terakhir harus diisi"),
     skPendirianUrl: z.string().url("SK Pendirian "),
     skKumhamPerusahaanUrl: z.string().url("SK Kumham tidak valid"),
     npwpPerusahaanUrl: z.string().url("NPWP tidak valid"),
@@ -302,6 +298,70 @@ const FormDataPemodalPerusahaan: React.FC = () => {
 
   const validateStep = () => {
     const result = schemaDataPemodalPerusahaan.safeParse(formData);
+
+    // validasi form field ketika is update
+    if (isUpdate) {
+      let filteredErrors = {};
+
+      if (!result.success) {
+        const errors = result.error.flatten().fieldErrors;
+        switch (formType) {
+          case "akta-perubahan-terakhir-path":
+            filteredErrors = errors.aktaPerubahanTerakhirUrl
+              ? {
+                  aktaPerubahanTerakhirUrl: errors.aktaPerubahanTerakhirUrl,
+                }
+              : {};
+            break;
+          case "akta-pendirian-perusahaan":
+            filteredErrors = errors.aktaPendirianPerusahaanUrl
+              ? {
+                  aktaPendirianPerusahaanUrl: errors.aktaPendirianPerusahaanUrl,
+                }
+              : {};
+            break;
+          case "sk-pendirian-perusahaan":
+            filteredErrors = errors.skPendirianUrl
+              ? {
+                  skPendirianUrl: errors.skPendirianUrl,
+                }
+              : {};
+            break;
+          case "sk-kumham-path":
+            filteredErrors = errors.skKumhamPerusahaanUrl
+              ? {
+                  skKumhamPerusahaanUrl: errors.skKumhamPerusahaanUrl,
+                }
+              : {};
+            break;
+          case "npwp-perusahaan":
+            filteredErrors = errors.npwpPerusahaanUrl
+              ? {
+                  npwpPerusahaanUrl: errors.npwpPerusahaanUrl,
+                }
+              : {};
+            break;
+          default:
+            filteredErrors = errors;
+            break;
+        }
+      }
+
+      setErrorsPemodalPerusahaan(filteredErrors);
+
+      const success = Object.keys(filteredErrors).length === 0;
+      if (!success) {
+        Swal.fire({
+          title: "Data Tidak Lengkap / Tidak Valid",
+          text: "Beberapa kolom berisi data yang tidak valid atau belum diisi. Harap koreksi sebelum melanjutkan.",
+          icon: "warning",
+          timer: 10000,
+          showConfirmButton: false,
+        });
+      }
+      return success;
+    }
+
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
       setErrorsPemodalPerusahaan(errors);
@@ -323,6 +383,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
   });
 
   const handleSubmit = async () => {
+    if (loading) return;
     if (isUpdate) {
       onUpdateEvent();
     } else {
@@ -342,9 +403,10 @@ const FormDataPemodalPerusahaan: React.FC = () => {
       });
       return;
     }
-    const isValid = await validateStep();
+    const isValid = validateStep();
     if (!isValid) return;
     try {
+      setLoading(true);
       const data = JSON.parse(savedData);
       const payload = {
         role: "9",
@@ -434,15 +496,11 @@ const FormDataPemodalPerusahaan: React.FC = () => {
         },
       };
 
-      const response = await axios.post(
-        `${API_BACKEND}/api/v1/auth/assign/role`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      await axios.post(`${API_BACKEND}/api/v1/auth/assign/role`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
       Swal.fire({
         title: "Berhasil",
         text: "Data berhasil dikirim!",
@@ -466,7 +524,6 @@ const FormDataPemodalPerusahaan: React.FC = () => {
       router.push("/dashboard");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error("Error submitting form:", error.response?.data?.message);
         Swal.fire({
           title: "Gagal",
           text:
@@ -476,7 +533,6 @@ const FormDataPemodalPerusahaan: React.FC = () => {
           timer: 3000,
         });
       } else {
-        console.error("Error submitting form:", error);
         Swal.fire({
           title: "Gagal",
           text: "Terjadi kesalahan yang tidak diketahui.",
@@ -484,6 +540,8 @@ const FormDataPemodalPerusahaan: React.FC = () => {
           timer: 3000,
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -497,7 +555,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
     if (!form) return { dataType: "", val: "" };
 
     switch (form.toLowerCase()) {
-      case "akta-perubahan-terakhir":
+      case "akta-perubahan-terakhir-path":
         return {
           dataType: "akta_perubahan_terahkir_path",
           val: formData.aktaPerubahanTerakhirUrl,
@@ -543,6 +601,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
 
       if (swalResult.isConfirmed) {
         try {
+          setLoading(true);
           const userData = getUser();
 
           if (!userData) return;
@@ -556,6 +615,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
             val,
             user_id: userId,
             company_id: companyId,
+            inbox_id: inboxId,
           };
 
           const res = await axios.put(
@@ -587,9 +647,8 @@ const FormDataPemodalPerusahaan: React.FC = () => {
           localStorage.removeItem("pemodalPerusahaanCache");
           localStorage.removeItem("formPemodalPerusahaan");
           Cookies.remove("formPemodalPerusahaan");
-          router.push("/dashboard");
+          router.replace("/dashboard");
         } catch (error: any) {
-          console.error("Update error detail:", error);
           Swal.fire({
             icon: "error",
             title: "Update gagal",
@@ -597,6 +656,8 @@ const FormDataPemodalPerusahaan: React.FC = () => {
               error.response?.data?.message ||
               "Terjadi kesalahan saat update data.",
           });
+        } finally {
+          setLoading(false);
         }
       }
     }
@@ -656,21 +717,30 @@ const FormDataPemodalPerusahaan: React.FC = () => {
       />
 
       <div className="mt-2 flex justify-end">
-        <button
-          className={`px-6 py-2 rounded-lg text-white ${
-            formData.setujuKebenaranData && formData.setujuRisikoInvestasi
-              ? isUpdate
-                ? "bg-[#3C2B90] hover:bg-[#2e2176]"
-                : "bg-green-600 hover:bg-green-700"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
-          onClick={handleSubmit}
-          disabled={
+        <Tooltip
+          label="Checklist Syarat & Ketentuan terlebih dahulu"
+          showTooltip={
             !formData.setujuKebenaranData || !formData.setujuRisikoInvestasi
           }
         >
-          {isUpdate ? "Update Data" : "Kirim Data"}
-        </button>
+          <button
+            className={`px-6 py-2 rounded-lg text-white ${
+              formData.setujuKebenaranData && formData.setujuRisikoInvestasi
+                ? isUpdate
+                  ? "bg-[#3C2B90] hover:bg-[#2e2176]"
+                  : "bg-green-600 hover:bg-green-700"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
+            onClick={handleSubmit}
+            disabled={
+              !formData.setujuKebenaranData ||
+              !formData.setujuRisikoInvestasi ||
+              loading
+            }
+          >
+            {loading ? "Memuat.." : isUpdate ? "Update Data" : "Kirim Data"}
+          </button>
+        </Tooltip>
       </div>
     </div>
   );

@@ -60,9 +60,7 @@ export default function JabatanForm() {
             }
           });
         }
-      } catch (err) {
-        console.error("Failed to parse jabatanFormData:", err);
-      }
+      } catch (err) {}
     }
   }, []);
 
@@ -85,7 +83,7 @@ export default function JabatanForm() {
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
-    type: "fileKtp" | "fileNpwp"
+    type: "fileKtp" | "fileNpwp",
   ) => {
     const file = e.target.files?.[0];
     if (file) {

@@ -42,9 +42,7 @@ export default function RegisterSelectRole({
       } else {
         window.location.href = "/form-pemodal";
       }
-    } catch (err: any) {
-      console.error("Error ", err);
-    }
+    } catch (err: any) {}
   };
 
   return (

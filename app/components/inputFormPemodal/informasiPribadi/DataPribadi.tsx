@@ -221,8 +221,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
       } else {
         alert("Upload gagal, tidak ada URL yang diterima.");
       }
-    } catch (error) {
-      console.error("Gagal upload KTP:", error);
+    } catch {
       Swal.fire({
         title: "Gagal",
         text: `Upload ${keyName} gagal. Silakan coba lagi.`,
@@ -313,9 +312,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
       try {
         const response = await axios.get(`${urlWilayah}/wilayah/province`);
         setProvince(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil province:", error);
-      }
+      } catch {}
     };
 
     fetchProvince();
@@ -331,9 +328,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
           },
         });
         setCity(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil city:", error);
-      }
+      } catch {}
     };
 
     fetchCity();
@@ -349,9 +344,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
           },
         });
         setDistrict(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil district:", error);
-      }
+      } catch {}
     };
 
     fetchDistrict();
@@ -367,9 +360,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
           },
         });
         setSubDistrict(response.data.data);
-      } catch (error) {
-        console.error("Gagal ambil subdistrict:", error);
-      }
+      } catch {}
     };
 
     fetchSubDistrict();
@@ -386,10 +377,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
           },
         });
         setPosCode(response?.data?.data?.postal_code || "");
-        console.log("CEK", response.data);
-      } catch (error) {
-        console.error("Gagal ambil kode pos:", error);
-      }
+      } catch {}
     };
 
     fetchPosCode();
@@ -402,9 +390,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
           `https://api.gateway.langitdigital78.com/v1/bank`,
         );
         setBank(response.data.data.beneficiary_banks);
-      } catch (error) {
-        console.error("Gagal ambil bank:", error);
-      }
+      } catch {}
     };
 
     fetchBank();

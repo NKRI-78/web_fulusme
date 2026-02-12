@@ -23,7 +23,6 @@ export async function getTransactions(
 
     return res.data.data;
   } catch (error: any) {
-    console.error("getTransactions error:", error?.response || error);
     throw new Error("Gagal mengambil transaksi");
   }
 }

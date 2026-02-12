@@ -47,8 +47,8 @@ const ProfileView: React.FC = () => {
 
   const getAvatar = (): string => {
     if (profile) {
-      if (profile.avatar !== "-") return profile.avatar;
-      if (profile.selfie !== "-") return profile.selfie;
+      if (profile.avatar) return profile.avatar;
+      if (profile.selfie) return profile.selfie;
     }
     return "/images/default-image.png";
   };

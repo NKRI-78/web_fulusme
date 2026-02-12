@@ -36,7 +36,6 @@ const loadFormIndex = (isUpdate: boolean, form: string | null): number => {
   if (form === "complete-company") return 1;
 
   if (isUpdate) {
-    console.log("get form index, form= " + form);
     if (!form) return 0;
 
     // jika formKey memuat form update penerbit maka navigate to index form penerbit yaitu index-2
@@ -83,7 +82,6 @@ export default function MultiStepFormWrapper() {
     setLoadingGetFormIndex(true);
 
     const formIndexResult = loadFormIndex(isUpdate !== null, formKey);
-    console.log("formundexresult", formIndexResult);
     setFormIndex(formIndexResult);
 
     setLoadingGetFormIndex(false);
@@ -106,11 +104,14 @@ export default function MultiStepFormWrapper() {
             },
           });
 
-          setUserProfile({ ...res.data["data"], form_key: formKey });
+          const userData = res.data.data;
+
+          setUserProfile({
+            ...userData,
+            form_key: formKey,
+          });
         }
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     };
     fetchUser();
   }, []);
@@ -165,7 +166,7 @@ export default function MultiStepFormWrapper() {
           showConfirmButton: false,
         });
 
-        router.back();
+        router.replace("/dashboard");
       }
     } catch (err: any) {
       const message =
@@ -225,6 +226,7 @@ export default function MultiStepFormWrapper() {
           {formIndex === 2 && (
             <FormPenerbit
               profile={userProfile}
+              loadingUpdateDocument={loadingUpdateDoc}
               isUpdate={isUpdate !== null}
               onBack={prev}
               onUpdateCallback={(val) => {

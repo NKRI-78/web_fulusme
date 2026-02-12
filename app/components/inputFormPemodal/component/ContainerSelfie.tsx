@@ -30,7 +30,6 @@ const ContainerSelfie: React.FC<Props> = ({
   useEffect(() => {
     const checkCameraSupport = async () => {
       if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-        console.log("Device tidak mendukung kamera");
         setErrorMessage("Device tidak mendukung kamera");
         return;
       }
@@ -38,18 +37,14 @@ const ContainerSelfie: React.FC<Props> = ({
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const hasCamera = devices.some(
-          (device) => device.kind === "videoinput"
+          (device) => device.kind === "videoinput",
         );
 
         if (!hasCamera) {
-          console.log("Tidak ada kamera yang terdeteksi");
           setErrorMessage("Tidak ada kamera yang terdeteksi");
         } else {
-          console.log("Kamera tersedia");
         }
-      } catch (err) {
-        console.error("Gagal memeriksa kamera:", err);
-      }
+      } catch (err) {}
     };
 
     checkCameraSupport();
@@ -68,13 +63,12 @@ const ContainerSelfie: React.FC<Props> = ({
       setIsCameraActive(true);
     } catch (err) {
       if (err instanceof DOMException) {
-        console.log(err);
         if (
           err.name === "NotAllowedError" ||
           err.name === "PermissionDeniedError"
         ) {
           setErrorMessage(
-            "Akses kamera ditolak. Silakan aktifkan izin kamera di pengaturan browser."
+            "Akses kamera ditolak. Silakan aktifkan izin kamera di pengaturan browser.",
           );
         } else {
           setErrorMessage("Terjadi kesalahan saat mengakses kamera.");
@@ -116,7 +110,6 @@ const ContainerSelfie: React.FC<Props> = ({
           const fileName = `selfie-${new Date().toISOString()}.png`;
           const file = new File([blob], fileName, { type: "image/png" });
           photoResult(file);
-          console.log(file.name);
         }
       }, "image/png");
 

@@ -29,7 +29,6 @@ import {
   FormPenerbitSchema,
   FormPenerbitValues,
 } from "./formPenerbit.schema";
-import FileUpload from "@/app/helper/FileUpload";
 import { ProfileUpdate } from "@/app/(defaults)/form-penerbit/IProfileUpdate";
 import {
   FORM_INDEX_CACHE_KEY,
@@ -42,10 +41,12 @@ import { IFormPublisher } from "./IFormPublisher";
 import FileInput from "./_component/FileInput";
 import Subtitle from "./_component/SectionSubtitle";
 import { uploadMediaService } from "@/app/helper/mediaService";
+import { logger } from "@/utils/logger";
 
 type Props = {
   profile: ProfileUpdate | null;
   isUpdate: boolean;
+  loadingUpdateDocument: boolean;
   onBack: () => void;
   onSubmidCallback: () => void;
   onUpdateCallback: (val: UpdateFieldValue) => void;
@@ -90,6 +91,7 @@ const FormPenerbit: React.FC<Props> = ({
   onBack,
   profile,
   isUpdate,
+  loadingUpdateDocument,
   onSubmidCallback,
   onUpdateCallback,
 }) => {
@@ -126,6 +128,9 @@ const FormPenerbit: React.FC<Props> = ({
     setValue,
     reset,
     watch,
+    trigger,
+    setError,
+    clearErrors,
   } = methods;
 
   const direkturFA = useFieldArray({
@@ -190,7 +195,6 @@ const FormPenerbit: React.FC<Props> = ({
         })) || [emptyKomisaris()],
         agree: true,
       });
-      console.log("Prefilled form from profile (update mode)");
     }
   }, [isUpdate, profile]);
 
@@ -200,14 +204,11 @@ const FormPenerbit: React.FC<Props> = ({
     setLoading(true);
     try {
       const draft = localStorage.getItem(FORM_PENERBIT_1_CACHE_KEY);
-      console.log(draft);
       const userData = getUser();
 
       if (!draft || !userData) return;
 
       const publisherFormCache: IFormPublisher = JSON.parse(draft);
-
-      console.log(publisherFormCache);
 
       const payload = {
         role: "2",
@@ -281,14 +282,9 @@ const FormPenerbit: React.FC<Props> = ({
         })),
       };
 
-      const res = await axios.post(
-        `${API_BACKEND}/api/v1/auth/assign/role`,
-        payload,
-        {
-          headers: { Authorization: `Bearer ${userData.token}` },
-        },
-      );
-      console.log(res);
+      await axios.post(`${API_BACKEND}/api/v1/auth/assign/role`, payload, {
+        headers: { Authorization: `Bearer ${userData.token}` },
+      });
 
       clearDraft();
 
@@ -303,7 +299,6 @@ const FormPenerbit: React.FC<Props> = ({
 
       onSubmidCallback();
     } catch (error: any) {
-      console.log(error);
       Swal.fire({
         icon: "error",
         title: "Kirim data gagal",
@@ -375,21 +370,123 @@ const FormPenerbit: React.FC<Props> = ({
     setLoading(false);
   };
 
-  const onSubmit = handleSubmit(
-    async (values, e) => {
-      if (isUpdate) return handleUpdateRegister(values);
-      return handleRegisterCompany(values);
-    },
-    () => {
-      Swal.fire({
-        title: "Data Tidak Lengkap / Tidak Valid",
-        text: "Beberapa kolom berisi data yang tidak valid atau belum diisi. Harap koreksi sebelum melanjutkan.",
-        icon: "warning",
-        timer: 10000,
-        showConfirmButton: false,
-      });
-    },
-  );
+  async function validateSubmitOnUpdate(): Promise<boolean> {
+    let valid: boolean = false;
+    logger.info("FORM PENERBIT validateSubmitOnUpdate with key event", formKey);
+
+    switch (formKey) {
+      case "sk-kumham-terakhir":
+        valid = await trigger("sk_kumham_terahkir");
+        break;
+      case "siup":
+        valid = await trigger("siup");
+        break;
+      case "tdp":
+        valid = await trigger("tdp");
+        break;
+      case "nib":
+        valid = await trigger("company_nib_path");
+        break;
+      case "npwp-perusahaan":
+        valid = await trigger("fileNpwp");
+        break;
+      case "akta-pendirian-perusahaan":
+        valid = await trigger("akta_pendirian");
+        break;
+      case "sk-kumham-pendirian":
+        valid = await trigger("sk_kumham_path");
+        break;
+      case "akta-perubahan-terakhir-path":
+        valid = await trigger("akta_perubahan_terahkir_path");
+        break;
+      case "laporan-keuangan":
+        valid = await trigger("laporanKeuangan");
+        break;
+      case "rekening-koran":
+        valid = await trigger("rekeningKoran");
+        break;
+
+      // [DIREKTUR]==[KTP]
+      case "0-direktur-upload-ktp":
+        valid = await trigger("direktur.0.fileKTP");
+        break;
+      case "1-direktur-upload-ktp":
+        valid = await trigger("direktur.1.fileKTP");
+        break;
+      case "2-direktur-upload-ktp":
+        valid = await trigger("direktur.2.fileKTP");
+        break;
+
+      // [DIREKTUR]==[NPWP]
+      case "0-direktur-upload-npwp":
+        valid = await trigger("direktur.0.fileNPWP");
+        break;
+      case "1-direktur-upload-npwp":
+        valid = await trigger("direktur.1.fileNPWP");
+        break;
+      case "2-direktur-upload-npwp":
+        valid = await trigger("direktur.2.fileNPWP");
+        break;
+
+      // [KOMISARIS]==[KTP]
+      case "0-komisaris-upload-ktp":
+        valid = await trigger("komisaris.0.fileKTP");
+        break;
+      case "1-komisaris-upload-ktp":
+        valid = await trigger("komisaris.1.fileKTP");
+        break;
+      case "2-komisaris-upload-ktp":
+        valid = await trigger("komisaris.2.fileKTP");
+        break;
+
+      // [KOMISARIS]==[NPWP]
+      case "0-komisaris-upload-npwp":
+        valid = await trigger("komisaris.0.fileNPWP");
+        break;
+      case "1-komisaris-upload-npwp":
+        valid = await trigger("komisaris.1.fileNPWP");
+        break;
+      case "2-komisaris-upload-npwp":
+        valid = await trigger("komisaris.2.fileNPWP");
+        break;
+      default:
+        valid = true;
+    }
+    logger.info("FORM PENERBIT validateSubmitOnUpdate trigger", formKey, valid);
+    return valid;
+  }
+
+  const onSubmit = async () => {
+    if (isUpdate) {
+      const valid = await validateSubmitOnUpdate();
+      if (valid) {
+        handleUpdateRegister(values);
+      } else {
+        Swal.fire({
+          title: "Data Tidak Lengkap / Tidak Valid",
+          text: "Beberapa kolom berisi data yang tidak valid atau belum diisi. Harap koreksi sebelum melanjutkan.",
+          icon: "warning",
+          timer: 10000,
+          showConfirmButton: false,
+        });
+      }
+    } else {
+      handleSubmit(
+        async (values, e) => {
+          return handleRegisterCompany(values);
+        },
+        async () => {
+          Swal.fire({
+            title: "Data Tidak Lengkap / Tidak Valid",
+            text: "Beberapa kolom berisi data yang tidak valid atau belum diisi. Harap koreksi sebelum melanjutkan.",
+            icon: "warning",
+            timer: 10000,
+            showConfirmButton: false,
+          });
+        },
+      );
+    }
+  };
 
   useEffect(() => {
     const draft = localStorage.getItem(FORM_PENERBIT_2_CACHE_KEY);
@@ -410,8 +507,6 @@ const FormPenerbit: React.FC<Props> = ({
 
   const canAddDirektur = direkturFA.fields.length < MAX_DIREKTUR;
   const canAddKomisaris = komisarisFA.fields.length < MAX_KOMISARIS;
-
-  const { setError, clearErrors } = methods;
 
   const handleUploadFile = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -469,13 +564,13 @@ const FormPenerbit: React.FC<Props> = ({
         return values.tdp;
       case "nib":
         return values.company_nib_path;
-      case "npwp":
+      case "npwp-perusahaan":
         return values.fileNpwp;
       case "akta-pendirian-perusahaan":
         return values.akta_pendirian;
       case "sk-kumham-pendirian":
         return values.sk_kumham_path;
-      case "akta-perubahan-terakhir":
+      case "akta-perubahan-terakhir-path":
         return values.akta_perubahan_terahkir_path;
       case "laporan-keuangan":
         return values.laporanKeuangan;
@@ -576,7 +671,7 @@ const FormPenerbit: React.FC<Props> = ({
                   />
                 </div>
               </UpdateRing>
-              <UpdateRing identity={"npwp"} formKey={formKey}>
+              <UpdateRing identity={"npwp-perusahaan"} formKey={formKey}>
                 {/* <FileUpload
                   label="NPWP"
                   fileUrl={watch("fileNpwp")}
@@ -593,7 +688,7 @@ const FormPenerbit: React.FC<Props> = ({
                     fileName="NPWP"
                     accept=".pdf"
                     fileUrl={watch("fileNpwp")}
-                    disabled={disabledFormWhenUpdate("npwp")}
+                    disabled={disabledFormWhenUpdate("npwp-perusahaan")}
                     onChange={(fileUrl) => {
                       setValue("fileNpwp", fileUrl, {
                         shouldValidate: true,
@@ -639,19 +734,19 @@ const FormPenerbit: React.FC<Props> = ({
                 formKey={formKey}
               >
                 {/* <FileUpload
-                  label="Akte Pendirian Perusahaan"
+                  label="Akta Pendirian Perusahaan"
                   fileUrl={watch("akta_pendirian")}
                   onUpload={(e) => handleUploadFile(e, "akta_pendirian")}
                   error={errors?.akta_pendirian?.message}
                 /> */}
                 <div>
-                  <SectionPoint text="Akte Pendirian Perusahaan" />
+                  <SectionPoint text="Akta Pendirian Perusahaan" />
                   <Subtitle
                     text="File maksimal berukuran 10mb"
                     className="mb-1"
                   />
                   <FileInput
-                    fileName="Akte Pendirian Perusahaan"
+                    fileName="Akta Pendirian Perusahaan"
                     accept=".pdf"
                     fileUrl={watch("akta_pendirian")}
                     disabled={disabledFormWhenUpdate(
@@ -698,11 +793,11 @@ const FormPenerbit: React.FC<Props> = ({
               </UpdateRing>
 
               <UpdateRing
-                identity={"akta-perubahan-terakhir"}
+                identity={"akta-perubahan-terakhir-path"}
                 formKey={formKey}
               >
                 {/* <FileUpload
-                  label="Akte Perubahan Terakhir"
+                  label="Akta Perubahan Terakhir"
                   fileUrl={watch("akta_perubahan_terahkir_path")}
                   onUpload={(e) =>
                     handleUploadFile(e, "akta_perubahan_terahkir_path")
@@ -710,16 +805,18 @@ const FormPenerbit: React.FC<Props> = ({
                   error={errors?.akta_perubahan_terahkir_path?.message}
                 /> */}
                 <div>
-                  <SectionPoint text="Akte Perubahan Terakhir" />
+                  <SectionPoint text="Akta Perubahan Terakhir" />
                   <Subtitle
                     text="File maksimal berukuran 10mb"
                     className="mb-1"
                   />
                   <FileInput
-                    fileName="Akte Perubahan Terakhir"
+                    fileName="Akta Perubahan Terakhir"
                     accept=".pdf"
                     fileUrl={watch("akta_perubahan_terahkir_path")}
-                    disabled={disabledFormWhenUpdate("akta-perubahan-terakhir")}
+                    disabled={disabledFormWhenUpdate(
+                      "akta-perubahan-terakhir-path",
+                    )}
                     onChange={(fileUrl) => {
                       setValue("akta_perubahan_terahkir_path", fileUrl, {
                         shouldValidate: true,
@@ -833,6 +930,7 @@ const FormPenerbit: React.FC<Props> = ({
                   key={field._id}
                   namePrefix="direktur"
                   index={index}
+                  formKey={formKey}
                   isUpdate={isUpdate}
                   isKomisaris={false}
                   hasDirekturUtama={hasDirekturUtama}
@@ -869,6 +967,7 @@ const FormPenerbit: React.FC<Props> = ({
                   namePrefix="komisaris"
                   index={index}
                   isKomisaris
+                  formKey={formKey}
                   isUpdate={isUpdate}
                   hasKomisarisUtama={hasKomisarisUtama}
                   updateFormKey={formKey}
@@ -928,10 +1027,15 @@ const FormPenerbit: React.FC<Props> = ({
               )}
               <FormButton
                 onClick={onSubmit}
-                disabled={!agree || loading}
+                disabled={!agree || loading || loadingUpdateDocument}
                 className={!agree ? "cursor-not-allowed" : ""}
               >
-                {loading ? "Memuat" : isUpdate ? "Update" : "Kirim"} Data
+                {loading || loadingUpdateDocument
+                  ? "Memuat"
+                  : isUpdate
+                    ? "Update"
+                    : "Kirim"}{" "}
+                Data
               </FormButton>
             </div>
           </section>
