@@ -65,7 +65,7 @@ export default function RegisterOtp({
       };
       const response = await axios.post(
         `${API_BACKEND}/api/v1/verify-otp`,
-        payloads
+        payloads,
       );
 
       const result: AuthResponse = response.data;
@@ -208,7 +208,7 @@ export default function RegisterOtp({
 
       <div className="hidden md:block md:w-1/2">
         <img
-          src="/images/modal-auth.png"
+          src="/images/modal-auth.webp"
           alt="OTP"
           className="w-full h-full object-cover"
         />
