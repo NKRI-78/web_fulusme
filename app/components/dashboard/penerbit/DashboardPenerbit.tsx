@@ -40,8 +40,8 @@ export const DashboardPenerbit: React.FC<Props> = ({
     const statusProject = profile?.company?.projects
       ? projectStatus
       : profile?.verify_emiten
-      ? "VERIFIED"
-      : "UNVERIFIED";
+        ? "VERIFIED"
+        : "UNVERIFIED";
 
     setCurrentStep(statusSteps[statusProject]);
   }, [profile]);
@@ -49,6 +49,17 @@ export const DashboardPenerbit: React.FC<Props> = ({
   const rejectedProject = projectStatus === "REJECTED";
 
   const renderPanelContent = (): React.ReactNode => {
+    if (rejectedProject) {
+      return (
+        <PanelContent
+          title="Proyek Ditolak"
+          message="Pengajuan proyek Anda belum dapat disetujui. Silakan perbaiki detail proyek sesuai ketentuan, lalu ajukan kembali proyek baru."
+          buttonTitle="Buat Proyek Baru"
+          navigateToPath={"/create-project"}
+        />
+      );
+    }
+
     if (profile?.company.projects) {
       if (hasPaidAdministration) {
         return (
@@ -136,7 +147,7 @@ export const DashboardPenerbit: React.FC<Props> = ({
 
   return (
     <div className="space-y-4">
-      {projectStatus !== "PUBLISH" && projectStatus !== "REJECTED" && (
+      {projectStatus !== "PUBLISH" && (
         <PanelContainer clasName="flex flex-col items-center text-center">
           {renderPanelContent()}
         </PanelContainer>

@@ -6,6 +6,8 @@ export const ProjectCard: React.FC<{
 }> = ({ project }) => {
   const medias = project.medias ?? project.media;
 
+  const rejected = project.status === "REJECTED";
+
   return (
     <div className="rounded-xl overflow-hidden shadow border bg-[#10565C]">
       <div className="relative h-40">
@@ -29,7 +31,10 @@ export const ProjectCard: React.FC<{
         {project.status === "PUBLISH" ? (
           <StatusContainer title="Sedang Tayang" bgColor="bg-red-500" />
         ) : (
-          <StatusContainer title="Sedang Direview" bgColor="bg-gray-700" />
+          <StatusContainer
+            title={rejected ? `Proyek Ditolak` : `Sedang Direview`}
+            bgColor="bg-gray-700"
+          />
         )}
       </div>
 
