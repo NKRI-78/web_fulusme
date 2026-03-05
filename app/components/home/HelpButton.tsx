@@ -8,7 +8,7 @@ export function HelpButton() {
 
   return (
     <a
-      href="https://wa.me/6283814333442"
+      href="https://wa.me/6281117797231"
       target="_blank"
       rel="noopener noreferrer"
       className={`
