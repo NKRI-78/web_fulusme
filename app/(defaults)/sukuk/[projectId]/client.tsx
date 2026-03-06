@@ -384,7 +384,7 @@ const SukukClient = ({ projectId }: Props) => {
                 <p className="text-xs text-center mt-4">
                   Butuh Pertanyaan?{" "}
                   <a
-                    href="https://wa.me/6283814333442"
+                    href="https://wa.me/6281117797231"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 font-semibold"
