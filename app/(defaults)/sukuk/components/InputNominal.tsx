@@ -1,10 +1,9 @@
 "use client";
 
 import { getUser } from "@/app/lib/auth";
-import { fetchDashboardClient } from "@/redux/slices/dashboardSlice";
-import { AppDispatch, RootState } from "@/redux/store";
+import { RootState } from "@/redux/store";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 interface InputNominalLotProps {
   label?: string;
@@ -29,7 +28,6 @@ export default function InputNominalLot({
   roi,
   onConfirm,
 }: InputNominalLotProps) {
-  const dispatch = useDispatch<AppDispatch>();
   const { data: dashboardData } = useSelector(
     (state: RootState) => state.dashboard,
   );
@@ -50,13 +48,6 @@ export default function InputNominalLot({
 
   const formatRupiah = (num: number) =>
     new Intl.NumberFormat("id-ID").format(num);
-
-  // 🔁 fetch dashboard user
-  useEffect(() => {
-    if (user?.token) {
-      dispatch(fetchDashboardClient(user.token));
-    }
-  }, [dispatch]);
 
   // sinkronisasi nominal ketika lot berubah
   useEffect(() => {

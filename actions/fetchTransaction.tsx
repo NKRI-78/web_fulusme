@@ -1,22 +1,15 @@
-import axios from "axios";
 import { TransactionResponse } from "@/app/interfaces/transaction/transaction";
 import { API_BACKEND } from "@/app/utils/constant";
+import api from "@/utils/axios";
 
-export async function getTransactions(
-  token: string,
-  page: number = 1,
-  limit: number = 5,
-) {
+export async function getTransactions(page: number = 1, limit: number = 5) {
   try {
-    const res = await axios.get<TransactionResponse>(
+    const res = await api.get<TransactionResponse>(
       `${API_BACKEND}/api/v1/transaction/project/list`,
       {
         params: {
           page,
           limit,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
         },
       },
     );

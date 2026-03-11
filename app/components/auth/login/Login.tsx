@@ -6,11 +6,10 @@ import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { API_BACKEND } from "@/app/utils/constant";
-import Link from "next/link";
 import Image from "next/image";
+import api from "@/utils/axios";
 
 const errorMessages: Record<string, string> = {
   CREDENTIALS_IS_INCORRECT: "Password yang kamu masukkan salah.",
@@ -40,13 +39,10 @@ const Login: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BACKEND}/api/v1/auth/login`,
-        {
-          email,
-          password,
-        }
-      );
+      const response = await api.post(`/api/v1/auth/login`, {
+        email,
+        password,
+      });
       const userData = response.data.data;
       Cookies.set("user", JSON.stringify(response.data.data), { expires: 7 });
 
@@ -59,17 +55,10 @@ const Login: React.FC = () => {
           confirmButtonColor: "#10565C",
           confirmButtonText: "Verifikasi Sekarang",
         });
-
-        const payloads = {
+        await api.post(`/api/v1/resend-otp`, {
           val: userData.email,
-        };
-        const { data } = await axios.post(
-          `${API_BACKEND}/api/v1/resend-otp`,
-          payloads
-        );
-
+        });
         localStorage.setItem("showOtp", "true");
-
         router.push("/");
         return;
       }

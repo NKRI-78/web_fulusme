@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FolderUp, X, Image as ImageIcon } from "lucide-react";
-import axios from "axios";
 import Swal from "sweetalert2";
-import { compressImage } from "@/app/helper/CompressorImage";
 import SectionPoint from "./SectionPoint";
 import { uploadMediaService } from "@/app/helper/mediaService";
 

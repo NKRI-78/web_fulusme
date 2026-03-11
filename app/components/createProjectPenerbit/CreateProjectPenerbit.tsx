@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
-import Cookies from "js-cookie";
 import Flatpickr from "react-flatpickr";
 import { Indonesian } from "flatpickr/dist/l10n/id.js";
 import "flatpickr/dist/flatpickr.min.css";
@@ -13,12 +12,7 @@ import PhotoUploaderContainer from "../inputFormPenerbit/_component/PhotoUploade
 import FileInput from "../inputFormPenerbit/_component/FileInput";
 import SectionPoint from "../inputFormPenerbit/_component/SectionPoint";
 import Subtitle from "../inputFormPenerbit/_component/SectionSubtitle";
-import {
-  Controller,
-  SubmitHandler,
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import {
   CreateProjectFormSchema,
   createProjectPenerbitSchema,
@@ -27,8 +21,6 @@ import {
 } from "./form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CurrencyField from "../inputFormPenerbit/_component/CurrencyField";
-import { API_BACKEND } from "@/app/utils/constant";
-import axios from "axios";
 import { fetchProvinces } from "@/app/lib/fetchWilayah";
 
 type OptionType = { value: string; label: string; zip_code: string };
@@ -38,12 +30,7 @@ import FormButton from "../inputFormPenerbit/_component/FormButton";
 import MonthSelection from "../inputFormPenerbit/_component/MonthSelection";
 import GoogleMapPicker from "./GoogleMapsPicker";
 import FormAlamat from "./FormAlamat";
-
-const getUserToken = (): string => {
-  const userCookie = Cookies.get("user");
-  if (!userCookie) throw "User tidak ditemukan";
-  return JSON.parse(userCookie).token;
-};
+import api from "@/utils/axios";
 
 const FORM_CACHE_KEY = "createProjectPenerbitCache";
 
@@ -137,8 +124,8 @@ const CreateProjectPenerbit: React.FC = () => {
 
   const fetchOptions = async (url: string, parentId?: string) => {
     try {
-      const response = await axios.get(
-        `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`,
+      const response = await api.get(
+        `/${url}${parentId ? `/${parentId}` : ""}`,
       );
 
       return response.data?.data.map((item: any) => ({
@@ -215,10 +202,7 @@ const CreateProjectPenerbit: React.FC = () => {
         no_contract_value: "-",
       };
 
-      const token = getUserToken();
-      await axios.post(`${API_BACKEND}/api/v1/project/store`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.post(`/api/v1/project/store`, payload);
 
       await Swal.fire({
         title: "Berhasil Membuat Proyek",
@@ -249,12 +233,7 @@ const CreateProjectPenerbit: React.FC = () => {
 
   const fetchJenisProyek = async () => {
     try {
-      const token = getUserToken();
-      const res = await axios.get(`${API_BACKEND}/api/v1/project/type/list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await api.get(`/api/v1/project/type/list`);
       const types = res.data["data"];
       if (types) {
         setJenisProyek(types);
@@ -268,15 +247,7 @@ const CreateProjectPenerbit: React.FC = () => {
 
   const fetchJenisInstansiPemberiProyek = async () => {
     try {
-      const token = getUserToken();
-      const res = await axios.get(
-        `${API_BACKEND}/api/v1/project/authority/type/list`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const res = await api.get(`/api/v1/project/authority/type/list`);
       const types = res.data["data"];
       if (types) {
         setJenisInstansiPemberiProyek(types);
@@ -290,12 +261,7 @@ const CreateProjectPenerbit: React.FC = () => {
 
   const fetchCompanyId = async () => {
     try {
-      const token = getUserToken();
-      const res = await axios.get(`${API_BACKEND}/api/v1/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await api.get(`/api/v1/profile`);
 
       const user = res.data["data"];
       if (user) {

@@ -4,13 +4,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import axios from "axios";
-import { API_BACKEND } from "@app/utils/constant";
 import { setCookie } from "@/app/helper/cookie";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
 import { AuthResponse } from "@/app/interfaces/auth/auth";
-import { logger } from "@/utils/logger";
+import api from "@/utils/axios";
+import axios from "axios";
 
 const schema = z
   .object({
@@ -71,10 +70,7 @@ export default function RegisterForm({
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        `${API_BACKEND}/api/v1/auth/register`,
-        payload,
-      );
+      const response = await api.post(`/api/v1/auth/register`, payload);
 
       const result: AuthResponse = response.data;
 

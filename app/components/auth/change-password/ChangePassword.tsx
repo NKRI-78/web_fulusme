@@ -3,18 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@redux/store";
-import { setPassword, setShowPassword } from "@redux/slices/authSlice";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const ChangePassword: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-
-  const password = useSelector((state: RootState) => state.auth.password);
-  const loading = useSelector((state: RootState) => state.auth.loading);
-  const showPassword = useSelector(
-    (state: RootState) => state.auth.showPassword
-  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +22,7 @@ const ChangePassword: React.FC = () => {
           Update Password
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {/* <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label
               htmlFor="newPassword"
@@ -66,7 +59,7 @@ const ChangePassword: React.FC = () => {
           >
             {loading ? "Updating..." : "Update Password"}
           </button>
-        </form>
+        </form> */}
       </div>
     </div>
   );

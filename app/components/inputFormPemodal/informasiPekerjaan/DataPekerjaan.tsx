@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { FaFileAlt } from "react-icons/fa";
 import Select from "react-select";
-import { API_BACKEND_MEDIA } from "@/app/utils/constant";
-import { compressImage } from "@/app/helper/CompressorImage";
 import UpdateRing from "../component/UpdateRing";
 import { NumericFormat } from "react-number-format";
 import { uploadMediaService } from "@/app/helper/mediaService";

@@ -1,6 +1,5 @@
+import api from "@/utils/axios";
 import { getCookie, setCookie } from "@app/helper/cookie";
-import { API_BACKEND } from "@app/utils/constant";
-import axios from "axios";
 import React, { useState } from "react";
 import Countdown from "react-countdown";
 import OTPInput from "react-otp-input";
@@ -40,8 +39,7 @@ export default function RegisterOtp({
       setIsDisableResendOTP(true);
       setExpiry(Date.now() + 60_000); // mulai countdown 60 detik
 
-      const payloads = { val: user?.email };
-      await axios.post(`${API_BACKEND}/api/v1/resend-otp`, payloads);
+      await api.post(`/api/v1/resend-otp`, { val: user?.email });
     } catch (err: any) {
       // Jika gagal, kembalikan state supaya user bisa coba lagi
       setIsDisableResendOTP(false);
@@ -59,14 +57,10 @@ export default function RegisterOtp({
     event.preventDefault();
     try {
       setLoading(true);
-      const payloads = {
+      const response = await api.post(`/api/v1/verify-otp`, {
         val: user?.email,
         otp,
-      };
-      const response = await axios.post(
-        `${API_BACKEND}/api/v1/verify-otp`,
-        payloads,
-      );
+      });
 
       const result: AuthResponse = response.data;
       setCookie("user", JSON.stringify(result.data));

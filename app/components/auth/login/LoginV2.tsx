@@ -5,13 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import Swal from "sweetalert2";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import axios from "axios";
-
-const errorMessages: Record<string, string> = {
-  CREDENTIALS_IS_INCORRECT: "Password yang kamu masukkan salah.",
-  USER_NOT_FOUND: "Email salah atau belum terdaftar, cek kembali email Anda.",
-};
+import api from "@/utils/axios";
 
 const LoginV2: React.FC = () => {
   const router = useRouter();
@@ -34,23 +28,10 @@ const LoginV2: React.FC = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth//login`,
-        {
-          email,
-          password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      // asumsi backend kirim token / data user
-      // if (res.data?.access_token) {
-      //   localStorage.setItem("token", res.data.access_token);
-      // }
+      await api.post(`/api/v1/auth//login`, {
+        email,
+        password,
+      });
 
       await Swal.fire({
         icon: "success",

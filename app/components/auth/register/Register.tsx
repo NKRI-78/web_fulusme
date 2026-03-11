@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@redux/store";
 import { Eye, EyeOff } from "lucide-react";
-import { registerAsync } from "@redux/slices/authSlice";
 import { useState } from "react";
 import Swal from "sweetalert2";
 
@@ -34,19 +33,18 @@ const Register: React.FC = () => {
     }
 
     try {
-      await dispatch(
-        registerAsync({
-          register: {
-            fullname: `${firstName} ${lastName}`,
-            email,
-            phone,
-            password,
-            role: userType === "Individu" ? "1" : "2",
-          },
-        }),
-      ).unwrap();
-
-      router.push("/");
+      // await dispatch(
+      //   registerAsync({
+      //     register: {
+      //       fullname: `${firstName} ${lastName}`,
+      //       email,
+      //       phone,
+      //       password,
+      //       role: userType === "Individu" ? "1" : "2",
+      //     },
+      //   }),
+      // ).unwrap();
+      // router.push("/");
     } catch {}
   };
 

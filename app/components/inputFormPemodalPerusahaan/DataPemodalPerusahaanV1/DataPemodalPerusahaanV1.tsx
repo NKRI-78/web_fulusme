@@ -10,7 +10,6 @@ import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { useSearchParams } from "next/navigation";
 import { uploadMediaService } from "@/app/helper/mediaService";
 import FileInput from "../../inputFormPenerbit/_component/FileInput";
-import { PhoneInput } from "@/app/(defaults)/form-penerbit/components/PhoneInput";
 
 interface Props {
   formData: {
@@ -87,7 +86,6 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
   onLihatSkPendirianPerusahaan,
   onLihatSkKumhamPerusahaan,
   onLihatNpwpPerusahaan,
-
   errors,
 }) => {
   const [optionsBussines, setOptionsBussines] = useState<TypeOption[]>([]);

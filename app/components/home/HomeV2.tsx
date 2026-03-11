@@ -3,18 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ProjectCard } from "@/app/components/project/ProjectCard";
-// import { IProjectData } from "@/app/interface/IProject";
 import Cookies from "js-cookie";
 import { getAllProject } from "@/actions/GetAllProject";
 import Modal from "@/app/helper/Modal";
 import RegisterOtp from "../auth/register/RegisterOtp";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
 import RegisterV2 from "../auth/register/RegisterV2";
-import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
-import { InboxResponse } from "../notif/inbox-interface";
 import { useDispatch } from "react-redux";
-import { setBadge } from "@/redux/slices/badgeSlice";
 import { Project } from "@/app/interfaces/project/IProject";
 import GridView from "../GridView";
 import { HelpButton, HelpButtonPosition } from "./HelpButton";

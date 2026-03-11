@@ -6,9 +6,9 @@ import DocumentPreview from "./component/DocumentPreview";
 import { PDFDocument } from "pdf-lib";
 import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { uploadMediaService } from "@/app/helper/mediaService";
+import api from "@/utils/axios";
 
 interface FormData {
   signature: string;
@@ -113,18 +113,10 @@ const FormSignature: React.FC = () => {
     }
 
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BACKEND}/api/v1/contract-letter-project-payment/upload`,
-        {
-          project_payment_id: projectPaymentId,
-          path: signedPdfUrl,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      await api.post(`/api/v1/contract-letter-project-payment/upload`, {
+        project_payment_id: projectPaymentId,
+        path: signedPdfUrl,
+      });
 
       Swal.fire({
         title: "Berhasil!",

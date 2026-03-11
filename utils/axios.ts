@@ -1,6 +1,7 @@
 import { getUser, removeAuthUser, saveAuthUser } from "@/app/lib/auth";
 import { API_BACKEND } from "@/app/utils/constant";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { logger } from "./logger";
 
 // config axios
 const api = axios.create({
@@ -57,21 +58,34 @@ api.interceptors.response.use(
 
     // Jika error 401 (Unauthorized) dan request belum pernah di-retry
     if (error.response?.status === 401 && !originalRequest._retry) {
+      logger.warn("[AXIOS] 401 detected", {
+        url: originalRequest.url,
+        method: originalRequest.method,
+      });
+
       if (isRefreshing) {
-        // Jika sedang refresh, masukkan request ke antrean
+        logger.log("[AXIOS] Refresh in progress, request queued");
+
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
         })
-          .then((token) => { 
+          .then((token) => {
+            logger.log("[AXIOS] Retry queued request", originalRequest.url);
+
             if (originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${token}`;
             }
+
             return api(originalRequest);
           })
-          .catch((err) => Promise.reject(err));
+          .catch((err) => {
+            logger.error("[AXIOS] Queued request failed", err);
+            return Promise.reject(err);
+          });
       }
 
-      // Mulai proses refresh token
+      logger.log("[AXIOS] Starting token refresh");
+
       originalRequest._retry = true;
       isRefreshing = true;
 
@@ -79,50 +93,57 @@ api.interceptors.response.use(
         const user = getUser();
 
         if (!user) {
+          logger.error("[AXIOS] No refresh token found");
           throw new Error("Refresh token tidak tersedia");
         }
 
-        // Panggil endpoint refresh token (JANGAN gunakan instance 'api' agar tidak infinite loop)
+        logger.log("[AXIOS] Requesting refresh token", user);
+
         const { data } = await axios.post(
           `${API_BACKEND}/api/v1/auth/refresh-token`,
           {
             refresh_token: user.refresh,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "Content-Type": "application/json",
-            },
-          },
         );
 
         const newAccessToken = data.data.token;
-        const newRefreshToken = data.refresh_token;
+        const newRefreshToken = data.data.refresh;
 
-        // Simpan token baru
+        logger.log("[AXIOS] Token refreshed successfully");
+
         saveAuthUser({
           ...user,
           token: newAccessToken,
           refresh: newRefreshToken,
         });
 
-        // Jalankan ulang request yang antre dengan token baru
+        logger.log("[AXIOS] Processing queued requests");
+
         processQueue(null, newAccessToken);
 
-        // Ulangi original request
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         }
+
+        logger.log("[AXIOS] Retrying original request", originalRequest.url);
+
         return api(originalRequest);
       } catch (err) {
-        // Jika refresh token juga gagal (misal sudah expired juga), paksa user logout
+        logger.error("[AXIOS] Refresh token failed", err);
+
         processQueue(err as AxiosError, null);
+
         if (typeof window !== "undefined") {
-          removeAuthUser();
-          window.location.href = "/login";
+          logger.warn("[AXIOS] Logging out user due to refresh failure");
+
+          //   removeAuthUser();
+          //   window.location.href = "/auth/login";
         }
+
         return Promise.reject(err);
       } finally {
+        logger.log("[AXIOS] Refresh process finished");
+
         isRefreshing = false;
       }
     }

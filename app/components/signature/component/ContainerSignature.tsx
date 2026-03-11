@@ -2,7 +2,6 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import SignatureCanvas from "react-signature-canvas";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { uploadMediaService } from "@/app/helper/mediaService";
 

@@ -10,7 +10,6 @@ import {
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Swal from "sweetalert2";
-import axios from "axios";
 
 import SectionTitle from "./_component/SectionTitle";
 import SectionPoint from "./_component/SectionPoint";
@@ -19,8 +18,6 @@ import AddButton from "./_component/AddButton";
 import FormButton from "./_component/FormButton";
 import UpdateRing from "./_component/UpdateRing";
 
-import { API_BACKEND, API_BACKEND_MEDIA } from "@/app/utils/constant";
-// import { IFormPublisher } from "@/app/interface/IFormPublisher";
 import { getUser } from "@/app/lib/auth";
 
 import {
@@ -42,6 +39,7 @@ import FileInput from "./_component/FileInput";
 import Subtitle from "./_component/SectionSubtitle";
 import { uploadMediaService } from "@/app/helper/mediaService";
 import { logger } from "@/utils/logger";
+import api from "@/utils/axios";
 
 type Props = {
   profile: ProfileUpdate | null;
@@ -282,9 +280,7 @@ const FormPenerbit: React.FC<Props> = ({
         })),
       };
 
-      await axios.post(`${API_BACKEND}/api/v1/auth/assign/role`, payload, {
-        headers: { Authorization: `Bearer ${userData.token}` },
-      });
+      await api.post(`/api/v1/auth/assign/role`, payload);
 
       clearDraft();
 

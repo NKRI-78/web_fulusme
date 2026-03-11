@@ -2,13 +2,12 @@
 
 import CircularProgressIndicator from "@/app/components/CircularProgressIndicator";
 import { Broadcast } from "@/app/interfaces/broadcast/IBroadcast";
-import { API_BACKEND } from "@/app/utils/constant";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import BroadcastCard from "./BroadcastCard";
 import { useRouter } from "next/navigation";
 import { Inbox } from "lucide-react";
+import api from "@/utils/axios";
 
 const BroadcastView = () => {
   const router = useRouter();
@@ -21,7 +20,7 @@ const BroadcastView = () => {
     setLoading(true);
     const fetchBroadcast = async () => {
       try {
-        const res = await axios.get(`${API_BACKEND}/api/v1/broadcast/list`);
+        const res = await api.get(`/api/v1/broadcast/list`);
         const broadcastData = res.data.data as Broadcast[];
         const mappedBroadcasts = broadcastData.map((broadcast) => ({
           ...broadcast,

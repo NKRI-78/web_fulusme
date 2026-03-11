@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
-import { FolderUp, X, Video as VideoIcon } from "lucide-react";
+import { FolderUp, X } from "lucide-react";
 import SectionPoint from "./SectionPoint";
 import { uploadMediaService } from "@/app/helper/mediaService";
 
