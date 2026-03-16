@@ -1,7 +1,7 @@
 import axios, { AxiosProgressEvent } from "axios";
 import { compressImage } from "./CompressorImage";
-import { getAuthUser } from "./getAuthUser";
 import { API_BACKEND_MEDIA } from "../utils/constant";
+import { getUser } from "../lib/auth";
 
 export interface MediaServiceResponse<T extends object> {
   ok: boolean;
@@ -32,7 +32,7 @@ export async function uploadMediaService(
   formData.append("subfolder", "fulusme");
   formData.append("media", compressedFile);
 
-  const user = getAuthUser();
+  const user = getUser();
   if (user) {
     try {
       const res = await axios.post(
@@ -85,7 +85,7 @@ export async function uploadMediaService(
 export async function getMediaService(
   mediaId: string,
 ): Promise<MediaServiceResponse<GetMediaData>> {
-  const user = getAuthUser();
+  const user = getUser();
   if (user) {
     try {
       const res = await axios.get(

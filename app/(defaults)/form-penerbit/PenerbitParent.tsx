@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import PublisherForm from "./FormPenerbit";
 import FormPenerbit from "@/app/components/inputFormPenerbit/FormPenerbit";
 import { useRouter, useSearchParams } from "next/navigation";
-import axios from "axios";
-import { API_BACKEND, IS_DEV } from "@/app/utils/constant";
+import { IS_DEV } from "@/app/utils/constant";
 import { penerbitUpdateKeys } from "./IUpdateRegistrationKey";
 import FormUtusanPenerbit from "./FormUtusanPenerbit";
 import { getUser } from "@/app/lib/auth";
@@ -18,6 +17,7 @@ import {
 } from "./form-cache-key";
 import Swal from "sweetalert2";
 import CircularProgressIndicator from "@/app/components/CircularProgressIndicator";
+import api from "@/utils/axios";
 
 export interface UpdateFieldValueManajemen {
   id: string;
@@ -98,14 +98,8 @@ export default function MultiStepFormWrapper() {
     const fetchUser = async () => {
       try {
         if (userCookie) {
-          const res = await axios(`${API_BACKEND}/api/v1/profile`, {
-            headers: {
-              Authorization: `Bearer ${userCookie.token}`,
-            },
-          });
-
+          const res = await api.get(`/api/v1/profile`);
           const userData = res.data.data;
-
           setUserProfile({
             ...userData,
             form_key: formKey,
@@ -144,19 +138,11 @@ export default function MultiStepFormWrapper() {
 
     try {
       if (userCookie) {
-        await axios.put(
-          `${API_BACKEND}/api/v1/document/update/${formKeyResult}`,
-          payload,
-          {
-            headers: { Authorization: `Bearer ${userCookie.token}` },
-          },
-        );
-
+        await api.put(`/api/v1/document/update/${formKeyResult}`, payload);
         localStorage.removeItem(FORM_INDEX_CACHE_KEY);
         localStorage.removeItem(FORM_PIC_CACHE_KEY);
         localStorage.removeItem(FORM_PENERBIT_1_CACHE_KEY);
         localStorage.removeItem(FORM_PENERBIT_2_CACHE_KEY);
-
         await Swal.fire({
           title: "Berhasil",
           text: "Data berhasil diupdate",

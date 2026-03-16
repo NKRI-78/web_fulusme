@@ -4,19 +4,14 @@ import React, { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
 import OTPInput from "react-otp-input";
-import ImageUploading, {
-  ImageListType,
-  ImageType,
-} from "react-images-uploading";
 import { Eye, EyeOff, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import Countdown from "react-countdown";
 import { getCookie, setCookie } from "@/app/helper/cookie";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import api from "@/utils/axios";
 
 interface RoleModalProps {
   open: boolean;
@@ -75,25 +70,14 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
         password: data.password,
       };
 
-      const response = await axios.post(
-        `${API_BACKEND}/api/v1/auth/register`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      const result: AuthDataResponse = response.data;
-
-      await axios.post(
-        `${API_BACKEND}/api/v1/resend-otp`,
+      const response = await api.post(`/api/v1/auth/register`, payload);
+      await api.post(
+        `/api/v1/resend-otp`,
         { val: data.email },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${response.data["data"]["otp"]}`, // Ganti yourToken dengan token-mu
+            Authorization: `${response.data["data"]["otp"]}`,
           },
         },
       );
@@ -114,10 +98,7 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
         email: user.email,
         type: "SENDING_OTP",
       };
-      const { data } = await axios.post(
-        `${API_BACKEND}/api/v1/verify-otp`,
-        payloads,
-      );
+      await api.post(`/api/v1/verify-otp`, payloads);
     } catch (err: any) {
       setIsLoading(false);
       Swal.fire({
@@ -137,11 +118,7 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
         type: "VERIFIED",
         otp,
       };
-      const { data } = await axios.post(
-        `${API_BACKEND}/api/v1/auth/verify-email`,
-        payloads,
-      );
-
+      await api.post(`/api/v1/auth/verify-email`, payloads);
       setOtpErrorMessage("");
       window.location.reload();
     } catch (err: any) {

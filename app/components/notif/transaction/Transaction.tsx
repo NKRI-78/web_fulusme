@@ -1,8 +1,6 @@
 "use client";
 
 import useOnlineStatus from "@/app/hooks/useOnlineStatus";
-import { API_BACKEND } from "@/app/utils/constant";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { InboxResponse } from "../inbox-interface";
 import EmptyTransaction from "../InboxEmpty";
@@ -14,6 +12,7 @@ import Center from "../../Center";
 import CircularProgressIndicator from "../../CircularProgressIndicator";
 import { AnimatedWrapper } from "../../AnimatedWrapper";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import api from "@/utils/axios";
 
 const Transaction = () => {
   // data hook
@@ -37,11 +36,7 @@ const Transaction = () => {
     try {
       const token = getUser()?.token;
       if (token) {
-        const res = await axios(`${API_BACKEND}/api/v1/inbox/list`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await api.get(`/api/v1/inbox/list`);
         if (!res.data["data"]) {
           setTransactions([]);
           return;

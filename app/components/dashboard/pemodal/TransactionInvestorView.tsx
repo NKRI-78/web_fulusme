@@ -11,13 +11,11 @@ import {
   Loader2,
   Info,
 } from "lucide-react";
-import axios from "axios";
 import { getTransactions } from "@/actions/fetchTransaction";
 import { TransactionItem } from "@/app/interfaces/transaction/transaction";
 import Pagination from "../../pagination/pagination";
 import { getUser } from "@/app/lib/auth";
 import GeneralDialog from "../../GeneralDialog";
-import { API_BACKEND } from "@/app/utils/constant";
 import Swal from "sweetalert2";
 import { AnimatedWrapper } from "../../AnimatedWrapper";
 import Center from "../../Center";
@@ -26,6 +24,7 @@ import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
 import { useRouter } from "next/navigation";
 import Tooltip from "../../Tooltip";
+import api from "@/utils/axios";
 
 export default function TransactionInvestorView() {
   const router = useRouter();
@@ -64,7 +63,7 @@ export default function TransactionInvestorView() {
   const fetchData = async (p: number) => {
     try {
       setLoading(true);
-      const data = await getTransactions(user?.token ?? "", p, limit);
+      const data = await getTransactions(p, limit);
       setTransactions(data.items);
       setTotalItems(data.total_items);
     } finally {
@@ -80,16 +79,9 @@ export default function TransactionInvestorView() {
 
   const refundPayment = async (paymentId: string, token: string) => {
     try {
-      const res = await axios.post(
-        `${API_BACKEND}/api/v1/project/refund`,
-        { payment_id: paymentId },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const res = await api.post(`/api/v1/project/refund`, {
+        payment_id: paymentId,
+      });
       return res.data;
     } catch (error: any) {
       throw error.response?.data || error;

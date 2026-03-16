@@ -1,4 +1,3 @@
-import { UpdateProfile } from "@app/lib/profileService";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 interface ProfileState {
@@ -16,7 +15,7 @@ export const updateProfileAsync = createAsyncThunk(
   async ({ fullname }: { fullname: string }) => {
     const response = await UpdateProfile(fullname);
     return response;
-  }
+  },
 );
 
 export const profileSlice = createSlice({

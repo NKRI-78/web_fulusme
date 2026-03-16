@@ -1,5 +1,4 @@
-import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
+import api from "@/utils/axios";
 import { InboxResponse } from "../components/notif/inbox-interface";
 
 export async function fetchInboxClient(
@@ -8,11 +7,7 @@ export async function fetchInboxClient(
   try {
     if (!token) return [];
 
-    const res = await axios.get(`${API_BACKEND}/api/v1/inbox/list`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await api.get(`/api/v1/inbox/list`);
 
     if (!res.data?.data) return [];
 
@@ -24,6 +19,6 @@ export async function fetchInboxClient(
 
     return filteredInboxes;
   } catch (error) {
-    throw error; // lempar biar bisa ditangani di komponen
+    throw error;
   }
 }

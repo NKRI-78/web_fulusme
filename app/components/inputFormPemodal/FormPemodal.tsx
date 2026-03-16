@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -10,12 +9,14 @@ import { useSearchParams } from "next/navigation";
 
 import ComponentDataPribadi from "./informasiPribadi/DataPribadi";
 import ComponentDataPekerjaan from "./informasiPekerjaan/DataPekerjaan";
-import { API_BACKEND, IS_DEV, IS_PROD } from "@/app/utils/constant";
+import { IS_DEV, IS_PROD } from "@/app/utils/constant";
 import FileViewerModal from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
 import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 import Tooltip from "../Tooltip";
+import api from "@/utils/axios";
+import axios from "axios";
 
 export const pemodalKeys: string[] = ["ktp-upload", "npwp-upload"];
 
@@ -101,11 +102,7 @@ const FormPemodal: React.FC = () => {
     const fetchProfile = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${API_BACKEND}/api/v1/profile`, {
-          headers: {
-            Authorization: `Bearer ${userCookie.token}`,
-          },
-        });
+        const response = await api.get(`/api/v1/profile`);
 
         const data = response.data?.data;
 
@@ -1058,11 +1055,7 @@ const FormPemodal: React.FC = () => {
           },
         };
 
-        await axios.post(`${API_BACKEND}/api/v1/auth/assign/role`, payload, {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-        });
+        await api.post(`/api/v1/auth/assign/role`, payload);
 
         setCookie(
           "user",
@@ -1086,15 +1079,7 @@ const FormPemodal: React.FC = () => {
           const { dataType, val } = mapFormToDataType(form, data);
           const payload = { val };
 
-          await axios.put(
-            `${API_BACKEND}/api/v1/document/update/user/${dataType}`,
-            payload,
-            {
-              headers: {
-                Authorization: `Bearer ${user?.token}`,
-              },
-            },
-          );
+          await api.put(`/api/v1/document/update/user/${dataType}`, payload);
           localStorage.removeItem("formPemodal");
           localStorage.removeItem("signature");
           Cookies.remove("formPemodal");

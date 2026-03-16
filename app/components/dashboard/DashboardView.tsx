@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
 import { getUser } from "@/app/lib/auth";
 import Swal from "sweetalert2";
 import DashboardPemodal from "./pemodal/DashboardPemodal";
@@ -17,6 +15,7 @@ import Center from "../Center";
 import { AnimatedWrapper } from "../AnimatedWrapper";
 import { InboxResponse } from "../notif/inbox-interface";
 import DashboardPemodalPerusahaan from "./pemodal/DashboardPemodalPerusahaan";
+import api from "@/utils/axios";
 
 export const DashboardView: React.FC = () => {
   const user = getUser();
@@ -38,7 +37,7 @@ export const DashboardView: React.FC = () => {
     if (user) {
       const fetchProfile = async () => {
         try {
-          const res = await axios.get(`${API_BACKEND}/api/v1/profile`, {
+          const res = await api.get(`/api/v1/profile`, {
             headers: {
               Authorization: `Bearer ${user.token}`,
             },
@@ -65,15 +64,11 @@ export const DashboardView: React.FC = () => {
       if (user?.role === "emiten") {
         const fetchInbox = async () => {
           try {
-            const res = await axios(`${API_BACKEND}/api/v1/inbox/list`, {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-            });
+            const res = await api.get(`/api/v1/inbox/list`);
             const inboxes = res.data.data as InboxResponse[];
             const hasPaid = inboxes.some((data) => data.type === "transaction");
             const uploadDokumenPelengkap = inboxes.some(
-              (data) => data.field_3 === "additional-document"
+              (data) => data.field_3 === "additional-document",
             );
             setHasPaidAdministration(hasPaid);
             setUploadDokumenPelengkap(uploadDokumenPelengkap);
@@ -87,12 +82,7 @@ export const DashboardView: React.FC = () => {
       if (user?.role === "investor" || user?.role === "investor institusi") {
         const fetchProjects = async () => {
           try {
-            const res = await axios.get(`${API_BACKEND}/api/v1/project/list`, {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-            });
-
+            const res = await api.get(`/api/v1/project/list`);
             const projects = (res.data.data ?? []) as Project[];
             setProjects(projects);
           } catch (error) {
@@ -101,15 +91,7 @@ export const DashboardView: React.FC = () => {
         };
         const fetchInvestorData = async () => {
           try {
-            const res = await axios.get(
-              `${API_BACKEND}/api/v1/dashboard/investor`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-              }
-            );
-
+            const res = await api.get(`/api/v1/dashboard/investor`);
             const data = res.data.data;
             setInvestorData(data);
           } catch (error) {

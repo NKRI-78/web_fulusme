@@ -22,10 +22,9 @@ import {
   FormDokumenPelengkapPenerbitSchema,
 } from "./form-schema";
 import Swal from "sweetalert2";
-import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
 import { useRouter, useSearchParams } from "next/navigation";
 import FileInput from "../inputFormPenerbit/_component/FileInput";
+import api from "@/utils/axios";
 
 const getUserToken = (): string => {
   const userCookie = Cookies.get("user");
@@ -114,14 +113,7 @@ const FormDokumenTambahanPage: React.FC = () => {
         };
 
         const token = getUserToken();
-        await axios.post(
-          `${API_BACKEND}/api/v1/document/verify/project`,
-          payload,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-
+        await api.post(`/api/v1/document/verify/project`, payload);
         const modalResult = await Swal.fire({
           title: "Dokumen Berhasil Diupload",
           text: "Dokumen tambahan Anda telah kami terima. Mohon menunggu hingga 2x24 jam untuk mendapatkan informasi selanjutnya.",

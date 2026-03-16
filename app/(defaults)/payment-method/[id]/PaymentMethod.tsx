@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { API_BACKEND, API_PG } from "@/app/utils/constant";
+import { API_PG } from "@/app/utils/constant";
 import { getUser } from "@/app/lib/auth";
 import { PaymentMethodType } from "./components/types";
 import TransactionSummary from "./components/TransactionSummary";
@@ -12,8 +12,8 @@ import ConfirmButton from "./components/ConfirmButton";
 import ProjectCardSkeleton from "./components/ProjectCardSkeleton";
 import { Project } from "@/app/interfaces/project/IProject";
 import Custom404 from "@/app/not-found";
-import ProjectCardDummy from "./components/ProjectCardDummy";
 import ProjectCardCheckout from "./components/ProjectCardDummy";
+import api from "@/utils/axios";
 
 const PaymentMethod = ({ id }: { id: string }) => {
   const [methods, setMethods] = useState<PaymentMethodType[]>([]);
@@ -62,9 +62,7 @@ const PaymentMethod = ({ id }: { id: string }) => {
     if (id) {
       const fetchProject = async () => {
         try {
-          const response = await axios.get(
-            `${API_BACKEND}/api/v1/project/detail/${id}`,
-          );
+          const response = await api.get(`/api/v1/project/detail/${id}`);
           setProject(response.data.data);
         } catch (error: any) {
           if (error.response?.status === 400) {
@@ -96,10 +94,7 @@ const PaymentMethod = ({ id }: { id: string }) => {
 
       const userData = getUser();
       if (userData) {
-        const endpoint = `${API_BACKEND}/api/v1/project/payment`;
-        const result = await axios.post(endpoint, payload, {
-          headers: { Authorization: `Bearer ${userData?.token}` },
-        });
+        const result = await api.post(`/api/v1/project/payment`, payload);
         router.replace(`/waiting-payment?orderId=${result.data.data.id}`);
       }
     } catch (err: any) {

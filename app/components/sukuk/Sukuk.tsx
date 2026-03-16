@@ -10,9 +10,8 @@ import { Navigation, Thumbs } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import { useParams } from "next/navigation";
-import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
 import Custom404 from "@/app/not-found";
+import api from "@/utils/axios";
 
 type Project = {
   id: string;
@@ -103,9 +102,7 @@ const Sukuk = ({ id }: Props) => {
 
     const fetchProject = async () => {
       try {
-        const response = await axios.get(
-          `${API_BACKEND}/api/v1/project/detail/${id}`,
-        );
+        const response = await api.get(`/api/v1/project/detail/${id}`);
         setProject(response.data.data);
       } catch (error: any) {
         // Cek jika error 404

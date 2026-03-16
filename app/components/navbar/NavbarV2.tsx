@@ -6,14 +6,12 @@ import Tooltip from "../Tooltip";
 import { BellRing, Menu, X } from "lucide-react";
 import { AppDispatch, RootState } from "@redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { loadSession } from "@redux/slices/authSlice";
 import Link from "next/link";
 import Modal from "@/app/helper/Modal";
 import RegisterV2 from "../auth/register/RegisterV2";
 import RegisterOtp from "../auth/register/RegisterOtp";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
 import Cookies from "js-cookie";
-import axios from "axios";
 import { User } from "@/app/interfaces/user/IUser";
 import {
   FORM_INDEX_CACHE_KEY,
@@ -23,12 +21,11 @@ import {
 } from "@/app/(defaults)/form-penerbit/form-cache-key";
 import { getUser } from "@/app/lib/auth";
 import { fetchInboxThunk } from "@/redux/slices/inboxSlice";
-import { API_BACKEND } from "@/app/utils/constant";
 import { setBadge } from "@/redux/slices/badgeSlice";
 import CircularProgressIndicator from "../CircularProgressIndicator";
 import { getSocket } from "@/app/utils/sockets";
-import { getAuthUser } from "@/app/helper/getAuthUser";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import api from "@/utils/axios";
 
 const PRIMARY_COLOR = "#10565C";
 const ON_PRIMARY_COLOR = "#FFFFFF";
@@ -60,7 +57,7 @@ const NavbarV2: React.FC = () => {
 
   useEffect(() => {
     const socket = getSocket();
-    const user = getAuthUser();
+    const user = getUser();
 
     socket.on("inbox-update", async () => {
       const inboxes = await dispatch(fetchInboxThunk(user?.token ?? "-"));
@@ -88,10 +85,6 @@ const NavbarV2: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(loadSession());
-  }, []);
-
-  useEffect(() => {
     setLoadingUser(true);
     setHydrated(true);
     const user = getUser();
@@ -106,15 +99,9 @@ const NavbarV2: React.FC = () => {
 
   useEffect(() => {
     if (userData) {
-      axios
-        .get(`${API_BACKEND}/api/v1/profile`, {
-          headers: {
-            Authorization: `Bearer ${userData.token}`,
-          },
-        })
-        .then((res) => {
-          setProfile(res.data.data);
-        });
+      api.get(`/api/v1/profile`).then((res) => {
+        setProfile(res.data.data);
+      });
     }
   }, [userData]);
 

@@ -12,7 +12,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { API_BACKEND, API_BACKEND_MEDIA } from "@/app/utils/constant";
 import { fetchProvinces } from "@/app/lib/fetchWilayah";
 import FormAlamat from "./FormAlamat";
 import Swal from "sweetalert2";
@@ -25,6 +24,7 @@ import { PhoneInput } from "./components/PhoneInput";
 import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PENERBIT_1_CACHE_KEY } from "./form-cache-key";
 import { uploadMediaService } from "@/app/helper/mediaService";
+import api from "@/utils/axios";
 
 export const alamatSchema = z.object({
   name: z.string().optional(),
@@ -144,9 +144,7 @@ export type FormData = z.infer<typeof schema>;
 
 const fetchOptions = async (url: string, parentId?: string) => {
   try {
-    const response = await axios.get(
-      `${API_BACKEND}/${url}${parentId ? `/${parentId}` : ""}`,
-    );
+    const response = await api.get(`/${url}${parentId ? `/${parentId}` : ""}`);
 
     return response.data?.data.map((item: any) => ({
       value: item.name,

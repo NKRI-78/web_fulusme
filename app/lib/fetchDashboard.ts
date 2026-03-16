@@ -1,17 +1,9 @@
-// app/lib/fetchDashboard.ts
-import axios from "axios";
+import api from "@/utils/axios";
 import { DashboardResponse } from "../interfaces/dashboard/dashboard";
 
 export async function fetchDashboard(
-  token: string
+  token: string,
 ): Promise<DashboardResponse["data"]> {
-  const res = await axios.get<DashboardResponse>(
-    `${process.env.NEXT_PUBLIC_API_BACKEND}/api/v1/dashboard/investor`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const res = await api.get<DashboardResponse>(`/api/v1/dashboard/investor`);
   return res.data.data;
 }

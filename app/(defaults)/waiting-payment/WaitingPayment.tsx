@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -11,17 +10,14 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import moment from "moment";
-import { API_BACKEND } from "@/app/utils/constant";
-import { Socket as ClientSocket } from "socket.io-client";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import SkeletonWaitingPayment from "./components/SkeletonWaitingPayment";
 import { motion } from "framer-motion";
 import CaraPembayaran from "./components/HowToPayment";
-import { getUser } from "@/app/lib/auth";
-import { getSocket, onSocketReady } from "@/app/utils/sockets";
-import { getAuthUser } from "@/app/helper/getAuthUser";
+import { onSocketReady } from "@/app/utils/sockets";
 import { logger } from "@/utils/logger";
+import api from "@/utils/axios";
 
 export interface PaymentMethod {
   id: number;
@@ -89,11 +85,9 @@ const WaitingPayment = () => {
 
     if (token) {
       try {
-        const response = await axios.get(
-          `${API_BACKEND}/api/v1/transaction/project/detail/${orderId}`,
-          { headers: { Authorization: `Bearer ${token}` } },
+        const response = await api.get(
+          `/api/v1/transaction/project/detail/${orderId}`,
         );
-
         const data = response.data.data;
         const mapped: PaymentData = {
           payment_id: data.payment_id,
