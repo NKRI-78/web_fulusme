@@ -18,6 +18,18 @@ let failedQueue: Array<{
   reject: (reason?: unknown) => void;
 }> = [];
 
+// auth endpoint (pengecualian middleware)
+const AUTH_ENDPOINTS = [
+  "/api/v1/forgot-password",
+  "/api/v1/verify-otp-change-password",
+  "/api/v1/change-password",
+  "/api/v1/resend-otp-change-password",
+  "/api/v1/auth/login",
+  "/api/v1/auth/register",
+  "/api/v1/verify-otp",
+  "/api/v1/resend-otp",
+];
+
 // fungsi untuk memproses antrean request yang tertahan
 const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
@@ -52,12 +64,19 @@ api.interceptors.response.use(
       | (InternalAxiosRequestConfig & { _retry?: boolean })
       | undefined;
 
+    logger.info("originalRequest.url", originalRequest?.url ?? "null");
+    const isAuthEndpoint = AUTH_ENDPOINTS.includes(originalRequest?.url ?? "");
+
     if (!originalRequest) {
       return Promise.reject(error);
     }
 
     // Jika error 401 (Unauthorized) dan request belum pernah di-retry
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthEndpoint
+    ) {
       logger.warn("[AXIOS] 401 detected", {
         url: originalRequest.url,
         method: originalRequest.method,

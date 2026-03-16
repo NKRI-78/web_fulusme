@@ -24,7 +24,6 @@ import { fetchInboxThunk } from "@/redux/slices/inboxSlice";
 import { setBadge } from "@/redux/slices/badgeSlice";
 import CircularProgressIndicator from "../CircularProgressIndicator";
 import { getSocket } from "@/app/utils/sockets";
-import { getAuthUser } from "@/app/helper/getAuthUser";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 import api from "@/utils/axios";
 
@@ -58,7 +57,7 @@ const NavbarV2: React.FC = () => {
 
   useEffect(() => {
     const socket = getSocket();
-    const user = getAuthUser();
+    const user = getUser();
 
     socket.on("inbox-update", async () => {
       const inboxes = await dispatch(fetchInboxThunk(user?.token ?? "-"));

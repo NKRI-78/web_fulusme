@@ -1,19 +1,25 @@
 "use client";
 
-import { AppDispatch } from "@redux/store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
-import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import Cookies from "js-cookie";
-import { API_BACKEND } from "@/app/utils/constant";
 import Image from "next/image";
 import api from "@/utils/axios";
+import { saveAuthUser } from "@/app/lib/auth";
+import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 
+const errorTitles: Record<string, string> = {
+  INVALID_CREDENTIALS: "Login Gagal",
+  USER_NOT_FOUND: "Email Tidak Ditemukan",
+  ACCOUNT_TEMPORARILY_LOCKED: "Akun Sementara Dikunci",
+};
 const errorMessages: Record<string, string> = {
-  CREDENTIALS_IS_INCORRECT: "Password yang kamu masukkan salah.",
+  INVALID_CREDENTIALS:
+    "Email atau Password yang kamu masukkan salah. Periksa kembali lalu coba lagi.",
   USER_NOT_FOUND: "Email salah atau belum terdaftar, cek kembali email Anda.",
+  ACCOUNT_TEMPORARILY_LOCKED:
+    "Akun Anda sementara dikunci karena terlalu banyak percobaan login yang gagal. Silakan coba kembali dalam 15 menit.",
 };
 
 const Login: React.FC = () => {
@@ -43,8 +49,9 @@ const Login: React.FC = () => {
         email,
         password,
       });
-      const userData = response.data.data;
-      Cookies.set("user", JSON.stringify(response.data.data), { expires: 7 });
+
+      const userData: AuthDataResponse = response.data.data;
+      saveAuthUser(userData);
 
       if (!userData.enabled) {
         await Swal.fire({
@@ -90,14 +97,13 @@ const Login: React.FC = () => {
       router.push("/dashboard");
     } catch (error: any) {
       const rawMessage = error.response?.data?.message;
-
-      const message =
-        errorMessages[rawMessage as keyof typeof errorMessages] ??
-        "Terjadi kesalahan saat login. Silakan coba lagi.";
-
+      var title = "Login Gagal";
+      var message = "Terjadi kesalahan saat login. Silakan coba lagi.";
+      title = errorTitles[rawMessage as keyof typeof errorMessages];
+      message = errorMessages[rawMessage as keyof typeof errorMessages];
       Swal.fire({
         icon: "error",
-        title: "Login Gagal",
+        title: title,
         text: message,
         confirmButtonColor: "#10565C",
       });
@@ -132,7 +138,7 @@ const Login: React.FC = () => {
               <p className="text-base md:text-xl lg:text-3xl font-bold text-white">
                 Selamat Datang Kembali!
               </p>
-              <p className="text-sm md:text-base text-white">
+              <p className="text-sm md:text-base text-white hidden md:block">
                 Akses kembali akun Anda dan lanjutkan aktivitas investasi
                 bersama kami.
               </p>
@@ -147,11 +153,11 @@ const Login: React.FC = () => {
             min-h-[60vh] lg:min-h-0
           "
         >
-          <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
-            <p className="text-center font-bold text-xl">Masuk</p>
+          <form onSubmit={handleSubmit} className="w-full max-w-md">
+            <p className="text-center font-bold text-xl mb-6">Masuk</p>
 
-            <div className="w-full">
-              <label className="font-bold text-[#10565C] block mb-1">
+            <div className="w-full mb-6">
+              <label className="font-bold text-sm md:text-base text-primary block mb-1">
                 Email
               </label>
               <input
@@ -163,8 +169,8 @@ const Login: React.FC = () => {
               />
             </div>
 
-            <div className="w-full">
-              <label className="font-bold text-[#10565C] block mb-1">
+            <div className="w-full mb-4">
+              <label className="font-bold text-sm md:text-base text-primary block mb-1">
                 Password
               </label>
               <div className="relative">
@@ -186,10 +192,22 @@ const Login: React.FC = () => {
               </div>
             </div>
 
+            <div className="mb-4 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  router.push("/auth/forgot-password");
+                }}
+                className="text-primary text-xs md:text-sm underline underline-offset-4 hover:opacity-80 transition-opacity"
+              >
+                Lupa Kata Sandi
+              </button>
+            </div>
+
             <div className="w-full flex gap-4">
               <button
                 type="button"
-                className="flex items-center gap-x-1 bg-transparent px-4 py-2 rounded-md border border-gray-500 text-gray-500 font-bold transition-all duration-300 hover:bg-gray-50 hover:text-black active:shadow-md"
+                className="flex items-center gap-x-1 bg-transparent px-4 py-2 text-xs md:text-base rounded-md border border-gray-500 text-gray-500 font-bold transition-all duration-300 hover:bg-gray-50 hover:text-black active:shadow-md"
                 onClick={() => router.back()}
               >
                 <ArrowLeft size={16} />
@@ -199,7 +217,7 @@ const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`flex-1 bg-[#10565C] text-white px-4 py-2 rounded-md font-bold transition-all border border-[#10565C] active:shadow-md ${
+                className={`flex-1 bg-primary text-white px-4 py-2 text-xs md:text-base rounded-md font-bold transition-all border border-primary active:shadow-md ${
                   loading
                     ? "opacity-60 cursor-not-allowed"
                     : "hover:bg-[#0c4247]"
