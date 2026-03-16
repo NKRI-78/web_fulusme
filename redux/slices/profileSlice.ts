@@ -1,3 +1,4 @@
+import { UpdateProfile } from "@/app/lib/profileService";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 interface ProfileState {
