@@ -3,7 +3,6 @@ import { RegisterModel } from "@interfaces/auth/register";
 
 import Cookies from "js-cookie";
 
-import { LoginUser, RegisterUser } from "@lib/authService";
 import {
   AsyncThunk,
   createAsyncThunk,

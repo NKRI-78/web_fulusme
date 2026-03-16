@@ -12,13 +12,12 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Copy, FileUp, FileText, Upload, X, Trash2 } from "lucide-react";
-import axios from "axios";
 import { formatRupiah } from "@/app/utils/formatRupiah";
 import { useRouter, useSearchParams } from "next/navigation";
-import { API_BACKEND, API_BACKEND_MEDIA } from "@/app/utils/constant";
 import Swal from "sweetalert2";
 import { getUser } from "@/app/lib/auth";
 import { uploadMediaService } from "@/app/helper/mediaService";
+import api from "@/utils/axios";
 
 const ACCEPT_TYPES = ["image/jpeg", "image/png"] as const;
 type AcceptType = (typeof ACCEPT_TYPES)[number];
@@ -139,15 +138,7 @@ export default function PembayaranDanamon({
 
     const user = getUser();
 
-    const res = await axios.post(
-      `${API_BACKEND}/api/v1/document/transaction/payment`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      },
-    );
+    const res = await api.post(`/api/v1/document/transaction/payment`, payload);
 
     if (res.status !== 200) {
       throw new Error(res.statusText || "Gagal mengirim bukti pembayaran.");

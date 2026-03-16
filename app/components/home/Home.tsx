@@ -3,18 +3,16 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ProjectCard } from "@/app/components/project/ProjectCard";
-import Cookies from "js-cookie";
 import { getAllProject } from "@/actions/GetAllProject";
 import Modal from "@/app/helper/Modal";
 import RegisterOtp from "../auth/register/RegisterOtp";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
-import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
 import { InboxResponse } from "../notif/inbox-interface";
 import { useDispatch } from "react-redux";
 import { setBadge } from "@/redux/slices/badgeSlice";
 import { getUser } from "@/app/lib/auth";
 import { Project } from "@/app/interfaces/project/IProject";
+import api from "@/utils/axios";
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();
@@ -22,7 +20,7 @@ const Home: React.FC = () => {
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"Umum" | "Pemodal" | "Penerbit">(
-    "Umum"
+    "Umum",
   );
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [project, seProject] = useState<Project[]>([]);
@@ -49,18 +47,14 @@ const Home: React.FC = () => {
 
   const fetchInbox = async (token: string) => {
     try {
-      const res = await axios(`${API_BACKEND}/api/v1/inbox/list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await api.get(`/api/v1/inbox/list`);
       if (!res.data["data"]) {
         dispatch(setBadge(0));
         return;
       }
 
       const unReadInboxes = res.data["data"].filter(
-        (inbox: InboxResponse) => inbox.is_read === false
+        (inbox: InboxResponse) => inbox.is_read === false,
       ) as InboxResponse[];
       dispatch(setBadge(unReadInboxes.length));
     } catch (e) {

@@ -91,12 +91,12 @@ const Footer: React.FC = () => {
           <div className="space-y-1">
             <p className="text-white">WhatsApp</p>
             <a
-              href="https://wa.me/6283814333442"
+              href="https://wa.me/6281117797231"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white cursor-pointer hover:underline"
             >
-              083814333442
+              081117797231
             </a>
           </div>
 

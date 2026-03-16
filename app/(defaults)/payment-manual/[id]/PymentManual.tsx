@@ -22,14 +22,13 @@ import {
   ArrowLeft,
   ArrowRight,
 } from "lucide-react";
-import axios from "axios";
 import { formatRupiah } from "@/app/utils/formatRupiah";
 import { useRouter } from "next/navigation";
-import { API_BACKEND, API_BACKEND_MEDIA } from "@/app/utils/constant";
 import Swal from "sweetalert2";
 import { getUser } from "@/app/lib/auth";
 import DetailPembayaran from "../components/DetailPembayaran";
 import { uploadMediaService } from "@/app/helper/mediaService";
+import api from "@/utils/axios";
 
 /* =========================
  *  TYPES
@@ -166,13 +165,7 @@ export default function PembayaranBCAWithDetail({
           setLoading(false);
           return;
         }
-        const res = await axios.get(
-          `${API_BACKEND}/api/v1/inbox/detail/${inboxId}`,
-          {
-            headers: { Authorization: `Bearer ${user.token}` },
-          },
-        );
-
+        const res = await api.get(`/api/v1/inbox/detail/${inboxId}`);
         // Sesuaikan dengan envelope respons yang kamu kirim
         const json = res.data;
         setHeaderTitle(json?.data?.title ?? "Pembayaran Administrasi Proyek");
@@ -280,10 +273,9 @@ export default function PembayaranBCAWithDetail({
         detail: detail ?? undefined, // kirim breakdown agar backend punya salinannya
       };
 
-      const res = await axios.post(
-        `${API_BACKEND}/api/v1/document/transaction/payment`,
+      const res = await api.post(
+        `/api/v1/document/transaction/payment`,
         payload,
-        { headers: { Authorization: `Bearer ${user.token}` } },
       );
 
       if (res.status !== 200)

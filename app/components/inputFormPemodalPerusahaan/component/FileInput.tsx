@@ -1,9 +1,6 @@
 import React from "react";
 import { FileText } from "lucide-react";
-import axios from "axios";
 import Swal from "sweetalert2";
-import { API_BACKEND_MEDIA } from "@/app/utils/constant";
-import { compressImage } from "@/app/helper/CompressorImage";
 import { uploadMediaService } from "@/app/helper/mediaService";
 
 const IMAGE_MIME = ["image/png", "image/jpeg"];

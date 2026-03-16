@@ -8,8 +8,6 @@ import TextField from "@/app/components/inputFormPenerbit/_component/TextField";
 import ContainerSelfie from "./ContainerSelfie";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
-import { API_BACKEND, API_BACKEND_MEDIA } from "@/app/utils/constant";
 import { getUser } from "@/app/lib/auth";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { ProfileUpdate } from "./IProfileUpdate";
@@ -18,6 +16,7 @@ import { UpdateFieldValue } from "./PenerbitParent";
 import { setCookie } from "@/app/helper/cookie";
 import { uploadMediaService } from "@/app/helper/mediaService";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import api from "@/utils/axios";
 
 interface FormSchema {
   photo: string;
@@ -152,15 +151,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
           no_npwp: "99",
         };
 
-        await axios.post(
-          `${API_BACKEND}/api/v1/auth/register-as-emiten`,
-          payload,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          },
-        );
+        await api.post(`/api/v1/auth/register-as-emiten`, payload);
 
         setCookie(
           "user",

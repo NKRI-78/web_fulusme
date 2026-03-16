@@ -1,11 +1,7 @@
 "use client";
 
-import useOnlineStatus from "@/app/hooks/useOnlineStatus";
-import { API_BACKEND } from "@/app/utils/constant";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import InboxModalDialog from "../InboxModalDialog";
-import Swal from "sweetalert2";
 import { InboxResponse } from "../inbox-interface";
 import InboxEmpty from "../InboxEmpty";
 import { useRouter } from "next/navigation";
@@ -16,7 +12,7 @@ import { getUser } from "@/app/lib/auth";
 import InboxCard from "../InboxCard";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchInboxThunk, updateInboxes } from "@/redux/slices/inboxSlice";
-import { getSocket, initSocket, onSocketReady } from "@/app/utils/sockets";
+import { onSocketReady } from "@/app/utils/sockets";
 
 const Inbox = () => {
   // data hook

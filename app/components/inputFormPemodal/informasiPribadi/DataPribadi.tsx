@@ -2,13 +2,10 @@
 // ComponentDataPribadi.tsx
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { FaFileAlt } from "react-icons/fa";
 import Swal from "sweetalert2";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import Select from "react-select";
-import { API_BACKEND_MEDIA } from "@/app/utils/constant";
-import { compressImage } from "@/app/helper/CompressorImage";
 import UpdateRing from "../component/UpdateRing";
 import ContainerSelfie from "../component/ContainerSelfie";
 import { uploadMediaService } from "@/app/helper/mediaService";

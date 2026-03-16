@@ -1,33 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppDispatch, RootState } from "@redux/store";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { setShowLogoutModal } from "@redux/slices/modalSlice";
-import { GetProfile } from "@app/lib/profileService";
-import { setFullname } from "@redux/slices/profileSlice";
 
 const LeftSidebar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const fullname = useSelector((state: RootState) => state.profile.fullname);
   const pathname = usePathname();
-  
-  const [showDropdown, setShowDropdown] = useState(false);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const profile = await GetProfile();
-      if (profile?.data?.profile.fullname) {
-        dispatch(setFullname(profile.data.profile.fullname));
-      }
-    };
-    fetchProfile();
-  }, [dispatch]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const isActive = (path: string) => pathname === path;
 
@@ -39,7 +26,7 @@ const LeftSidebar: React.FC = () => {
           alt=""
           className="w-10 rounded-full bg-slate-200"
         />
-        <h2 className="text-md font-bold">{fullname}</h2>
+        <h2 className="text-md font-bold">{"fullname"}</h2>
       </div>
 
       <ul>
@@ -122,7 +109,9 @@ const LeftSidebar: React.FC = () => {
           <Link
             href="/auth/change-password"
             className={`hover:text-gray-400 ${
-              isActive("/auth/change-password") ? "text-green-400 font-bold" : ""
+              isActive("/auth/change-password")
+                ? "text-green-400 font-bold"
+                : ""
             }`}
           >
             Change Password

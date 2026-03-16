@@ -9,7 +9,6 @@ export const GetProfile = async () => {
   try {
     const response = await axios.get(
       `https://api-sabi.langitdigital78.com/api/v1/profile`,
-
       {
         headers: {
           Authorization: `Bearer ${token}`,

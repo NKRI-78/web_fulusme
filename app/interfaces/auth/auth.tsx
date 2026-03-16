@@ -12,4 +12,5 @@ export interface AuthDataResponse {
   role: string;
   verify: boolean;
   token: string;
+  refresh: string;
 }

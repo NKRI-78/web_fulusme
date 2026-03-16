@@ -7,8 +7,6 @@ import TextField from "@/app/components/inputFormPemodalPerusahaan/component/Tex
 import ContainerSelfie from "./component/ContainerSelfie";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
 import { useRouter } from "next/navigation";
 import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
@@ -17,6 +15,7 @@ import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 import { uploadMediaService } from "@/app/helper/mediaService";
 import FileInput from "../inputFormPenerbit/_component/FileInput";
+import api from "@/utils/axios";
 
 interface FormSchema {
   photo: string;
@@ -106,12 +105,7 @@ const FormPemodalPerusahaan: React.FC = () => {
 
     const fetchProfile = async () => {
       try {
-        const res = await axios.get(`${API_BACKEND}/api/v1/profile`, {
-          headers: {
-            Authorization: `Bearer ${userCookie.token}`,
-          },
-        });
-
+        const res = await api.get(`/api/v1/profile`);
         const remoteProfile = res.data?.data;
         setProfile(remoteProfile);
 
@@ -179,15 +173,7 @@ const FormPemodalPerusahaan: React.FC = () => {
             surat_kuasa: formFields.suratKuasa,
           };
 
-          await axios.post(
-            `${API_BACKEND}/api/v1/auth/register-as-emiten`,
-            payload,
-            {
-              headers: {
-                Authorization: `Bearer ${userData.token}`,
-              },
-            },
-          );
+          await api.post(`/api/v1/auth/register-as-emiten`, payload);
 
           setCookie(
             "user",
@@ -277,15 +263,7 @@ const FormPemodalPerusahaan: React.FC = () => {
             inbox_id: inboxId ?? "-",
           };
 
-          await axios.put(
-            `${API_BACKEND}/api/v1/document/update/${dataType}`,
-            payload,
-            {
-              headers: {
-                Authorization: `Bearer ${userData.token}`,
-              },
-            },
-          );
+          await api.put(`/api/v1/document/update/${dataType}`, payload);
 
           setCookie(
             "user",

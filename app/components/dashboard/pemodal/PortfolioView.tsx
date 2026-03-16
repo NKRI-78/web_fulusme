@@ -9,12 +9,11 @@ import { PanelContainer } from "../PanelContainer";
 import GridView from "../../GridView";
 import PortfolioCard from "../../portfolio/PortfolioCard";
 import { getUser } from "@/app/lib/auth";
-import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
 import Center from "../../Center";
 import CircularProgressIndicator from "../../CircularProgressIndicator";
 import { AnimatedWrapper } from "../../AnimatedWrapper";
 import { FolderOpen } from "lucide-react";
+import api from "@/utils/axios";
 
 const PortfolioView: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -30,15 +29,7 @@ const PortfolioView: React.FC = () => {
     if (user) {
       const fetchInvestorData = async () => {
         try {
-          const res = await axios.get(
-            `${API_BACKEND}/api/v1/dashboard/investor`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-            }
-          );
-
+          const res = await api.get(`/api/v1/dashboard/investor`);
           const data = res.data.data;
           setInvestorData(data);
           setPortofolios(data.portfolio ?? []);

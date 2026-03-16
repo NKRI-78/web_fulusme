@@ -1,20 +1,9 @@
-import axios from "axios";
-import { API_BACKEND } from "./constant";
-import { getUser } from "../lib/auth";
+import api from "@/utils/axios";
 
 export type TypeOption = { value: string; label: string };
 
 export async function fetchStatusCompany(): Promise<TypeOption[]> {
-  const user = getUser();
-  const { data } = await axios.get(
-    `${API_BACKEND}/api/v1/company/type/place/list`,
-    {
-      headers: {
-        Authorization: `Bearer ${user?.token}`,
-      },
-    }
-  );
-
+  const { data } = await api.get(`/api/v1/company/type/place/list`);
   if (!data || !Array.isArray(data.data)) {
     throw new Error("Format respons API tidak sesuai");
   }

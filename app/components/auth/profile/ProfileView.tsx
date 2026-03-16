@@ -2,8 +2,6 @@
 
 import { User } from "@/app/interfaces/user/IUser";
 import { getUser } from "@/app/lib/auth";
-import { API_BACKEND } from "@/app/utils/constant";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import CircularProgressIndicator from "../../CircularProgressIndicator";
@@ -11,6 +9,7 @@ import ProfilePenerbitView from "./ProfilePenerbitView";
 import ProfilePemodalPribadi from "./ProfilePemodalPribadiView";
 import ProfilePemodalPerusahaan from "./ProfilePemodalPerusahaanView";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import api from "@/utils/axios";
 
 const ProfileView: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -23,11 +22,7 @@ const ProfileView: React.FC = () => {
       setUserSession(session);
       const fetchProfile = async () => {
         try {
-          const res = await axios(`${API_BACKEND}/api/v1/profile`, {
-            headers: {
-              Authorization: `Bearer ${session.token}`,
-            },
-          });
+          const res = await api.get(`/api/v1/profile`);
           const profile: User = res.data.data;
           setProfile(profile);
           setLoading(false);

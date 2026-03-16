@@ -4,15 +4,15 @@ import React, { useEffect, useState } from "react";
 import DataPemodalPerusahaanV1 from "./DataPemodalPerusahaanV1/DataPemodalPerusahaanV1";
 import { z } from "zod";
 import Swal from "sweetalert2";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import FileViewer from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
-import { API_BACKEND } from "@/app/utils/constant";
 import { useSearchParams } from "next/navigation";
 import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
 import Tooltip from "../Tooltip";
+import api from "@/utils/axios";
+import axios from "axios";
 
 const FormDataPemodalPerusahaan: React.FC = () => {
   type OptionType = { value: string; label: string } | null;
@@ -135,9 +135,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
 
     const fetchProfile = async () => {
       try {
-        const res = await axios.get(`${API_BACKEND}/api/v1/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get(`/api/v1/profile`);
         const profile = res.data?.data;
         setProfile(profile);
 
@@ -496,11 +494,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
         },
       };
 
-      await axios.post(`${API_BACKEND}/api/v1/auth/assign/role`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.post(`/api/v1/auth/assign/role`, payload);
       Swal.fire({
         title: "Berhasil",
         text: "Data berhasil dikirim!",
@@ -618,15 +612,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
             inbox_id: inboxId,
           };
 
-          const res = await axios.put(
-            `${API_BACKEND}/api/v1/document/update/${dataType}`,
-            payload,
-            {
-              headers: {
-                Authorization: `Bearer ${userData.token}`,
-              },
-            },
-          );
+          await api.put(`/api/v1/document/update/${dataType}`, payload);
 
           setCookie(
             "user",

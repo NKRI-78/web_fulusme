@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Check, X } from "lucide-react";
 
 import type { Swiper as SwiperType } from "swiper";
@@ -11,8 +11,6 @@ import { Navigation, Thumbs } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import Cookies from "js-cookie";
-import axios from "axios";
-import { API_BACKEND } from "@/app/utils/constant";
 import Custom404 from "@/app/not-found";
 import ProgressBar from "../components/ProgressBar";
 import { formatRupiah } from "@/app/lib/utils";
@@ -23,11 +21,10 @@ import ShareDialog from "@/app/components/ShareDialog";
 import CircularProgressIndicator from "@/app/components/CircularProgressIndicator";
 import { useRouter } from "next/navigation";
 import Modal from "@/app/helper/Modal";
-import InputNominal from "../components/InputNominal";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
-import { fetchDashboardClient } from "@/redux/slices/dashboardSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 import InputNominalLot from "../components/InputNominal";
+import api from "@/utils/axios";
 
 type Props = {
   projectId: string;
@@ -47,7 +44,6 @@ const SukukClient = ({ projectId }: Props) => {
   const [role, setRole] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
   const {
     data: quotaData,
     loading: loadingDashboard,
@@ -60,12 +56,6 @@ const SukukClient = ({ projectId }: Props) => {
       ? (project.user_paid_amount / project.target_amount) * 100
       : 0;
   }
-
-  const user = getUser();
-
-  useEffect(() => {
-    dispatch(fetchDashboardClient(user?.token ?? ""));
-  }, [dispatch]);
 
   useEffect(() => {
     const userCookie = getUser();
@@ -81,9 +71,7 @@ const SukukClient = ({ projectId }: Props) => {
     if (projectId) {
       const fetchProject = async () => {
         try {
-          const response = await axios.get(
-            `${API_BACKEND}/api/v1/project/detail/${projectId}`,
-          );
+          const response = await api.get(`/api/v1/project/detail/${projectId}`);
           setProject(response.data.data);
         } catch (error: any) {
           // Cek jika error 404
@@ -384,7 +372,7 @@ const SukukClient = ({ projectId }: Props) => {
                 <p className="text-xs text-center mt-4">
                   Butuh Pertanyaan?{" "}
                   <a
-                    href="https://wa.me/6283814333442"
+                    href="https://wa.me/6281117797231"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 font-semibold"

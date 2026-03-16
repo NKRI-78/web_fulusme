@@ -12,3 +12,11 @@ export function getUser(): AuthDataResponse | null {
     return null;
   }
 }
+
+export function saveAuthUser(auth: AuthDataResponse) {
+  Cookies.set("user", JSON.stringify(auth), { expires: 7 });
+}
+
+export function removeAuthUser() {
+  Cookies.remove("user");
+}

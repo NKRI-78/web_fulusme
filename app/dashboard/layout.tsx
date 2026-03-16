@@ -15,10 +15,9 @@ import { getUser } from "../lib/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getTransactions } from "@/actions/fetchTransaction";
-import axios from "axios";
-import { API_BACKEND } from "../utils/constant";
 import { InboxResponse } from "../components/notif/inbox-interface";
 import { AuthDataResponse } from "../interfaces/auth/auth";
+import api from "@/utils/axios";
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -39,11 +38,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
       if (user.role === "emiten") {
         const getTransactionCount = async () => {
           try {
-            const res = await axios(`${API_BACKEND}/api/v1/inbox/list`, {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-            });
+            const res = await api.get(`/api/v1/inbox/list`);
             const list = res.data["data"] as InboxResponse[];
             const filteredTransactions = list.filter(
               (inbox: InboxResponse) => inbox.type === "transaction",
@@ -59,7 +54,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
       if (user.role === "investor" || user.role === "investor institusi") {
         const getTransactionCount = async () => {
           try {
-            const data = await getTransactions(user?.token ?? "", 1, 10);
+            const data = await getTransactions(1, 10);
             setTransactionCount(data.items.length);
           } catch (error) {
             setTransactionCount(0);
@@ -67,14 +62,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
         };
         const getPortfolioCount = async () => {
           try {
-            const res = await axios.get(
-              `${API_BACKEND}/api/v1/dashboard/investor`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-              },
-            );
+            const res = await api.get(`/api/v1/dashboard/investor`);
             const portfolios: any[] = res.data.data.portfolio;
             setPortfolioCount(portfolios.length);
           } catch (error) {
