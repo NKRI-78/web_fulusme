@@ -11,18 +11,29 @@ import { AuthResponse } from "@/app/interfaces/auth/auth";
 import api from "@/utils/axios";
 import axios from "axios";
 
-const schema = z
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]\/+=~`]).{8,}$/;
+
+export const schema = z
   .object({
     name: z.string().min(2, "Nama wajib diisi"),
-    // phone: z.string().min(8, "No. Tlp wajib diisi"),
+
     phone: z
-      .string({
-        required_error: "No. Tlp wajib diisi",
-      })
+      .string({ required_error: "No. Tlp wajib diisi" })
       .min(10, "No. Tlp minimal 10 digit")
       .max(13, "No. Tlp maksimal 13 digit"),
+
     email: z.string().email("Format email tidak valid"),
-    password: z.string().min(6, "Password minimal 6 karakter"),
+
+    password: z
+      .string()
+      .min(8, "Password minimal 8 karakter")
+      .regex(/^\S+$/, "Password tidak boleh mengandung spasi")
+      .regex(
+        passwordRegex,
+        "Password harus mengandung huruf besar, huruf kecil, angka, dan karakter spesial",
+      ),
+
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -48,6 +59,7 @@ export default function RegisterForm({
     formState: { errors },
   } = useForm<RegisterFormSchema>({
     resolver: zodResolver(schema),
+    mode: "onChange",
   });
   const [isChecked, setIsChecked] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -130,7 +142,9 @@ export default function RegisterForm({
                 className="w-full border border-gray-300 px-4 py-2 rounded"
               />
               {errors.name ? (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.name.message}
+                </p>
               ) : (
                 <p className="text-[11px] text-gray-500 mt-1">
                   <span className="text-red-500">* </span> Nama harus sesuai
@@ -150,7 +164,9 @@ export default function RegisterForm({
                 onInput={handleNumberInput}
               />
               {errors.phone && (
-                <p className="text-red-500 text-sm">{errors.phone.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.phone.message}
+                </p>
               )}
             </div>
 
@@ -162,7 +178,9 @@ export default function RegisterForm({
                 className="w-full border border-gray-300 px-4 py-2 rounded"
               />
               {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -181,9 +199,15 @@ export default function RegisterForm({
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
-              {errors.password && (
-                <p className="text-red-500 text-sm">
+              {errors.password ? (
+                <p className="text-red-500 text-xs mt-1">
                   {errors.password.message}
+                </p>
+              ) : (
+                <p className="text-[11px] text-gray-500 mt-1">
+                  <span className="text-red-500">* </span> Password minimal 8
+                  karakter, mengandung huruf besar, huruf kecil, angka, dan
+                  karakter spesial (tanpa spasi).
                 </p>
               )}
             </div>
@@ -204,7 +228,7 @@ export default function RegisterForm({
                 {showPasswordConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm">
+                <p className="text-red-500 text-xs mt-1">
                   {errors.confirmPassword.message}
                 </p>
               )}
