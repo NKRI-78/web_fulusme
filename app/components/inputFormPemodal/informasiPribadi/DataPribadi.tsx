@@ -23,6 +23,8 @@ interface Props {
     statusPernikahan: string;
     pendidikanTerakhir: string;
     pekerjaan: string;
+    beneficialOwnerFullname: string;
+    beneficialOwnerNoKTP: string;
     pekerjaanLainnya: string;
     addres: string;
     namaBank: { value: string; label: string };
@@ -501,7 +503,7 @@ const ComponentDataPribadi: React.FC<Props> = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 justify-center gap-6 p-6 max-w-6xl mx-auto">
       <div>
-        <div className="space-y-4">
+        <div className="space-y-3">
           <h2 className="text-2xl font-bold">Isi Data Sebagai Pemodal</h2>
           <p className="text-sm text-gray-600">
             Untuk memastikan kelancaran proses verifikasi dan layanan yang
@@ -695,6 +697,60 @@ const ComponentDataPribadi: React.FC<Props> = ({
                   {errors.tanggalLahir[0]}
                 </p>
               )}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-1">
+              Beneficial Owner
+              <span className="text-red-500"> * </span>
+            </h3>
+            <div className="flex gap-2">
+              <div>
+                <label className="text-sm font-medium mb-2">
+                  Nama Lengkap <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  disabled={isUpdate}
+                  name="beneficialOwnerFullname"
+                  value={formData.beneficialOwnerFullname}
+                  onChange={onChange}
+                  placeholder="Masukan Nama Lengkap"
+                  className="border p-2 w-full rounded mb-4 placeholder:text-sm"
+                />
+                {errors?.beneficialOwnerFullname && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.beneficialOwnerFullname[0]}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2">
+                  Nomor KTP <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  disabled={isUpdate}
+                  maxLength={16}
+                  name="beneficialOwnerNoKTP"
+                  value={formData.beneficialOwnerNoKTP}
+                  onInput={(e) => {
+                    const input = e.currentTarget;
+                    input.value = input.value.replace(/\D/g, "").slice(0, 16);
+                  }}
+                  onChange={onChange}
+                  inputMode="numeric"
+                  placeholder="Masukan Nomor KTP"
+                  className="border p-2 w-full rounded mb-4 placeholder:text-sm"
+                />
+                {errors?.beneficialOwnerNoKTP && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.beneficialOwnerNoKTP[0]}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>

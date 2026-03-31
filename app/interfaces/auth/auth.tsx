@@ -13,4 +13,5 @@ export interface AuthDataResponse {
   verify: boolean;
   token: string;
   refresh: string;
+  fulfilled_registration: boolean;
 }

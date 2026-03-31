@@ -18,7 +18,7 @@ import AddButton from "./_component/AddButton";
 import FormButton from "./_component/FormButton";
 import UpdateRing from "./_component/UpdateRing";
 
-import { getUser } from "@/app/lib/auth";
+import { getUser, saveAuthUser } from "@/app/lib/auth";
 
 import {
   MAX_DIREKTUR,
@@ -38,7 +38,6 @@ import { IFormPublisher } from "./IFormPublisher";
 import FileInput from "./_component/FileInput";
 import Subtitle from "./_component/SectionSubtitle";
 import { uploadMediaService } from "@/app/helper/mediaService";
-import { logger } from "@/utils/logger";
 import api from "@/utils/axios";
 
 type Props = {
@@ -240,6 +239,8 @@ const FormPenerbit: React.FC<Props> = ({
         total_employees: String(penerbitFormCache.total_employees),
         laporan_keuangan_path: penerbitFormCache.laporanKeuangan,
         address: publisherFormCache.address,
+        beneficial_owner_fullname: publisherFormCache.beneficialOwnerFullname,
+        beneficial_owner_no_ktp: publisherFormCache.beneficialOwnerNoKTP,
         rekening_koran_path: penerbitFormCache.rekeningKoran,
         directors:
           penerbitFormCache.direktur.length === 1
@@ -292,6 +293,14 @@ const FormPenerbit: React.FC<Props> = ({
         timerProgressBar: true,
         showConfirmButton: false,
       });
+
+      const user = getUser();
+      if (user) {
+        saveAuthUser({
+          ...user,
+          fulfilled_registration: true,
+        });
+      }
 
       onSubmidCallback();
     } catch (error: any) {
@@ -368,7 +377,6 @@ const FormPenerbit: React.FC<Props> = ({
 
   async function validateSubmitOnUpdate(): Promise<boolean> {
     let valid: boolean = false;
-    logger.info("FORM PENERBIT validateSubmitOnUpdate with key event", formKey);
 
     switch (formKey) {
       case "sk-kumham-terakhir":
@@ -448,9 +456,23 @@ const FormPenerbit: React.FC<Props> = ({
       default:
         valid = true;
     }
-    logger.info("FORM PENERBIT validateSubmitOnUpdate trigger", formKey, valid);
     return valid;
   }
+
+  const submitHandler = handleSubmit(
+    async (values) => {
+      return handleRegisterCompany(values);
+    },
+    (e) => {
+      Swal.fire({
+        title: "Data Tidak Lengkap / Tidak Valid",
+        text: "Beberapa kolom berisi data yang tidak valid atau belum diisi. Harap koreksi sebelum melanjutkan.",
+        icon: "warning",
+        timer: 10000,
+        showConfirmButton: false,
+      });
+    },
+  );
 
   const onSubmit = async () => {
     if (isUpdate) {
@@ -467,20 +489,7 @@ const FormPenerbit: React.FC<Props> = ({
         });
       }
     } else {
-      handleSubmit(
-        async (values, e) => {
-          return handleRegisterCompany(values);
-        },
-        async () => {
-          Swal.fire({
-            title: "Data Tidak Lengkap / Tidak Valid",
-            text: "Beberapa kolom berisi data yang tidak valid atau belum diisi. Harap koreksi sebelum melanjutkan.",
-            icon: "warning",
-            timer: 10000,
-            showConfirmButton: false,
-          });
-        },
-      );
+      await submitHandler();
     }
   };
 

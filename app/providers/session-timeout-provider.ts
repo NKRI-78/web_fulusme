@@ -152,7 +152,7 @@ export default function SessionTimeoutProvider({
   };
 
   useEffect(() => {
-    logger.info("auth state:", isAuthenticated);
+    logger.info("auth state :", isAuthenticated);
 
     if (!isAuthenticated) {
       clearTimers();
