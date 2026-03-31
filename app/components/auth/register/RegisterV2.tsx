@@ -94,7 +94,7 @@ export default function RegisterForm({
         if (err.response) {
           const msg =
             err.response.data?.message || JSON.stringify(err.response.data);
-          if (msg === "USER_ALREADY_EXIST") {
+          if (msg === "USER_ALREADY_EXIST" || msg === "REGISTRATION_FAILED") {
             errorMessage =
               "Email sudah digunakan. Silakan masuk atau gunakan email lain.";
           }

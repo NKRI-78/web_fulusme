@@ -25,6 +25,7 @@ import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PENERBIT_1_CACHE_KEY } from "./form-cache-key";
 import { uploadMediaService } from "@/app/helper/mediaService";
 import api from "@/utils/axios";
+import SectionPoint from "@/app/components/inputFormPenerbit/_component/SectionPoint";
 
 export const alamatSchema = z.object({
   name: z.string().optional(),
@@ -109,6 +110,18 @@ export const schema = z
       .string({ required_error: "Nama pemilik wajib diisi" })
       .trim()
       .min(1, "Nama pemilik wajib diisi"),
+
+    beneficialOwnerFullname: z
+      .string({ required_error: "Nama lengkap wajib diisi" })
+      .trim()
+      .min(1, "Nama lengkap wajib diisi"),
+
+    beneficialOwnerNoKTP: z
+      .string({ required_error: "Nomor KTP wajib diisi" })
+      .trim()
+      .min(1, "Nomor KTP wajib diisi")
+      .regex(/^\d+$/, "Nomor KTP harus berupa angka")
+      .regex(/^\d{16}$/, "Nomor KTP harus 16 digit angka"),
 
     noPhoneCompany: z.object({
       kode: z.string().min(1, "Kode wilayah wajib dipilih"),
@@ -699,6 +712,54 @@ export default function PublisherForm({ onNext, profile, isUpdate }: Props) {
                 {errors.namaPemilik.message}
               </p>
             )}
+          </div>
+
+          <h3 className="font-semibold">
+            Beneficial Owner
+            <span className="text-red-500"> * </span>
+          </h3>
+
+          <div className="w-full flex gap-x-4">
+            <div className="w-full">
+              <label className="text-sm font-medium mb-2 block">
+                Nama Lengkap <span className="text-red-500 ml-1">*</span>
+              </label>
+              <input
+                {...register("beneficialOwnerFullname")}
+                className="border rounded p-2 w-full placeholder:text-sm"
+                placeholder="Masukan Nama Lengkap"
+              />
+              {errors.beneficialOwnerFullname && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.beneficialOwnerFullname.message}
+                </p>
+              )}
+            </div>
+            <div className="w-full">
+              <label className="text-sm font-medium mb-2 block">
+                Nomor KTP <span className="text-red-500 ml-1">*</span>
+              </label>
+              <input
+                {...register("beneficialOwnerNoKTP")}
+                type="text"
+                inputMode="numeric"
+                maxLength={16}
+                className="border rounded p-2 w-full placeholder:text-sm"
+                placeholder="Masukan Nomor KTP"
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 16);
+                  setValue("beneficialOwnerNoKTP", value, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                  });
+                }}
+              />
+              {errors.beneficialOwnerNoKTP && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.beneficialOwnerNoKTP.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col md:flex-row gap-4">

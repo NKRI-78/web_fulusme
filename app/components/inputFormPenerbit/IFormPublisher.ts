@@ -15,6 +15,8 @@ export interface IFormPublisher {
   companyType: string;
   statusCompanys: string;
   sk_kumham_terahkir: string;
+  beneficialOwnerFullname: string;
+  beneficialOwnerNoKTP: string;
   tdp: string;
   siup: string;
   fileNpwp: string;

@@ -23,6 +23,9 @@ interface Props {
     nomorRekening: string;
     namaPemilik: string;
 
+    beneficialOwnerFullname: string;
+    beneficialOwnerNoKTP: string;
+
     aktaPerubahanTerakhirUrl?: string;
     aktaPendirianPerusahaanUrl?: string;
     skPendirianUrl?: string;
@@ -948,6 +951,54 @@ const ComponentDataPemodalPerusahaanV1: React.FC<Props> = ({
               {errors.namaPemilik_efek[0]}
             </p>
           )}
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-1">
+            Beneficial Owner
+            <span className="text-red-500"> * </span>
+          </h3>
+          <div className="w-full flex gap-x-4">
+            <div>
+              <label className="text-sm font-medium mb-2">Nama Lengkap</label>
+              <input
+                type="text"
+                name="beneficialOwnerFullname"
+                placeholder="Masukkan Nama Lengkap"
+                value={formData.beneficialOwnerFullname}
+                onChange={onChange}
+                disabled={isUpdate}
+                className="border rounded p-2 w-full mb-0 placeholder:text-sm"
+              />
+              {errors?.beneficialOwnerFullname && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.beneficialOwnerFullname[0]}
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2">Nomor KTP</label>
+              <input
+                type="text"
+                name="beneficialOwnerNoKTP"
+                placeholder="Masukkan Nomor KTP"
+                value={formData.beneficialOwnerNoKTP}
+                maxLength={16}
+                onChange={onChange}
+                disabled={isUpdate}
+                onInput={(e) => {
+                  const input = e.currentTarget;
+                  input.value = input.value.replace(/\D/g, "").slice(0, 16);
+                }}
+                className="border rounded p-2 w-full mb-0 placeholder:text-sm"
+              />
+              {errors?.beneficialOwnerNoKTP && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.beneficialOwnerNoKTP[0]}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="mb-4">

@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import FileViewer from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
 import { useSearchParams } from "next/navigation";
 import { setCookie } from "@/app/helper/cookie";
-import { getUser } from "@/app/lib/auth";
+import { getUser, saveAuthUser } from "@/app/lib/auth";
 import Tooltip from "../Tooltip";
 import api from "@/utils/axios";
 import axios from "axios";
@@ -41,6 +41,9 @@ const FormDataPemodalPerusahaan: React.FC = () => {
       namaBank: null,
       nomorRekening: "",
       namaPemilik: "",
+
+      beneficialOwnerFullname: "",
+      beneficialOwnerNoKTP: "",
 
       aktaPerubahanTerakhirUrl: "",
       aktaPendirianPerusahaanUrl: "",
@@ -246,6 +249,18 @@ const FormDataPemodalPerusahaan: React.FC = () => {
     skKumhamPerusahaanUrl: z.string().url("SK Kumham tidak valid"),
     npwpPerusahaanUrl: z.string().url("NPWP tidak valid"),
 
+    beneficialOwnerFullname: z
+      .string({ required_error: "Nama lengkap wajib diisi" })
+      .trim()
+      .min(1, "Nama lengkap wajib diisi"),
+
+    beneficialOwnerNoKTP: z
+      .string({ required_error: "Nomor KTP wajib diisi" })
+      .trim()
+      .min(1, "Nomor KTP wajib diisi")
+      .regex(/^\d+$/, "Nomor KTP harus berupa angka")
+      .regex(/^\d{16}$/, "Nomor KTP harus 16 digit angka"),
+
     provincePemodalPerusahaan: z
       .object({
         value: z.string(),
@@ -418,6 +433,8 @@ const FormDataPemodalPerusahaan: React.FC = () => {
         sk_kumham_terahkir: "-",
         sk_kumham_path: data.skKumhamPerusahaanUrl,
         sk_pendirian_perusahaan: data.skPendirianUrl,
+        beneficial_owner_fullname: data.beneficialOwnerFullname,
+        beneficial_owner_no_ktp: data.beneficialOwnerNoKTP,
         npwp: data.nomorNpwpPerusahaan,
         npwp_path: data.npwpPerusahaanUrl,
         didirkan: "-",
@@ -507,13 +524,13 @@ const FormDataPemodalPerusahaan: React.FC = () => {
 
       const userData = getUser();
 
-      setCookie(
-        "user",
-        JSON.stringify({
+      if (userData) {
+        saveAuthUser({
           ...userData,
           role: "investor institusi",
-        }),
-      );
+          fulfilled_registration: true,
+        });
+      }
 
       router.push("/dashboard");
     } catch (error) {
