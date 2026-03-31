@@ -33,7 +33,8 @@ export default function ClientLayout({
   const pathname = usePathname();
   const isViewer = pathname.startsWith("/viewer");
   const user = getUser();
-  const isAuthenticated = user != null && user.enabled;
+  const isAuthenticated =
+    user != null && user.enabled && user.fulfilled_registration;
 
   return (
     <Provider store={store}>

@@ -12,11 +12,12 @@ import ComponentDataPekerjaan from "./informasiPekerjaan/DataPekerjaan";
 import { IS_DEV, IS_PROD } from "@/app/utils/constant";
 import FileViewerModal from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
 import { setCookie } from "@/app/helper/cookie";
-import { getUser } from "@/app/lib/auth";
+import { getUser, saveAuthUser } from "@/app/lib/auth";
 import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 import Tooltip from "../Tooltip";
 import api from "@/utils/axios";
 import axios from "axios";
+import { logger } from "@/utils/logger";
 
 export const pemodalKeys: string[] = ["ktp-upload", "npwp-upload"];
 
@@ -91,6 +92,7 @@ const FormPemodal: React.FC = () => {
   const form = searchParams.get("form");
   const [dataProfile, setDataProfile] = useState<DataProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
@@ -305,6 +307,17 @@ const FormPemodal: React.FC = () => {
         .refine((val) => val !== null, {
           message: "Kota wajib dipilih",
         }),
+      beneficialOwnerFullname: z
+        .string({ required_error: "Nama lengkap wajib diisi" })
+        .trim()
+        .min(1, "Nama lengkap wajib diisi"),
+
+      beneficialOwnerNoKTP: z
+        .string({ required_error: "Nomor KTP wajib diisi" })
+        .trim()
+        .min(1, "Nomor KTP wajib diisi")
+        .regex(/^\d+$/, "Nomor KTP harus berupa angka")
+        .regex(/^\d{16}$/, "Nomor KTP harus 16 digit angka"),
       districtPribadi: z
         .object({
           value: z.string(),
@@ -482,6 +495,8 @@ const FormPemodal: React.FC = () => {
           namaPemilik: parsed.namaPemilik || "",
           cabangBank: parsed.cabangBank || "",
           ktpUrl: parsed.ktpUrl || "",
+          beneficialOwnerFullname: parsed.beneficialOwnerFullname,
+          beneficialOwnerNoKTP: parsed.beneficialOwnerNoKTP,
           rekeningKoran: parsed.rekeningKoran || "",
           provincePribadi: parsed.provincePribadi ?? null,
           cityPribadi: parsed.cityPribadi ?? null,
@@ -508,6 +523,8 @@ const FormPemodal: React.FC = () => {
       addres: "",
       namaBank: null,
       nomorRekening: "",
+      beneficialOwnerFullname: "",
+      beneficialOwnerNoKTP: "",
       namaPemilik: "",
       cabangBank: "",
       ktpUrl: "",
@@ -656,6 +673,8 @@ const FormPemodal: React.FC = () => {
           nama: parsed.nama || "",
           nik: parsed.nik || "",
           npwp: parsed.npwp || "",
+          beneficialOwnerFullname: parsed.beneficialOwnerFullname,
+          beneficialOwnerNoKTP: parsed.beneficialOwnerNoKTP,
           tempatLahir: parsed.tempatLahir || "",
           tanggalLahir: parsed.tanggalLahir || "",
           jenisKelamin: parsed.jenisKelamin || "",
@@ -989,6 +1008,7 @@ const FormPemodal: React.FC = () => {
       if (!isValid && IS_PROD) return;
     }
 
+    setLoadingSubmit(true);
     try {
       const data = JSON.parse(savedData);
 
@@ -1005,6 +1025,8 @@ const FormPemodal: React.FC = () => {
           status_marital: data.statusPernikahan,
           last_education: data.pendidikanTerakhir,
           province_name: data.provincePribadi?.label,
+          beneficial_owner_fullname: data.beneficialOwnerFullname,
+          beneficial_owner_no_ktp: data.beneficialOwnerNoKTP,
           city_name: data.cityPribadi?.label,
           district_name: data.districtPribadi?.label,
           subdistrict_name: data.subDistrictPribadi?.label,
@@ -1057,13 +1079,26 @@ const FormPemodal: React.FC = () => {
 
         await api.post(`/api/v1/auth/assign/role`, payload);
 
-        setCookie(
-          "user",
-          JSON.stringify({
+        localStorage.removeItem("formPemodal");
+
+        if (user) {
+          saveAuthUser({
             ...user,
             role: "investor",
-          } as AuthDataResponse),
-        );
+            fulfilled_registration: true,
+          });
+        }
+
+        await Swal.fire({
+          title: "Berhasil",
+          text: "Data berhasil dikirim",
+          icon: "success",
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+
+        router.replace("/dashboard");
       } else {
         const swalResult = await Swal.fire({
           icon: "question",
@@ -1116,6 +1151,8 @@ const FormPemodal: React.FC = () => {
           timer: 3000,
         });
       }
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
@@ -1261,17 +1298,23 @@ const FormPemodal: React.FC = () => {
             <button
               onClick={handleSubmit}
               disabled={
+                loadingSubmit ||
                 !dataPekerjaan.setujuKebenaranData ||
                 !dataPekerjaan.setujuRisikoInvestasi
               }
               className={`px-8 py-2 rounded text-white ${
+                loadingSubmit ||
                 !dataPekerjaan.setujuKebenaranData ||
                 !dataPekerjaan.setujuRisikoInvestasi
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-[#3C2B90] hover:bg-[#2e2176]"
               }`}
             >
-              {isUpdate ? "Update Data" : "Kirim Data"}
+              {loadingSubmit
+                ? "Loading"
+                : isUpdate
+                  ? "Update Data"
+                  : "Kirim Data"}
             </button>
           </Tooltip>
         )}

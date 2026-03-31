@@ -2,6 +2,7 @@ import axios, { AxiosProgressEvent } from "axios";
 import { compressImage } from "./CompressorImage";
 import { API_BACKEND_MEDIA } from "../utils/constant";
 import { getUser } from "../lib/auth";
+import api_media from "@/utils/axios_media";
 
 export interface MediaServiceResponse<T extends object> {
   ok: boolean;
@@ -35,13 +36,10 @@ export async function uploadMediaService(
   const user = getUser();
   if (user) {
     try {
-      const res = await axios.post(
-        `${API_BACKEND_MEDIA}/api/v1/media/upload-fulusme`,
+      const res = await api_media.post(
+        `/api/v1/media/upload-fulusme`,
         formData,
         {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
           timeout: timeout,
           onUploadProgress: onUploadProgress,
         },
