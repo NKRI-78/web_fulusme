@@ -190,6 +190,9 @@ const NavbarV2: React.FC = () => {
                             height={28}
                             loading="lazy"
                             className="rounded-full object-cover w-[30px] h-[30px]"
+                            onError={(e) => {
+                              e.currentTarget.src = "/images/default-image.png";
+                            }}
                           />
                         </div>
                       </Link>
@@ -328,6 +331,9 @@ const NavbarV2: React.FC = () => {
                           height={28}
                           loading="lazy"
                           className="rounded-full object-cover w-[30px] h-[30px]"
+                          onError={(e) => {
+                            e.currentTarget.src = "/images/default-image.png";
+                          }}
                         />
                       </div>
 
