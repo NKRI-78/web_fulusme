@@ -96,14 +96,23 @@ const Login: React.FC = () => {
 
       router.push("/dashboard");
     } catch (error: any) {
-      const rawMessage = error.response?.data?.message;
-      var title = "Login Gagal";
-      var message = "Terjadi kesalahan saat login. Silakan coba lagi.";
-      title = errorTitles[rawMessage as keyof typeof errorMessages];
-      message = errorMessages[rawMessage as keyof typeof errorMessages];
+      const rawMessage = error?.response?.data?.message;
+
+      const defaultTitle = "Login Gagal";
+      const defaultMessage = "Terjadi kesalahan saat login. Silakan coba lagi.";
+
+      const title =
+        (rawMessage && errorTitles[rawMessage as keyof typeof errorTitles]) ??
+        defaultTitle;
+
+      const message =
+        (rawMessage &&
+          errorMessages[rawMessage as keyof typeof errorMessages]) ??
+        defaultMessage;
+
       Swal.fire({
         icon: "error",
-        title: title,
+        title,
         text: message,
         confirmButtonColor: "#10565C",
       });
@@ -192,7 +201,7 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <div className="mb-4 flex justify-end">
+            {/* <div className="mb-4 flex justify-end">
               <button
                 type="button"
                 onClick={() => {
@@ -202,7 +211,7 @@ const Login: React.FC = () => {
               >
                 Lupa Kata Sandi
               </button>
-            </div>
+            </div> */}
 
             <div className="w-full flex gap-4">
               <button
