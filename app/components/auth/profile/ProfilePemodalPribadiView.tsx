@@ -22,6 +22,9 @@ export default function ProfilePemodalPribadi({
             src={avatar}
             alt="Selfie"
             className="object-cover w-full h-full"
+            onError={(e) => {
+              e.currentTarget.src = "/images/default-image.png";
+            }}
           />
         </div>
 
