@@ -10,10 +10,6 @@ interface Props {
 }
 
 const BroadcastCard: React.FC<Props> = ({ broadcast, onClick }) => {
-  moment.locale("id");
-  const date = moment(broadcast.created_at);
-  const formattedDate = date.format("LLLL");
-
   return (
     <div
       onClick={onClick}
@@ -48,7 +44,9 @@ const BroadcastCard: React.FC<Props> = ({ broadcast, onClick }) => {
             )} */}
           </div>
 
-          <p className="text-xs text-gray-500 mt-1">{formattedDate}</p>
+          <p className="text-xs text-gray-500 mt-1">
+            {moment.utc(broadcast?.created_at).format("LLLL")}
+          </p>
         </div>
       </div>
     </div>
