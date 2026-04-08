@@ -1,5 +1,6 @@
 "use client";
 
+import "./style.css";
 import CircularProgressIndicator from "@/app/components/CircularProgressIndicator";
 import { Broadcast } from "@/app/interfaces/broadcast/IBroadcast";
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import Swal from "sweetalert2";
 import moment from "moment";
 import "moment/locale/id";
 import { useParams } from "next/navigation";
+import DOMPurify from "dompurify";
 import api from "@/utils/axios";
 
 const BroadcastDetailView = () => {
@@ -72,10 +74,15 @@ const BroadcastDetailView = () => {
           </p>
 
           <p className="text-xs text-gray-400 mt-1">
-            {moment(broadcast?.created_at).locale("id").format("LLLL")}
+            {moment.utc(broadcast?.created_at).format("LLLL")}
           </p>
 
-          <p className="text-sm text-gray-600">{broadcast?.content}</p>
+          <div
+            className="text-sm text-gray-600 prose max-w-none custom-content"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(broadcast?.content || ""),
+            }}
+          />
         </div>
       )}
     </div>
