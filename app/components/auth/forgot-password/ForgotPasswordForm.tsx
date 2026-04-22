@@ -49,10 +49,10 @@ const handleError = (error: any, enableDialog: boolean = true) => {
     const status = error.response?.status;
     const remoteMessage = error.response?.data?.message;
     if (status === 400) {
-      title = "Permintaan Tidak Valid";
+      title = "Terjadi Kesalahan";
       message = remoteMessage || "Permintaan tidak valid.";
     }
-    if (message === "USER_NOT_FOUND") {
+    if (message === "email is not registered") {
       title = "Email Tidak Ditemukan";
       message =
         "Periksa kembali email yang Anda masukkan. Pastikan tidak ada kesalahan penulisan dan gunakan email yang terdaftar di Fulusme.";
@@ -96,7 +96,6 @@ const handleError = (error: any, enableDialog: boolean = true) => {
 
 //* COMPONENT
 export default function ForgotPasswordForm() {
-  const { forgotToken } = useParams();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -104,11 +103,6 @@ export default function ForgotPasswordForm() {
   const [loading, setLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    const token = forgotToken as string;
-    logger.info("token", token);
-  }, []);
 
   //* handle submit
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -119,6 +113,7 @@ export default function ForgotPasswordForm() {
 
   //* send email
   const sendEmail = async () => {
+    setErrorMessage("");
     const validateResult = validateEmail(email);
     if (validateResult.isValid) {
       setLoading(true);
@@ -128,6 +123,17 @@ export default function ForgotPasswordForm() {
           email: email,
         });
         setIsEmailSent(true);
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+        Toast.fire({
+          icon: "success",
+          title: "Email berhasil dikirim!",
+        });
       } catch (e) {
         const error = handleError(e);
         setErrorMessage(error.message);

@@ -32,6 +32,7 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const isViewer = pathname.startsWith("/viewer");
+  const isChangePassword = pathname.endsWith("/change-password");
   const user = getUser();
   const isAuthenticated =
     user != null && user.enabled && user.fulfilled_registration;
@@ -45,7 +46,8 @@ export default function ClientLayout({
         >
           {pathname === "/auth/login" ||
           pathname === "/auth/register" ||
-          pathname === "/auth/forgot-password" ? (
+          pathname === "/auth/forgot-password" ||
+          isChangePassword ? (
             <div className="w-full flex items-center justify-center h-screen">
               {children}
             </div>
