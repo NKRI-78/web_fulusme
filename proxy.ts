@@ -6,6 +6,12 @@ export function proxy(request: NextRequest) {
   const userCookie = request.cookies.get("user")?.value;
   const { pathname } = request.nextUrl;
 
+  // 🔒 Redirect jika sudah login tapi akses login page
+  if (userCookie && pathname.startsWith("/auth/login")) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // 🔒 Protect private routes
   if (
     !userCookie &&
     (pathname.startsWith("/dashboard") ||
@@ -16,6 +22,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
+  // 🔒 Role-based access
   if (userCookie) {
     const session = JSON.parse(userCookie) as AuthDataResponse;
 
@@ -34,6 +41,7 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/",
+    "/auth/login",
     "/dashboard/:path*",
     "/create-project",
     "/dokumen-pelengkap",

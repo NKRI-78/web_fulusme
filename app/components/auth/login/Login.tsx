@@ -94,7 +94,7 @@ const Login: React.FC = () => {
         showConfirmButton: false,
       });
 
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } catch (error: any) {
       const rawMessage = error?.response?.data?.message;
 
@@ -201,7 +201,7 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            {/* <div className="mb-4 flex justify-end">
+            <div className="mb-4 flex justify-end">
               <button
                 type="button"
                 onClick={() => {
@@ -211,13 +211,13 @@ const Login: React.FC = () => {
               >
                 Lupa Kata Sandi
               </button>
-            </div> */}
+            </div>
 
             <div className="w-full flex gap-4">
               <button
                 type="button"
                 className="flex items-center gap-x-1 bg-transparent px-4 py-2 text-xs md:text-base rounded-md border border-gray-500 text-gray-500 font-bold transition-all duration-300 hover:bg-gray-50 hover:text-black active:shadow-md"
-                onClick={() => router.back()}
+                onClick={() => router.replace("/")}
               >
                 <ArrowLeft size={16} />
                 Kembali
