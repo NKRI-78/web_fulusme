@@ -50,6 +50,8 @@ const SukukClient = ({ projectId }: Props) => {
     error: errorDashboard,
   } = useSelector((state: RootState) => state.dashboard);
 
+  // const dispatch = useDispatch();
+
   var percentage: number = 0;
   if (project != null) {
     percentage = project.target_amount
@@ -86,6 +88,10 @@ const SukukClient = ({ projectId }: Props) => {
       fetchProject();
     }
   }, []);
+
+  // useEffect(() => {
+  //   dispatch(fetchDashboardClient());
+  // }, []);
 
   useEffect(() => {
     setHydrated(true);
@@ -341,25 +347,25 @@ const SukukClient = ({ projectId }: Props) => {
 
                 {role !== "emiten" ? (
                   hydrated && userData !== null ? (
-                    quotaData?.verified_investor ? (
-                      <button
-                        onClick={() => {
-                          if (!isOpen) return;
-                          return setShowModal(true);
-                        }}
-                        className={`w-full text-white font-semibold py-2 rounded-md mt-4 ${!isOpen ? "bg-[#10565c]/30 cursor-not-allowed" : "bg-[#10565c] hover:bg-[#104348] cursor-pointer"}`}
-                      >
-                        {isCompleted ? "Project sudah terpenuhi" : "Beli Efek"}
-                      </button>
-                    ) : (
-                      <button
-                        disabled
-                        className="w-full bg-gray-300 text-white font-semibold py-2 rounded-md mt-4 cursor-not-allowed"
-                      >
-                        Akun Belum Terverifikasi
-                      </button>
-                    )
+                    <button
+                      onClick={() => {
+                        if (!isOpen) return;
+                        return setShowModal(true);
+                      }}
+                      className={`w-full text-white font-semibold py-2 rounded-md mt-4 ${!isOpen ? "bg-[#10565c]/30 cursor-not-allowed" : "bg-[#10565c] hover:bg-[#104348] cursor-pointer"}`}
+                    >
+                      {isCompleted ? "Project sudah terpenuhi" : "Beli Efek"}
+                    </button>
                   ) : (
+                    // quotaData?.verified_investor ? (
+                    // ) : (
+                    //   <button
+                    //     disabled
+                    //     className="w-full bg-gray-300 text-white font-semibold py-2 rounded-md mt-4 cursor-not-allowed"
+                    //   >
+                    //     Akun Belum Terverifikasi
+                    //   </button>
+                    // )
                     <button
                       disabled
                       className="w-full bg-gray-300 text-white font-semibold py-2 rounded-md mt-4 cursor-not-allowed"
