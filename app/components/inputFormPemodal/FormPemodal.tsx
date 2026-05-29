@@ -1027,6 +1027,7 @@ const FormPemodal: React.FC = () => {
           province_name: data.provincePribadi?.label,
           beneficial_owner_fullname: data.beneficialOwnerFullname,
           beneficial_owner_no_ktp: data.beneficialOwnerNoKTP,
+          beneficiary_ktp: data.beneficialOwnerNoKTP,
           city_name: data.cityPribadi?.label,
           district_name: data.districtPribadi?.label,
           subdistrict_name: data.subDistrictPribadi?.label,
