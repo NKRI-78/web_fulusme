@@ -383,10 +383,10 @@ const Home: React.FC = () => {
             PT Fintek Andalan Solusi Teknologi (FuLusme) adalah Penyelenggara
             Layanan Urun Dana melalui Penawaran Efek Berbasis Teknologi
             Informasi (Securities Crowdfunding) sebagaimana tunduk pada
-            ketentuan Peraturan Otoritas Jasa Keuangan NOMOR 57/POJK.04/2020
+            ketentuan Peraturan Otoritas Jasa Keuangan POJK Nomor 17 Tahun 2025
             tentang Penawaran Efek Melalui Layanan Urun Dana Berbasis Teknologi
-            Informasi atau Securities Crowdfunding (“POJK 57/2020”), yang telah
-            berizin dan diawasi OJK, kami menyatakan bahwa :
+            Informasi atau Securities Crowdfunding (“POJK Nomor 17 Tahun 2025”),
+            yang telah berizin dan diawasi OJK, kami menyatakan bahwa :
           </p>
           <p>
             “OTORITAS JASA KEUANGAN TIDAK MEMBERIKAN PERNYATAAN MENYETUJUI ATAU
