@@ -138,6 +138,8 @@ const FormPemodal: React.FC = () => {
             namaBank: data.investor.bank.bank_name || "",
             nomorRekening: data.investor.bank?.no || "",
             namaPemilik: data.investor.bank?.bank_owner || "",
+            beneficialOwnerFullname: "Sudirman",
+            beneficialOwnerNoKTP: "1897836578926543",
             cabangBank: data.investor.bank?.bank_branch || "",
             ktpUrl: data.investor.ktp?.path || "",
             rekeningKoran: data.bank?.rek_koran_path || "",
