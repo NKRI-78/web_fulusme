@@ -95,7 +95,7 @@ const FormDokumenTambahanPage: React.FC = () => {
           rab: data.rab,
           cv: data.shortCvManajemen,
           dokumen_perizinan_lainnya: data.dokumenPerizinanLainnya ?? "-",
-          video_profil_perusahaan: data.videoProfilPerusahaan,
+          video_profile_company: data.videoProfilPerusahaan,
           project_summary: data.projectSummary,
           project_pendapatan: data.proyeksiPendapatan,
           timeline_pekerjaan: data.timelinePekerjaan,
