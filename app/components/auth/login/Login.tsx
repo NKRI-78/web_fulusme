@@ -53,22 +53,22 @@ const Login: React.FC = () => {
       const userData: AuthDataResponse = response.data.data;
       saveAuthUser(userData);
 
-      if (!userData.enabled) {
-        await Swal.fire({
-          icon: "info",
-          title: "Verifikasi Diperlukan",
-          text: "Anda belum memasukkan kode OTP. Silakan verifikasi terlebih dahulu.",
-          iconColor: "#10565C",
-          confirmButtonColor: "#10565C",
-          confirmButtonText: "Verifikasi Sekarang",
-        });
-        await api.post(`/api/v1/resend-otp`, {
-          val: userData.email,
-        });
-        localStorage.setItem("showOtp", "true");
-        router.push("/");
-        return;
-      }
+      // if (!userData.enabled) {
+      //   await Swal.fire({
+      //     icon: "info",
+      //     title: "Verifikasi Diperlukan",
+      //     text: "Anda belum memasukkan kode OTP. Silakan verifikasi terlebih dahulu.",
+      //     iconColor: "#10565C",
+      //     confirmButtonColor: "#10565C",
+      //     confirmButtonText: "Verifikasi Sekarang",
+      //   });
+      //   await api.post(`/api/v1/resend-otp`, {
+      //     val: userData.email,
+      //   });
+      //   localStorage.setItem("showOtp", "true");
+      //   router.push("/");
+      //   return;
+      // }
       if (userData.role === "user") {
         await Swal.fire({
           icon: "info",
