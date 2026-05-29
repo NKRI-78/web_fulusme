@@ -603,19 +603,19 @@ const HomeV2: React.FC = () => {
             Informasi atau Securities Crowdfunding (“POJK 57/2020”), yang telah
             berizin dan diawasi OJK, kami menyatakan bahwa :
           </p>
-          <p>
+          <p className="font-bold">
             “OTORITAS JASA KEUANGAN TIDAK MEMBERIKAN PERNYATAAN MENYETUJUI ATAU
             TIDAK MENYETUJUI EFEK INI, TIDAK JUGA MENYATAKAN KEBENARAN ATAU
             KECUKUPAN INFORMASI DALAM LAYANAN URUN DANA INI. SETIAP PERNYATAAN
             YANG BERTENTANGAN DENGAN HAL TERSEBUT ADALAH PERBUATAN MELANGGAR
             HUKUM”;
           </p>
-          <p>
+          <p className="font-bold">
             “INFORMASI DALAM LAYANAN URUN DANA INI PENTING DAN PERLU MENDAPAT
             PERHATIAN SEGERA. APABILA TERDAPAT KERAGUAN PADA TINDAKAN YANG AKAN
             DIAMBIL, SEBAIKNYA BERKONSULTASI DENGAN PENYELENGGARA.”; dan
           </p>
-          <p>
+          <p className="font-bold">
             PENERBIT DAN PENYELENGGARA, BAIK SENDIRI-SENDIRI MAUPUN
             BERSAMA-SAMA, BERTANGGUNG JAWAB SEPENUHNYA ATAS KEBENARAN SEMUA
             INFORMASI YANG TERCANTUM DALAM LAYANAN URUN DANA INI
