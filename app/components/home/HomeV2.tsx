@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { ProjectCard } from "@/app/components/project/ProjectCard";
 import { getUser } from "@/app/lib/auth";
 import { getAllProject } from "@/actions/GetAllProject";
@@ -264,6 +265,21 @@ const HomeV2: React.FC = () => {
               className="h-12"
             />
             <img src="/images/ksei.png" alt="ksei Logo" className="h-12 w-28" />
+          </div>
+
+          <div className="flex justify-center md:justify-start gap-6 items-center">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.fintekandalansolusiteknologi.fulusme"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/images/get-in-on-playstore.svg"
+                alt="Get it on Google Play"
+                width={145}
+                height={50}
+              />
+            </a>
           </div>
         </div>
 

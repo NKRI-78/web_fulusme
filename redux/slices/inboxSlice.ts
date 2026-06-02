@@ -1,5 +1,5 @@
 import { InboxResponse } from "@/app/components/notif/inbox-interface";
-import { fetchInboxClient } from "@/app/lib/fetchInbox";
+import { listInbox } from "@/app/services/inbox";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 export interface InboxState {
@@ -20,7 +20,7 @@ export const fetchInboxThunk = createAsyncThunk<
   { rejectValue: string }
 >("inbox/fetchInbox", async (_, { rejectWithValue }) => {
   try {
-    return await fetchInboxClient();
+    return await listInbox();
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Gagal fetch inbox";
     return rejectWithValue(message);

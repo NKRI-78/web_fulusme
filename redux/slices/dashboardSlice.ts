@@ -1,6 +1,5 @@
-// app/store/dashboardSlice.ts
 import { DashboardData } from "@/app/interfaces/dashboard/dashboard";
-import { fetchDashboard } from "@/app/lib/fetchDashboard";
+import { getDashboard } from "@/app/services/dashboard";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface DashboardState {
@@ -17,12 +16,12 @@ const initialState: DashboardState = {
 
 export const fetchDashboardClient = createAsyncThunk<
   DashboardData,
-  string, // token
+  void,
   { rejectValue: string }
->("dashboard/fetchDashboard", async (token, { rejectWithValue }) => {
+>("dashboard/fetchDashboard", async (_, { rejectWithValue }) => {
   try {
-    return await fetchDashboard(token);
-  } catch (err) {
+    return await getDashboard();
+  } catch {
     return rejectWithValue("Gagal mengambil dashboard investor");
   }
 });

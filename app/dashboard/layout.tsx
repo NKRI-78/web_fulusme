@@ -15,9 +15,9 @@ import { getUser } from "../lib/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getTransactions } from "@/actions/fetchTransaction";
-import { InboxResponse } from "../components/notif/inbox-interface";
 import { SessionData } from "@/app/lib/auth";
-import api from "@/utils/axios";
+import { getDashboard } from "@/app/services/dashboard";
+import { listInboxByType } from "@/app/services/inbox";
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -38,13 +38,9 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
       if (user.role === "emiten") {
         const getTransactionCount = async () => {
           try {
-            const res = await api.get(`/api/v1/inbox/list`);
-            const list = res.data["data"] as InboxResponse[];
-            const filteredTransactions = list.filter(
-              (inbox: InboxResponse) => inbox.type === "transaction",
-            );
-            setTransactionCount(filteredTransactions.length);
-          } catch (error) {
+            const items = await listInboxByType("transaction");
+            setTransactionCount(items.length);
+          } catch {
             setTransactionCount(0);
           }
         };
@@ -56,16 +52,15 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
           try {
             const data = await getTransactions(1, 10);
             setTransactionCount(data.items.length);
-          } catch (error) {
+          } catch {
             setTransactionCount(0);
           }
         };
         const getPortfolioCount = async () => {
           try {
-            const res = await api.get(`/api/v1/dashboard/investor`);
-            const portfolios: any[] = res.data.data.portfolio;
-            setPortfolioCount(portfolios.length);
-          } catch (error) {
+            const data = await getDashboard();
+            setPortfolioCount(data.portfolio.length);
+          } catch {
             setPortfolioCount(0);
           }
         };
