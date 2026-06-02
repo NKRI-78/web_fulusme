@@ -5,6 +5,8 @@ import ClientLayout from "@components/client/Client";
 import { FileViewerProvider } from "./hooks/useFileViewerModal";
 import { Metadata } from "next";
 import { BASE_URL } from "./utils/constant";
+import { cookies } from "next/headers";
+import { SessionData } from "@/app/lib/auth";
 
 export const metadata: Metadata = {
   title: "Fulusme.id",
@@ -32,11 +34,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const raw = cookieStore.get("session")?.value;
+  let session: SessionData | null = null;
+  try {
+    session = raw ? (JSON.parse(raw) as SessionData) : null;
+  } catch {
+    session = null;
+  }
+
   return (
     <html lang="en">
       <head>
@@ -44,7 +55,7 @@ export default function RootLayout({
       </head>
       <body>
         <FileViewerProvider>
-          <ClientLayout>{children}</ClientLayout>
+          <ClientLayout session={session}>{children}</ClientLayout>
         </FileViewerProvider>
       </body>
     </html>

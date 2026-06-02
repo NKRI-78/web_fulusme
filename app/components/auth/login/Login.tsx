@@ -77,6 +77,7 @@ const Login: React.FC = () => {
         });
 
         localStorage.setItem("showSelectRole", "true");
+        router.refresh();
         router.push("/");
         return;
       }
@@ -87,6 +88,7 @@ const Login: React.FC = () => {
         showConfirmButton: false,
       });
 
+      router.refresh();
       router.replace("/dashboard");
     } catch {
       Swal.fire({

@@ -9,14 +9,11 @@ import Modal from "@/app/helper/Modal";
 import RegisterOtp from "../auth/register/RegisterOtp";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
 import RegisterV2 from "../auth/register/RegisterV2";
-import { useDispatch } from "react-redux";
 import { Project } from "@/app/interfaces/project/IProject";
 import GridView from "../GridView";
 import { HelpButton, HelpButtonPosition } from "./HelpButton";
 
 const HomeV2: React.FC = () => {
-  const dispatch = useDispatch();
-
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"Umum" | "Pemodal" | "Penerbit">(
@@ -24,7 +21,6 @@ const HomeV2: React.FC = () => {
   );
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [step, setStep] = useState<"register" | "otp" | "role" | null>(null);
@@ -35,19 +31,15 @@ const HomeV2: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fetchTopVideos = async () => {
+    const fetchProjects = async () => {
       setLoading(true);
       const res = await getAllProject();
       setProjects(res?.data ?? []);
       setLoading(false);
     };
 
-    fetchTopVideos();
+    fetchProjects();
   }, []);
-
-  function getUserId(): string | null {
-    return getUser()?.id ?? null;
-  }
 
   const faqData = {
     Umum: [

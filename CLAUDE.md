@@ -57,7 +57,7 @@ This is a build/runtime incompatibility and is treated as the #1 blocker below.
    env file — NextAuth is running without a configured secret.
 5. **Whole-app hydration flicker.** `app/components/client/Client.tsx:36` calls
    `getUser()` (cookie read) during render of the root client layout, and
-   `NavbarV2.tsx:44-46,58` re-reads it in `useEffect` behind a `hydrated` flag.
+   `Navbar.tsx:44-46,58` re-reads it in `useEffect` behind a `hydrated` flag.
    Server HTML is rendered with no user; client re-renders with the user →
    guaranteed auth flicker on every navigation.
 
@@ -81,7 +81,7 @@ This is a build/runtime incompatibility and is treated as the #1 blocker below.
    where. `@lib/*` alias points at `app/lib`, but services also live in
    `app/utils`.
 9. **Business/data logic inside UI components.** The same profile endpoint is
-   fetched independently in 8+ components (`NavbarV2`, `DashboardView`,
+   fetched independently in 8+ components (`Navbar`, `DashboardView`,
    `ProfileView`, `CreateProjectPenerbit`, `FormPemodal`,
    `FormDataPemodalPerusahaan`, `FormPemodalPerusahaan`, `PenerbitParent`).
    Dashboard and inbox endpoints are likewise fetched in many places.
@@ -96,7 +96,7 @@ This is a build/runtime incompatibility and is treated as the #1 blocker below.
 11. **`any` everywhere.** ~147 occurrences across `app/`+`redux/`. Catch blocks
     are uniformly `catch (e: any)`; cookie helpers take `(key: any, value: any)`.
 12. **Versioned dead duplicates.** `Home.tsx` _and_ `HomeV2.tsx` are both
-    imported; `RegisterV2`, `FooterV2`, `NavbarV2`, `DataPemodalPerusahaanV1`
+    imported; `RegisterV2`, `FooterV2`, `Navbar`, `DataPemodalPerusahaanV1`
     coexist with predecessors. Old versions linger as dead/confusing code.
 13. **`Swal.fire` as the error layer.** Every service swallows errors into a
     SweetAlert toast (`authService`, `profileService`, `projectService`, …),
@@ -104,7 +104,7 @@ This is a build/runtime incompatibility and is treated as the #1 blocker below.
     error model.
 14. **Mixed naming + magic values.** `PymentManual.tsx` (typo), Indonesian +
     English identifiers mixed, hex colors hardcoded per component
-    (`NavbarV2.tsx:30-32`), localized comments throughout.
+    (`Navbar.tsx:30-32`), localized comments throughout.
 15. **`reactStrictMode: false`** (`next.config.mjs:3`) hides double-invoke bugs.
 16. **`react-strict-dom`-unfriendly raw `<img>`** in 6 files; layout-shift risk
     where `next/image` should be used.
@@ -198,7 +198,7 @@ unification.
 ### Why flicker exists now
 
 Server renders with no knowledge of the cookie's contents (it never reads it for
-UI), `ClientLayout`/`NavbarV2` read `getUser()` only in the browser → first paint
+UI), `ClientLayout`/`Navbar` read `getUser()` only in the browser → first paint
 is "logged out", second paint is "logged in".
 
 ### Target — Next.js 16 `httpOnly` + `proxy.ts` Thin Proxy
@@ -239,14 +239,14 @@ is "logged out", second paint is "logged in".
 
 ### Confirmed duplication (fix targets)
 
-- **Profile** fetched independently in: `NavbarV2.tsx`, `DashboardView.tsx`,
+- **Profile** fetched independently in: `Navbar.tsx`, `DashboardView.tsx`,
   `ProfileView.tsx`, `CreateProjectPenerbit.tsx`, `FormPemodal.tsx`,
   `FormDataPemodalPerusahaan.tsx`, `FormPemodalPerusahaan.tsx`,
   `PenerbitParent.tsx`, plus `app/lib/profileService.ts`.
 - **Dashboard (investor)** fetched in `Client.tsx`, `DashboardView.tsx`,
   `PortfolioView.tsx`, `PaymentMethod.tsx`, `WaitingPayment.tsx`,
   `sukuk/[projectId]/client.tsx`, `dashboard/layout.tsx`, plus thunk.
-- **Inbox** fetched in `NavbarV2`, `DashboardView`, `Home`, `Inbox`,
+- **Inbox** fetched in `Navbar`, `DashboardView`, `Home`, `Inbox`,
   `Transaction`, `PymentManual`, `dashboard/layout.tsx`, plus thunk.
 
 ### Target pattern
@@ -275,7 +275,7 @@ is "logged out", second paint is "logged in".
 
 - `home/Home.tsx` (V1, imported by `(defaults)/page.tsx`) **and**
   `home/HomeV2.tsx` both live; consolidate to one and delete the loser.
-- `RegisterV2`/`FooterV2`/`NavbarV2`/`DataPemodalPerusahaanV1` — drop the version
+- `RegisterV2`/`FooterV2`/`Navbar`/`DataPemodalPerusahaanV1` — drop the version
   suffix and delete superseded files once a single canonical version is chosen.
 - Form validation logic is duplicated across `FormPemodal`,
   `FormPemodalPerusahaan`, `FormDataPemodalPerusahaan`, `FormPenerbit` — extract
@@ -303,7 +303,7 @@ provider shell; pages and static sections become Server Components.
 | ----------------------------------------- | -------------------------------------------------------------------------- | ------------- | ---------------------------------- | ----------------------------------------------- |
 | Auth token in JS-readable cookie          | `app/lib/auth.ts`, `app/lib/utils.ts:18`, `app/helper/cookie.ts`           | Critical      | XSS-exfiltratable; trusted by edge | `httpOnly` cookies via `next/headers`           |
 | Authorization decided from client cookie  | `proxy.ts:27`, `app/hooks/useRole.ts`                                      | Critical      | User can forge role                | Server-trusted/signed session claims            |
-| Reading auth in `useEffect`/render for UI | `Client.tsx:36`, `NavbarV2.tsx:44-58`                                      | Critical      | Hydration flicker                  | Server reads session, passes as props           |
+| Reading auth in `useEffect`/render for UI | `Client.tsx:36`, `Navbar.tsx:44-58`                                        | Critical      | Hydration flicker                  | Server reads session, passes as props           |
 | Hardcoded API base URL                    | `authService.ts`, `profileService.ts`, `projectService.ts`, nextauth route | Architectural | Env drift, un-switchable           | `lib/api-client.ts` + `NEXT_PUBLIC_API_BACKEND` |
 | `axios` called directly in a component    | 15 files importing axios                                                   | Architectural | No central auth/error/refresh      | Call a service                                  |
 | Data fetched in UI component              | profile/dashboard/inbox (§7)                                               | Architectural | Duplicate requests, no caching     | Fetch in `page`/`layout` (server)               |
