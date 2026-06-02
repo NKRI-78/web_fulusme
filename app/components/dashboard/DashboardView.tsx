@@ -37,11 +37,7 @@ export const DashboardView: React.FC = () => {
     if (user) {
       const fetchProfile = async () => {
         try {
-          const res = await api.get(`/api/v1/profile`, {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          });
+          const res = await api.get(`/api/v1/profile`);
 
           const profileData = res.data.data;
           setProfile(profileData);

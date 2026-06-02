@@ -1,21 +1,18 @@
-import { getUser, removeAuthUser, saveAuthUser } from "@/app/lib/auth";
-import { API_BACKEND, API_BACKEND_MEDIA } from "@/app/utils/constant";
+import { API_BACKEND_MEDIA } from "@/app/utils/constant";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { logger } from "./logger";
+import { clearTokenCache, getToken, rotateToken } from "./tokenCache";
 
-// config axios
 const api_media = axios.create({
   baseURL: API_BACKEND_MEDIA,
 });
 
-// variabel untuk menangani antrean saat proses refresh token berlangsung
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (token: string) => void;
   reject: (reason?: unknown) => void;
 }> = [];
 
-// fungsi untuk memproses antrean request yang tertahan
 const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
@@ -27,12 +24,10 @@ const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue = [];
 };
 
-// 1. Request Interceptor: Menyisipkan Access Token ke setiap request
+// 1. Request interceptor — read token from shared cache (backed by httpOnly cookie)
 api_media.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    // Ambil token dari localStorage / Cookies (sesuaikan dengan penyimpanan Anda)
-    const token = getUser()?.token;
-
+  async (config: InternalAxiosRequestConfig) => {
+    const token = await getToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -41,7 +36,7 @@ api_media.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// 2. Response Interceptor: Menangani error 401 dan melakukan Refresh Token
+// 2. Response interceptor — handle 401, coordinate token refresh
 api_media.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -55,94 +50,57 @@ api_media.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Jika error 401 (Unauthorized) dan request belum pernah di-retry
     if (error.response?.status === 401 && !originalRequest._retry) {
-      logger.warn("[AXIOS] 401 detected", {
+      logger.warn("[AXIOS_MEDIA] 401 detected", {
         url: originalRequest.url,
         method: originalRequest.method,
       });
 
       if (isRefreshing) {
-        logger.log("[AXIOS] Refresh in progress, request queued");
-
+        logger.log("[AXIOS_MEDIA] Refresh in progress, request queued");
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            logger.log("[AXIOS] Retry queued request", originalRequest.url);
-
             if (originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${token}`;
             }
-
             return api_media(originalRequest);
           })
-          .catch((err) => {
-            logger.error("[AXIOS] Queued request failed", err);
-            return Promise.reject(err);
-          });
+          .catch((err) => Promise.reject(err));
       }
-
-      logger.log("[AXIOS] Starting token refresh");
 
       originalRequest._retry = true;
       isRefreshing = true;
 
       try {
-        const user = getUser();
+        logger.log("[AXIOS_MEDIA] Refreshing token via /api/auth/refresh");
+        const newToken = await rotateToken();
 
-        if (!user) {
-          logger.error("[AXIOS] No refresh token found");
-          throw new Error("Refresh token tidak tersedia");
+        if (!newToken) {
+          throw new Error("Refresh token tidak tersedia atau kadaluarsa");
         }
 
-        logger.log("[AXIOS] Requesting refresh token", user);
-
-        const { data } = await axios.post(
-          `${API_BACKEND}/api/v1/auth/refresh-token`,
-          {
-            refresh_token: user.refresh,
-          },
-        );
-
-        const newAccessToken = data.data.token;
-        const newRefreshToken = data.data.refresh;
-
-        logger.log("[AXIOS] Token refreshed successfully");
-
-        saveAuthUser({
-          ...user,
-          token: newAccessToken,
-          refresh: newRefreshToken,
-        });
-
-        logger.log("[AXIOS] Processing queued requests");
-
-        processQueue(null, newAccessToken);
+        logger.log("[AXIOS_MEDIA] Token refreshed");
+        processQueue(null, newToken);
 
         if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
         }
-
-        logger.log("[AXIOS] Retrying original request", originalRequest.url);
 
         return api_media(originalRequest);
       } catch (err) {
-        logger.error("[AXIOS] Refresh token failed", err);
-
+        logger.error("[AXIOS_MEDIA] Refresh failed", err);
+        clearTokenCache();
         processQueue(err as AxiosError, null);
 
         if (typeof window !== "undefined") {
-          logger.warn("[AXIOS] Logging out user due to refresh failure");
-
-          //   removeAuthUser();
-          //   window.location.href = "/auth/login";
+          logger.warn("[AXIOS_MEDIA] Logging out user due to refresh failure");
+          // window.location.href = "/auth/login";
         }
 
         return Promise.reject(err);
       } finally {
-        logger.log("[AXIOS] Refresh process finished");
-
         isRefreshing = false;
       }
     }

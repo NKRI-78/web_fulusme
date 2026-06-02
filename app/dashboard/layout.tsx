@@ -16,7 +16,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getTransactions } from "@/actions/fetchTransaction";
 import { InboxResponse } from "../components/notif/inbox-interface";
-import { AuthDataResponse } from "../interfaces/auth/auth";
+import { SessionData } from "@/app/lib/auth";
 import api from "@/utils/axios";
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
@@ -25,7 +25,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   const pathname = usePathname();
 
   const [expand, setExpand] = useState<boolean>(true);
-  const [userData, setUserData] = useState<AuthDataResponse | null>(null);
+  const [userData, setUserData] = useState<SessionData | null>(null);
 
   const [transactionCount, setTransactionCount] = useState<number>(0);
   const [portfolioCount, setPortfolioCount] = useState<number>(0);

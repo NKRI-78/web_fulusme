@@ -12,7 +12,7 @@ import { setCookie } from "@/app/helper/cookie";
 import { getUser } from "@/app/lib/auth";
 import { useSearchParams } from "next/navigation";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
-import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import { SessionData } from "@/app/lib/auth";
 import { uploadMediaService } from "@/app/helper/mediaService";
 import FileInput from "../inputFormPenerbit/_component/FileInput";
 import api from "@/utils/axios";
@@ -60,7 +60,7 @@ const FormPemodalPerusahaan: React.FC = () => {
 
   const [errors, setErrors] = useState<ErrorSchema>({});
   const [profile, setProfile] = useState<any>(null);
-  const [user, setUser] = useState<AuthDataResponse | null>(null);
+  const [user, setUser] = useState<SessionData | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const isUpdate = searchParams.get("update") === "true";

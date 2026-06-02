@@ -6,7 +6,7 @@ import DocumentPreview from "./component/DocumentPreview";
 import { PDFDocument } from "pdf-lib";
 import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
-import Cookies from "js-cookie";
+import { getUser } from "@/app/lib/auth";
 import { uploadMediaService } from "@/app/helper/mediaService";
 import api from "@/utils/axios";
 
@@ -28,20 +28,10 @@ const FormSignature: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    const userCookie = Cookies.get("user");
-    let token: string | null = null;
-
-    if (userCookie) {
-      try {
-        const parsedUser = JSON.parse(userCookie);
-        token = parsedUser.token;
-      } catch {}
-    }
-
-    if (!token) {
+    if (!getUser()) {
       Swal.fire({
         title: "Gagal",
-        text: "Token tidak ditemukan, silakan login ulang.",
+        text: "Sesi tidak ditemukan, silakan login ulang.",
         icon: "error",
       });
       return;

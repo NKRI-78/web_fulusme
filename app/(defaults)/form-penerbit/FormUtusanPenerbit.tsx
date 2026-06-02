@@ -13,9 +13,8 @@ import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PIC_CACHE_KEY } from "./form-cache-key";
 import { UpdateFieldValue } from "./PenerbitParent";
-import { setCookie } from "@/app/helper/cookie";
+import { syncRole } from "@/app/lib/auth";
 import { uploadMediaService } from "@/app/helper/mediaService";
-import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 import api from "@/utils/axios";
 
 interface FormSchema {
@@ -153,13 +152,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
 
         await api.post(`/api/v1/auth/register-as-emiten`, payload);
 
-        setCookie(
-          "user",
-          JSON.stringify({
-            ...user,
-            role: "emiten",
-          } as AuthDataResponse),
-        );
+        await syncRole("emiten");
 
         await Swal.fire({
           icon: "success",

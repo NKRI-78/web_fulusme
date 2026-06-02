@@ -60,7 +60,7 @@ export default function SessionTimeoutProvider({
     }
   };
 
-  const handleSessionExpired = () => {
+  const handleSessionExpired = async () => {
     if (expiredRef.current) return;
 
     expiredRef.current = true;
@@ -72,7 +72,7 @@ export default function SessionTimeoutProvider({
     router.push("/auth/login");
     router.refresh();
 
-    removeAuthUser();
+    await removeAuthUser();
     clearSessionExpiry();
   };
 

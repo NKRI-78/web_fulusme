@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import FileViewer from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
 import { useSearchParams } from "next/navigation";
 import { setCookie } from "@/app/helper/cookie";
-import { getUser, saveAuthUser } from "@/app/lib/auth";
+import { getUser, saveAuthUser, syncRole } from "@/app/lib/auth";
 import Tooltip from "../Tooltip";
 import api from "@/utils/axios";
 import axios from "axios";
@@ -129,12 +129,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
   useEffect(() => {
     if (!isUpdate) return;
 
-    const userCookie = Cookies.get("user");
-    if (!userCookie) return;
-
-    const user = JSON.parse(userCookie);
-    const token = user?.token;
-    if (!token) return;
+    if (!getUser()) return;
 
     const fetchProfile = async () => {
       try {
@@ -383,17 +378,6 @@ const FormDataPemodalPerusahaan: React.FC = () => {
     setErrorsPemodalPerusahaan({});
     return true;
   };
-  const [token, setToken] = useState(null);
-  useEffect(() => {
-    const userCookie = Cookies.get("user");
-    if (!userCookie) return;
-
-    const user = JSON.parse(userCookie);
-    const token = user?.token;
-
-    if (!token) return;
-    setToken(token);
-  });
 
   const handleSubmit = async () => {
     if (loading) return;
@@ -524,13 +508,8 @@ const FormDataPemodalPerusahaan: React.FC = () => {
 
       const userData = getUser();
 
-      if (userData) {
-        saveAuthUser({
-          ...userData,
-          role: "investor institusi",
-          fulfilled_registration: true,
-        });
-      }
+      await syncRole("investor institusi");
+      await saveAuthUser({ fulfilled_registration: true });
 
       router.push("/dashboard");
     } catch (error) {

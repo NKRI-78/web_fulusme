@@ -12,8 +12,7 @@ import ComponentDataPekerjaan from "./informasiPekerjaan/DataPekerjaan";
 import { IS_DEV, IS_PROD } from "@/app/utils/constant";
 import FileViewerModal from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
 import { setCookie } from "@/app/helper/cookie";
-import { getUser, saveAuthUser } from "@/app/lib/auth";
-import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import { getUser, saveAuthUser, syncRole, SessionData } from "@/app/lib/auth";
 import Tooltip from "../Tooltip";
 import api from "@/utils/axios";
 import axios from "axios";
@@ -86,7 +85,7 @@ const FormPemodal: React.FC = () => {
     form: string;
   };
   const router = useRouter();
-  const [user, setUser] = useState<AuthDataResponse | null>(null);
+  const [user, setUser] = useState<SessionData | null>(null);
   const searchParams = useSearchParams();
   const isUpdate = searchParams.get("update") === "true";
   const form = searchParams.get("form");
@@ -1084,13 +1083,8 @@ const FormPemodal: React.FC = () => {
 
         localStorage.removeItem("formPemodal");
 
-        if (user) {
-          saveAuthUser({
-            ...user,
-            role: "investor",
-            fulfilled_registration: true,
-          });
-        }
+        await syncRole("investor");
+        await saveAuthUser({ fulfilled_registration: true });
 
         await Swal.fire({
           title: "Berhasil",

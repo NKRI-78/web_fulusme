@@ -14,16 +14,16 @@ const initialState: InboxState = {
   error: null,
 };
 
-// 🔹 Async thunk
 export const fetchInboxThunk = createAsyncThunk<
   InboxResponse[],
-  string,
+  void,
   { rejectValue: string }
->("inbox/fetchInbox", async (token, { rejectWithValue }) => {
+>("inbox/fetchInbox", async (_, { rejectWithValue }) => {
   try {
-    return await fetchInboxClient(token);
-  } catch (err: any) {
-    return rejectWithValue(err.message || "Gagal fetch inbox");
+    return await fetchInboxClient();
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Gagal fetch inbox";
+    return rejectWithValue(message);
   }
 });
 
@@ -49,7 +49,7 @@ const inboxSlice = createSlice({
         (state, action: PayloadAction<InboxResponse[]>) => {
           state.loading = false;
           state.items = action.payload;
-        }
+        },
       )
       .addCase(fetchInboxThunk.rejected, (state, action) => {
         state.loading = false;

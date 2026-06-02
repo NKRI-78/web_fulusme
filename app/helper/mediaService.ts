@@ -1,6 +1,5 @@
 import axios, { AxiosProgressEvent } from "axios";
 import { compressImage } from "./CompressorImage";
-import { API_BACKEND_MEDIA } from "../utils/constant";
 import { getUser } from "../lib/auth";
 import api_media from "@/utils/axios_media";
 
@@ -26,55 +25,35 @@ export async function uploadMediaService(
   const compressedImage = await compressImage(file);
   const compressedFile = isImage ? compressedImage : file;
 
-  const sizeInMB = file.size / (1024 * 1024);
-
   const formData = new FormData();
   formData.append("folder", "web");
   formData.append("subfolder", "fulusme");
   formData.append("media", compressedFile);
 
-  const user = getUser();
-  if (user) {
-    try {
-      const res = await api_media.post(
-        `/api/v1/media/upload-fulusme`,
-        formData,
-        {
-          timeout: timeout,
-          onUploadProgress: onUploadProgress,
-        },
-      );
+  if (!getUser()) {
+    return { ok: false, message: "Unauthorized", error_code: "unauthorized" };
+  }
 
-      const mediaResponse: MediaResponse<UploadMediaData> = res.data;
+  try {
+    const res = await api_media.post(
+      `/api/v1/media/upload-fulusme`,
+      formData,
+      { timeout, onUploadProgress },
+    );
 
-      return {
-        ok: true,
-        message: "Success",
-        data: mediaResponse.data,
-      };
-    } catch (error) {
-      let message = "Unexpected error";
-
-      if (axios.isAxiosError(error)) {
-        message =
-          error.response?.data?.message ||
-          error.response?.statusText ||
-          error.message;
-      } else if (error instanceof Error) {
-        message = error.message;
-      }
-
-      return {
-        ok: false,
-        message,
-      };
+    const mediaResponse: MediaResponse<UploadMediaData> = res.data;
+    return { ok: true, message: "Success", data: mediaResponse.data };
+  } catch (error) {
+    let message = "Unexpected error";
+    if (axios.isAxiosError(error)) {
+      message =
+        error.response?.data?.message ||
+        error.response?.statusText ||
+        error.message;
+    } else if (error instanceof Error) {
+      message = error.message;
     }
-  } else {
-    return {
-      ok: false,
-      message: "Unauthorized",
-      error_code: "unauthorized",
-    };
+    return { ok: false, message };
   }
 }
 
@@ -83,48 +62,26 @@ export async function uploadMediaService(
 export async function getMediaService(
   mediaId: string,
 ): Promise<MediaServiceResponse<GetMediaData>> {
-  const user = getUser();
-  if (user) {
-    try {
-      const res = await axios.get(
-        `${API_BACKEND_MEDIA}/api/v1/media/${mediaId}/signed`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        },
-      );
+  if (!getUser()) {
+    return { ok: false, message: "Unauthorized", error_code: "unauthorized" };
+  }
 
-      const mediaResponse: MediaResponse<GetMediaData> = res.data;
-
-      return {
-        ok: true,
-        message: "Success",
-        data: mediaResponse.data,
-      };
-    } catch (error) {
-      let message = "Unexpected error";
-
-      if (axios.isAxiosError(error)) {
-        message =
-          error.response?.data?.message ||
-          error.response?.statusText ||
-          error.message;
-      } else if (error instanceof Error) {
-        message = error.message;
-      }
-
-      return {
-        ok: false,
-        message,
-      };
+  try {
+    // api_media interceptor injects Bearer token from httpOnly cookie via tokenCache
+    const res = await api_media.get(`/api/v1/media/${mediaId}/signed`);
+    const mediaResponse: MediaResponse<GetMediaData> = res.data;
+    return { ok: true, message: "Success", data: mediaResponse.data };
+  } catch (error) {
+    let message = "Unexpected error";
+    if (axios.isAxiosError(error)) {
+      message =
+        error.response?.data?.message ||
+        error.response?.statusText ||
+        error.message;
+    } else if (error instanceof Error) {
+      message = error.message;
     }
-  } else {
-    return {
-      ok: false,
-      message: "Unauthorized",
-      error_code: "unauthorized",
-    };
+    return { ok: false, message };
   }
 }
 

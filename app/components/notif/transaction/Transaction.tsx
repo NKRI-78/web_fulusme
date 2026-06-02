@@ -11,13 +11,13 @@ import TransactionInvestorPage from "../../dashboard/pemodal/TransactionInvestor
 import Center from "../../Center";
 import CircularProgressIndicator from "../../CircularProgressIndicator";
 import { AnimatedWrapper } from "../../AnimatedWrapper";
-import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import { SessionData } from "@/app/lib/auth";
 import api from "@/utils/axios";
 
 const Transaction = () => {
   // data hook
   const [transactions, setTransactions] = useState<InboxResponse[]>([]);
-  const [user, setUser] = useState<AuthDataResponse | null>(null);
+  const [user, setUser] = useState<SessionData | null>(null);
 
   // state hook
   const [loading, setLoading] = useState<boolean>(true);
@@ -34,8 +34,7 @@ const Transaction = () => {
   const fetchTransaction = async () => {
     setLoading(true);
     try {
-      const token = getUser()?.token;
-      if (token) {
+      if (getUser()) {
         const res = await api.get(`/api/v1/inbox/list`);
         if (!res.data["data"]) {
           setTransactions([]);

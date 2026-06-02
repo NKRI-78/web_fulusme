@@ -5,10 +5,10 @@ import { PanelContent } from "./PanelContent";
 import Modal from "@/app/helper/Modal";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
 import RegisterOtp from "../auth/register/RegisterOtp";
-import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import { SessionData } from "@/app/lib/auth";
 
 const DashboardUser: React.FC<{
-  user: AuthDataResponse | null;
+  user: SessionData | null;
 }> = ({ user }) => {
   const [step, setStep] = useState<"otp" | "role" | null>(null);
   const [showOtpModal, setShowOtpModal] = useState(false);

@@ -9,8 +9,6 @@ import { Eye, EyeOff, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import Countdown from "react-countdown";
-import { getCookie, setCookie } from "@/app/helper/cookie";
-import { AuthDataResponse } from "@/app/interfaces/auth/auth";
 import api from "@/utils/axios";
 
 interface RoleModalProps {
@@ -36,9 +34,11 @@ type FormValues = {
 };
 
 const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
-  const cookie = getCookie("user");
-  const decoded = decodeURIComponent(cookie ?? "");
-  const user = JSON.parse(decoded);
+  const pendingRaw =
+    typeof window !== "undefined"
+      ? localStorage.getItem("pendingRegistration")
+      : null;
+  const user = pendingRaw ? JSON.parse(pendingRaw) : {};
   const [loading, setLoading] = useState<boolean>(false);
   const [step, setStep] = useState<
     "select" | "penerbit" | "pemodal" | "otpRegister"
@@ -82,7 +82,10 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
         },
       );
 
-      setCookie("user", JSON.stringify(response.data["data"]));
+      localStorage.setItem(
+        "pendingRegistration",
+        JSON.stringify(response.data["data"]),
+      );
       setStep("otpRegister");
     } catch (error: any) {
       alert(error.response.data.message);

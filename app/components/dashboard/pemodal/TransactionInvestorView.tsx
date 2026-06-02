@@ -77,7 +77,7 @@ export default function TransactionInvestorView() {
     }
   }, [page, user]);
 
-  const refundPayment = async (paymentId: string, token: string) => {
+  const refundPayment = async (paymentId: string) => {
     try {
       const res = await api.post(`/api/v1/project/refund`, {
         payment_id: paymentId,
@@ -332,7 +332,7 @@ export default function TransactionInvestorView() {
                 if (!selectedPaymentId) return;
                 setProcessing(true);
                 try {
-                  await refundPayment(selectedPaymentId, user?.token ?? "");
+                  await refundPayment(selectedPaymentId);
 
                   // load ulang
                   await fetchData(1);

@@ -8,13 +8,13 @@ import CircularProgressIndicator from "../../CircularProgressIndicator";
 import ProfilePenerbitView from "./ProfilePenerbitView";
 import ProfilePemodalPribadi from "./ProfilePemodalPribadiView";
 import ProfilePemodalPerusahaan from "./ProfilePemodalPerusahaanView";
-import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import { SessionData } from "@/app/lib/auth";
 import api from "@/utils/axios";
 
 const ProfileView: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [profile, setProfile] = useState<User | null>(null);
-  const [userSession, setUserSession] = useState<AuthDataResponse | null>(null);
+  const [userSession, setUserSession] = useState<SessionData | null>(null);
 
   useEffect(() => {
     const session = getUser();

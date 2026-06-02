@@ -1,6 +1,5 @@
 "use client";
 
-import Cookies from "js-cookie";
 import React, { useEffect, useRef } from "react";
 import PhotoUploaderContainer from "../inputFormPenerbit/_component/PhotoUploaderContainer";
 import VideoUploaderContainer from "../inputFormPenerbit/_component/VideoUploadContainer";
@@ -26,11 +25,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import FileInput from "../inputFormPenerbit/_component/FileInput";
 import api from "@/utils/axios";
 
-const getUserToken = (): string => {
-  const userCookie = Cookies.get("user");
-  if (!userCookie) throw "User tidak ditemukan";
-  return JSON.parse(userCookie).token;
-};
 
 const FORM_CACHE_KEY = "formDokumenPelengkapPenerbitCache";
 
@@ -112,7 +106,6 @@ const FormDokumenTambahanPage: React.FC = () => {
           })),
         };
 
-        const token = getUserToken();
         await api.post(`/api/v1/document/verify/project`, payload);
         const modalResult = await Swal.fire({
           title: "Dokumen Berhasil Diupload",

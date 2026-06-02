@@ -5,9 +5,8 @@ import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import Swal from "sweetalert2";
 import Image from "next/image";
-import api from "@/utils/axios";
-import { saveAuthUser } from "@/app/lib/auth";
-import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import { SessionData } from "@/app/lib/auth";
+import { clearTokenCache } from "@/utils/tokenCache";
 
 const errorTitles: Record<string, string> = {
   INVALID_CREDENTIALS: "Login Gagal",
@@ -45,30 +44,28 @@ const Login: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await api.post(`/api/v1/auth/login`, {
-        email,
-        password,
+      // Tokens are set as httpOnly cookies by the Route Handler.
+      // The response body only contains non-sensitive session fields.
+      clearTokenCache(); // ensure stale cache is cleared before new session
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
-      const userData: AuthDataResponse = response.data.data;
-      saveAuthUser(userData);
+      const payload = await res.json();
 
-      // if (!userData.enabled) {
-      //   await Swal.fire({
-      //     icon: "info",
-      //     title: "Verifikasi Diperlukan",
-      //     text: "Anda belum memasukkan kode OTP. Silakan verifikasi terlebih dahulu.",
-      //     iconColor: "#10565C",
-      //     confirmButtonColor: "#10565C",
-      //     confirmButtonText: "Verifikasi Sekarang",
-      //   });
-      //   await api.post(`/api/v1/resend-otp`, {
-      //     val: userData.email,
-      //   });
-      //   localStorage.setItem("showOtp", "true");
-      //   router.push("/");
-      //   return;
-      // }
+      if (!res.ok) {
+        const rawMessage = payload?.message;
+        const title = errorTitles[rawMessage] ?? "Login Gagal";
+        const message =
+          errorMessages[rawMessage] ??
+          "Terjadi kesalahan saat login. Silakan coba lagi.";
+        return Swal.fire({ icon: "error", title, text: message, confirmButtonColor: "#10565C" });
+      }
+
+      const userData: SessionData = payload.data;
+
       if (userData.role === "user") {
         await Swal.fire({
           icon: "info",
@@ -79,13 +76,9 @@ const Login: React.FC = () => {
           confirmButtonColor: "#10565C",
         });
 
-        localStorage.setItem("user", JSON.stringify(response.data.data));
-
-        if (userData.role === "user") {
-          localStorage.setItem("showSelectRole", "true");
-          router.push("/");
-          return;
-        }
+        localStorage.setItem("showSelectRole", "true");
+        router.push("/");
+        return;
       }
       await Swal.fire({
         icon: "success",
@@ -95,25 +88,11 @@ const Login: React.FC = () => {
       });
 
       router.replace("/dashboard");
-    } catch (error: any) {
-      const rawMessage = error?.response?.data?.message;
-
-      const defaultTitle = "Login Gagal";
-      const defaultMessage = "Terjadi kesalahan saat login. Silakan coba lagi.";
-
-      const title =
-        (rawMessage && errorTitles[rawMessage as keyof typeof errorTitles]) ??
-        defaultTitle;
-
-      const message =
-        (rawMessage &&
-          errorMessages[rawMessage as keyof typeof errorMessages]) ??
-        defaultMessage;
-
+    } catch {
       Swal.fire({
         icon: "error",
-        title,
-        text: message,
+        title: "Login Gagal",
+        text: "Terjadi kesalahan jaringan. Silakan coba lagi.",
         confirmButtonColor: "#10565C",
       });
     } finally {

@@ -1,19 +1,22 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { AuthDataResponse } from "./app/interfaces/auth/auth";
 
 export function proxy(request: NextRequest) {
-  const userCookie = request.cookies.get("user")?.value;
+  // Read httpOnly cookies — not forgeable by client JS
+  const token = request.cookies.get("auth_token")?.value;
+  const role = request.cookies.get("auth_role")?.value;
   const { pathname } = request.nextUrl;
 
-  // 🔒 Redirect jika sudah login tapi akses login page
-  if (userCookie && pathname.startsWith("/auth/login")) {
+  const isAuthenticated = Boolean(token);
+
+  // Redirect already-logged-in users away from login page
+  if (isAuthenticated && pathname.startsWith("/auth/login")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // 🔒 Protect private routes
+  // Protect private routes
   if (
-    !userCookie &&
+    !isAuthenticated &&
     (pathname.startsWith("/dashboard") ||
       pathname.startsWith("/create-project") ||
       pathname.startsWith("/profile") ||
@@ -22,17 +25,14 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // 🔒 Role-based access
-  if (userCookie) {
-    const session = JSON.parse(userCookie) as AuthDataResponse;
-
-    if (
-      (pathname.startsWith("/create-project") ||
-        pathname.startsWith("/dokumen-pelengkap")) &&
-      session.role !== "emiten"
-    ) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
+  // Role-based access: only emiten may access project creation / supplemental docs
+  if (
+    isAuthenticated &&
+    (pathname.startsWith("/create-project") ||
+      pathname.startsWith("/dokumen-pelengkap")) &&
+    role !== "emiten"
+  ) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();

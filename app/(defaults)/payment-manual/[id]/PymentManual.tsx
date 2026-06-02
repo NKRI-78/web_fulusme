@@ -160,8 +160,7 @@ export default function PembayaranBCAWithDetail({
   useEffect(() => {
     (async () => {
       try {
-        const user = getUser();
-        if (!user?.token) {
+        if (!getUser()) {
           setLoading(false);
           return;
         }
@@ -248,8 +247,7 @@ export default function PembayaranBCAWithDetail({
   /* ----------------- submit ----------------- */
   const onSubmit = async ({ proof }: FormValues) => {
     try {
-      const user = getUser();
-      if (!user?.token) return;
+      if (!getUser()) return;
 
       // 1) upload media
       const uploadMediaResult = await uploadMediaService(file);

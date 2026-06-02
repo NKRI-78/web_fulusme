@@ -1,24 +1,14 @@
 import api from "@/utils/axios";
+import { getUser } from "@/app/lib/auth";
 import { InboxResponse } from "../components/notif/inbox-interface";
 
-export async function fetchInboxClient(
-  token: string,
-): Promise<InboxResponse[]> {
-  try {
-    if (!token) return [];
+export async function fetchInboxClient(): Promise<InboxResponse[]> {
+  if (!getUser()) return [];
 
-    const res = await api.get(`/api/v1/inbox/list`);
+  const res = await api.get(`/api/v1/inbox/list`);
+  if (!res.data?.data) return [];
 
-    if (!res.data?.data) return [];
-
-    const filteredInboxes = (res.data.data as InboxResponse[])
-      .filter(
-        (inbox) => inbox.type === "billing" && inbox.status !== "REJECTED",
-      )
-      .reverse();
-
-    return filteredInboxes;
-  } catch (error) {
-    throw error;
-  }
+  return (res.data.data as InboxResponse[])
+    .filter((inbox) => inbox.type === "billing" && inbox.status !== "REJECTED")
+    .reverse();
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { getToken } from "@/utils/tokenCache";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { API_PG } from "@/app/utils/constant";
@@ -41,20 +42,17 @@ const PaymentMethod = ({ id }: { id: string }) => {
   const baseAmount = amount;
 
   useEffect(() => {
-    const userData = getUser();
-    if (userData) {
-      setLoading(true);
+    if (!getUser()) return;
+    setLoading(true);
+    (async () => {
+      const token = await getToken();
       axios
         .get(`${API_PG}/api/v1/channel`, {
-          headers: {
-            Authorization: `Bearer ${userData.token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         })
-        .then((response) => {
-          setMethods(response.data.data);
-        })
+        .then((response) => setMethods(response.data.data))
         .finally(() => setLoading(false));
-    }
+    })();
   }, []);
 
   //* fetch project detail by id

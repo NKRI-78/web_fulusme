@@ -29,13 +29,13 @@ const Inbox = () => {
   const user = getUser();
 
   async function fetchInbox() {
-    await dispatch(fetchInboxThunk(user?.token ?? "-"));
+    await dispatch(fetchInboxThunk());
   }
 
   async function initializeSocket() {
     onSocketReady((socket) => {
       socket.on("inbox-update", async () => {
-        const inboxes = await dispatch(fetchInboxThunk(user?.token ?? "-"));
+        const inboxes = await dispatch(fetchInboxThunk());
 
         dispatch(
           setBadge(
@@ -51,7 +51,7 @@ const Inbox = () => {
   useEffect(() => {
     initializeSocket();
     fetchInbox();
-  }, [user?.token, dispatch]);
+  }, [dispatch]);
 
   // state hook
   const [dialogIsOpen, setOpenDialog] = useState<boolean>(false);
@@ -175,7 +175,7 @@ const Inbox = () => {
         )}
       </div>
 
-      {dialogIsOpen && user?.token && selectedInbox && (
+      {dialogIsOpen && user && selectedInbox && (
         <InboxModalDialog
           role={user.role}
           inbox={selectedInbox}

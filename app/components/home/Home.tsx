@@ -42,10 +42,10 @@ const Home: React.FC = () => {
   const user = getUser();
 
   useEffect(() => {
-    if (user?.token) fetchInbox(user?.token);
+    if (user) fetchInbox();
   }, []);
 
-  const fetchInbox = async (token: string) => {
+  const fetchInbox = async () => {
     try {
       const res = await api.get(`/api/v1/inbox/list`);
       if (!res.data["data"]) {

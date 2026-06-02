@@ -24,7 +24,7 @@ import { fetchInboxThunk } from "@/redux/slices/inboxSlice";
 import { setBadge } from "@/redux/slices/badgeSlice";
 import CircularProgressIndicator from "../CircularProgressIndicator";
 import { getSocket } from "@/app/utils/sockets";
-import { AuthDataResponse } from "@/app/interfaces/auth/auth";
+import { SessionData } from "@/app/lib/auth";
 import api from "@/utils/axios";
 
 const PRIMARY_COLOR = "#10565C";
@@ -41,7 +41,7 @@ const NavbarV2: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const [userData, setUserData] = useState<AuthDataResponse | null>(null);
+  const [userData, setUserData] = useState<SessionData | null>(null);
 
   const [hydrated, setHydrated] = useState(false);
 
@@ -57,10 +57,9 @@ const NavbarV2: React.FC = () => {
 
   useEffect(() => {
     const socket = getSocket();
-    const user = getUser();
 
     socket.on("inbox-update", async () => {
-      const inboxes = await dispatch(fetchInboxThunk(user?.token ?? "-"));
+      const inboxes = await dispatch(fetchInboxThunk());
 
       dispatch(
         setBadge(
@@ -106,9 +105,8 @@ const NavbarV2: React.FC = () => {
   }, [userData]);
 
   const fetchAndUpdateBadge = async () => {
-    const user = getUser();
-    if (user?.token) {
-      const inboxes = await dispatch(fetchInboxThunk(user?.token));
+    if (getUser()) {
+      const inboxes = await dispatch(fetchInboxThunk());
 
       dispatch(
         setBadge(

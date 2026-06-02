@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ProjectCard } from "@/app/components/project/ProjectCard";
-import Cookies from "js-cookie";
+import { getUser } from "@/app/lib/auth";
 import { getAllProject } from "@/actions/GetAllProject";
 import Modal from "@/app/helper/Modal";
 import RegisterOtp from "../auth/register/RegisterOtp";
@@ -45,20 +45,8 @@ const HomeV2: React.FC = () => {
     fetchTopVideos();
   }, []);
 
-  function getUserToken(): string | null {
-    const userCookie = Cookies.get("user");
-    if (!userCookie) return null;
-
-    const userJson = JSON.parse(userCookie);
-    return userJson.token;
-  }
-
   function getUserId(): string | null {
-    const userCookie = Cookies.get("user");
-    if (!userCookie) return null; // ✅ tambahkan return
-
-    const userJson = JSON.parse(userCookie);
-    return userJson.id;
+    return getUser()?.id ?? null;
   }
 
   const faqData = {
@@ -244,7 +232,7 @@ const HomeV2: React.FC = () => {
     setStep(null);
   };
 
-  const userToken = getUserToken();
+  const isLoggedIn = Boolean(getUser());
 
   return (
     <div>
@@ -262,7 +250,7 @@ const HomeV2: React.FC = () => {
             yang percaya pada perubahan."
           </p>
 
-          {isClient && !getUserToken() && (
+          {isClient && !isLoggedIn && (
             <button
               className="text-white text-lg bg-[#10565C] hover:bg-[#0c4246] focus:ring-1 focus:ring-white rounded-lg px-6 py-3 me-2 mb-2 dark:bg-[#10565C] dark:hover:bg-[#0c4246] focus:outline-none dark:focus:ring-white font-extrabold"
               onClick={() => {

@@ -296,10 +296,7 @@ const FormPenerbit: React.FC<Props> = ({
 
       const user = getUser();
       if (user) {
-        saveAuthUser({
-          ...user,
-          fulfilled_registration: true,
-        });
+        await saveAuthUser({ fulfilled_registration: true });
       }
 
       onSubmidCallback();

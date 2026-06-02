@@ -10,7 +10,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import moment from "moment";
-import Cookies from "js-cookie";
+import { getUser } from "@/app/lib/auth";
 import Link from "next/link";
 import SkeletonWaitingPayment from "./components/SkeletonWaitingPayment";
 import { motion } from "framer-motion";
@@ -71,19 +71,11 @@ const WaitingPayment = () => {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
 
-  function getUserToken(): string | null {
-    const userCookie = Cookies.get("user");
-    if (!userCookie) return null;
-    const userJson = JSON.parse(userCookie);
-    return userJson.token;
-  }
-
   const fetchDetailPayment = async () => {
     if (!orderId) return;
     setLoading(true);
-    const token = getUserToken();
 
-    if (token) {
+    if (getUser()) {
       try {
         const response = await api.get(
           `/api/v1/transaction/project/detail/${orderId}`,
