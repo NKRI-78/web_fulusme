@@ -104,7 +104,7 @@ export default function RegisterOtp({
     minutes,
     seconds,
     completed,
-  }: CountdownRenderProps): JSX.Element | null => {
+  }: CountdownRenderProps): React.ReactElement | null => {
     if (completed) return null;
     return (
       <span className="text-sm font-medium">

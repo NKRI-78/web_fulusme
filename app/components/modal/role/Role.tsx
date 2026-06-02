@@ -137,7 +137,7 @@ const RoleModal: React.FC<RoleModalProps> = ({ open, onClose }) => {
     minutes,
     seconds,
     completed,
-  }: CountdownRenderProps): JSX.Element | string => {
+  }: CountdownRenderProps): React.ReactElement | string => {
     if (completed) {
       setIsDisableResendOTP(false);
       return "";

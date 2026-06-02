@@ -51,8 +51,8 @@ const GoogleMapPicker: React.FC<GoogleMapPickerProps> = ({
   const [suggestions, setSuggestions] = useState<
     google.maps.places.AutocompletePrediction[]
   >([]);
-  const serviceRef = useRef<google.maps.places.AutocompleteService>();
-  const placesServiceRef = useRef<google.maps.places.PlacesService>();
+  const serviceRef = useRef<google.maps.places.AutocompleteService | null>(null);
+  const placesServiceRef = useRef<google.maps.places.PlacesService | null>(null);
 
   //* init service ketika map ready
   useEffect(() => {
