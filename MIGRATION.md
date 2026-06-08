@@ -39,13 +39,13 @@ confirms zero usage.
 
 ## Phases
 
-### Phase A — Foundation _(1 commit)_ — PR #1
-- [ ] Create empty `src/`; add new aliases to `tsconfig.json` beside the old ones.
-- [ ] Audit `next.config.mjs` for root path assumptions.
-- [ ] Delete dead `app/features/*` template tree **except** `broadcast` & `register` (relocate those later).
-- [ ] Resolve `app/src/react-step.tsx` (find user → relocate or delete).
-- [ ] Verify & delete unused slices (`projectSlice`, `profileSlice` if present).
-- [ ] `next build` green → commit `chore(struct): src scaffold + aliases, drop dead features tree`.
+### Phase A — Foundation _(1 commit)_ — PR #1 ✅ DONE
+- [x] Create `src/`; add new aliases (`@features`/`@shared`/`@store`) to `tsconfig.json` beside old ones (`@/*` left at `./*` so existing imports keep working).
+- [x] Delete dead `app/features/*` template tree **except** `broadcast` (the only live one, used by `(defaults)/informasi/*`). `register` was template junk too (Under-Construction page, listed in dead `LeftSidebar` demo nav) — deleted.
+- [x] Deleted dead `LeftSidebar.tsx` (zero importers; only linked to the deleted template tree).
+- [x] Resolved `app/src/react-step.tsx` → it was an ambient `declare module` type, moved to `types/react-step-progress-bar.d.ts`; `app/src/` removed.
+- [x] Deleted dead `redux/slices/projectSlice.ts` (not imported by `store.ts` or anywhere). `profileSlice` already gone in Phase 2.
+- [x] `next build` green → commit.
 
 ### Phase B — `shared/` _(1 commit)_ — PR #1
 - [ ] `shared/lib/api-client.ts` ← `app/lib/api-client.ts`; fold `utils/axios.ts` + `utils/axios_media.ts` into it via `baseURL` param.
@@ -106,5 +106,5 @@ These are real debt but deliberately excluded to keep this migration reviewable:
 ## Decisions captured during planning
 
 - Home: only `HomeV2.tsx` exists (V1 already deleted) → rename to `Home` in D9.
-- `app/features/{broadcast,register}` are live → relocate, don't delete.
+- Of `app/features/*`, only `broadcast` is live (used by `(defaults)/informasi/*`) → relocate in D-phase. `register` and all others were Under-Construction templates → deleted in Phase A. `LeftSidebar` (their dead nav) deleted too.
 - PR granularity: foundation (A–C) as PR #1, features as subsequent PRs.
