@@ -1,4 +1,4 @@
-import HomeV2 from "../components/home/HomeV2";
+import HomeV2 from "@features/content/components/Home";
 
 const HomePage: React.FC = () => {
   return <HomeV2 />;

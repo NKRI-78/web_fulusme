@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchContentHistories, fetchContentList } from '@lib/contentService';
+import { fetchContentHistories, fetchContentList } from '@features/content/services/contentService';
 import { Content } from '@shared/types/content/content';
 import { ContentHistory, ContentHistoryDataItem } from '@shared/types/content/content-history';
 
