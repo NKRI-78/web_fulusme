@@ -1,7 +1,7 @@
 import React from "react";
 
 import type { Metadata } from "next";
-import AboutUs from "@/app/components/aboutus/AboutUs";
+import AboutUs from "@features/content/components/AboutUs";
 
 export const metadata: Metadata = {
   title: "Tentang | FuLusme",

@@ -22,7 +22,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@store/store";
 
-import { LoadingSpinner } from "@components/loading/Spinner";
+import { LoadingSpinner } from "@shared/ui/Spinner";
 import moment from 'moment';
 
 // import {

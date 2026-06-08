@@ -1,7 +1,7 @@
 import React from "react";
 
 import type { Metadata } from "next";
-import TermsConditions from "@/app/components/TermsConditions/TermsConditions";
+import TermsConditions from "@features/content/components/TermsConditions";
 
 export const metadata: Metadata = {
   title: "Terms And Conditions | FuLusme",

@@ -1,7 +1,7 @@
 import React from "react";
 
 import type { Metadata } from "next";
-import BussinesList from "@components/bussines-list/BusinessList";
+import BussinesList from "@features/content/components/BusinessList";
 
 export const metadata: Metadata = {
   title: "Daftar Bisnis | FuLusme",

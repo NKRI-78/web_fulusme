@@ -1,7 +1,7 @@
 import React from "react";
 
 import type { Metadata } from "next";
-import FormSignature from "@/app/components/signature/FormSignature";
+import FormSignature from "@features/project/components/signature/FormSignature";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
