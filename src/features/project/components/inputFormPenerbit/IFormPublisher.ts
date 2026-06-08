@@ -1,4 +1,4 @@
-import { PhoneValue } from "../../(defaults)/form-penerbit/components/PhoneInput";
+import { PhoneValue } from "@/app/(defaults)/form-penerbit/components/PhoneInput";
 
 export interface IFormPublisher {
   sameAsCompany: boolean;

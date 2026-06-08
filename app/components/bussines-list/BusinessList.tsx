@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Building, X } from "lucide-react";
-import { ProjectCard } from "../project/ProjectCard";
+import { ProjectCard } from "@features/project/components/project/ProjectCard";
 import { getAllProject } from "@/actions/GetAllProject";
 import { Project } from "@shared/types/project/IProject";
 import GeneralDialog from "@shared/ui/GeneralDialog";

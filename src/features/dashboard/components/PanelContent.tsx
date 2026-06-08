@@ -1,5 +1,5 @@
 import Link from "next/link";
-import FormButton from "@/app/components/inputFormPemodalPerusahaan/component/FormButton";
+import FormButton from "@shared/ui/FormButton";
 import { Url } from "next/dist/shared/lib/router/router";
 
 export const PanelContent: React.FC<{

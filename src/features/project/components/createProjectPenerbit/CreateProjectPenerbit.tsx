@@ -5,13 +5,13 @@ import React, { useEffect, useRef, useState } from "react";
 import Flatpickr from "react-flatpickr";
 import { Indonesian } from "flatpickr/dist/l10n/id.js";
 import "flatpickr/dist/flatpickr.min.css";
-import TextField from "../inputFormPenerbit/_component/TextField";
-import DropdownSelect from "../inputFormPenerbit/_component/DropdownSelect";
-import CustomCheckBox from "../inputFormPenerbit/_component/CustomCheckBox";
-import PhotoUploaderContainer from "../inputFormPenerbit/_component/PhotoUploaderContainer";
-import FileInput from "../inputFormPenerbit/_component/FileInput";
-import SectionPoint from "../inputFormPenerbit/_component/SectionPoint";
-import Subtitle from "../inputFormPenerbit/_component/SectionSubtitle";
+import TextField from "@features/project/components/inputFormPenerbit/_component/TextField";
+import DropdownSelect from "@features/project/components/inputFormPenerbit/_component/DropdownSelect";
+import CustomCheckBox from "@features/project/components/inputFormPenerbit/_component/CustomCheckBox";
+import PhotoUploaderContainer from "@features/project/components/inputFormPenerbit/_component/PhotoUploaderContainer";
+import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";
+import SectionPoint from "@features/project/components/inputFormPenerbit/_component/SectionPoint";
+import Subtitle from "@features/project/components/inputFormPenerbit/_component/SectionSubtitle";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import {
   CreateProjectFormSchema,
@@ -20,14 +20,14 @@ import {
   ProjectTypeInterface,
 } from "./form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import CurrencyField from "../inputFormPenerbit/_component/CurrencyField";
+import CurrencyField from "@features/project/components/inputFormPenerbit/_component/CurrencyField";
 import { fetchProvinces } from "@shared/lib/lookups/fetchWilayah";
 
 type OptionType = { value: string; label: string; zip_code: string };
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import FormButton from "../inputFormPenerbit/_component/FormButton";
-import MonthSelection from "../inputFormPenerbit/_component/MonthSelection";
+import FormButton from "@shared/ui/FormButton";
+import MonthSelection from "@features/project/components/inputFormPenerbit/_component/MonthSelection";
 import GoogleMapPicker from "./GoogleMapsPicker";
 import FormAlamat from "./FormAlamat";
 import api from "@/utils/axios";

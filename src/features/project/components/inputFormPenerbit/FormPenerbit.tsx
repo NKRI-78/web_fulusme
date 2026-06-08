@@ -15,7 +15,7 @@ import SectionTitle from "./_component/SectionTitle";
 import SectionPoint from "./_component/SectionPoint";
 import JobStructureForm from "./_component/JobStructureForm";
 import AddButton from "./_component/AddButton";
-import FormButton from "./_component/FormButton";
+import FormButton from "@shared/ui/FormButton";
 import UpdateRing from "./_component/UpdateRing";
 
 import { getUser, saveAuthUser } from "@shared/lib/auth";

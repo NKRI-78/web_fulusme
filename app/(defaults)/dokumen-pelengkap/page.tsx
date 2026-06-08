@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 
 import type { Metadata } from "next";
-import FormDokumenTambahanPage from "@/app/components/formDokumenTambahanPenerbit/FormDokumenTambahanPage";
+import FormDokumenTambahanPage from "@features/project/components/formDokumenTambahanPenerbit/FormDokumenTambahanPage";
 
 export const metadata: Metadata = {
   title: "Form Pelengkap | FuLusme",

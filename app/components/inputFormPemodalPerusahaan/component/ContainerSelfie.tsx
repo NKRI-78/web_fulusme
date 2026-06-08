@@ -1,6 +1,6 @@
 "use client";
 
-import FormButton from "@/app/components/inputFormPemodalPerusahaan/component/FormButton";
+import FormButton from "@shared/ui/FormButton";
 import SectionPoint from "@/app/components/inputFormPemodalPerusahaan/component/SectionPoint";
 import { Camera, CameraOff, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";

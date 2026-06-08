@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ProjectCard } from "@/app/components/project/ProjectCard";
+import { ProjectCard } from "@features/project/components/project/ProjectCard";
 import { getUser } from "@shared/lib/auth";
 import { getAllProject } from "@/actions/GetAllProject";
 import Modal from "@shared/ui/Modal";

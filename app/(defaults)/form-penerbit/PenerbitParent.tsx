@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import PublisherForm from "./FormPenerbit";
-import FormPenerbit from "@/app/components/inputFormPenerbit/FormPenerbit";
+import FormPenerbit from "@features/project/components/inputFormPenerbit/FormPenerbit";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IS_DEV } from "@shared/lib/constant";
 import { penerbitUpdateKeys } from "./IUpdateRegistrationKey";

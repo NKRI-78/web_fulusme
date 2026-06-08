@@ -1,7 +1,7 @@
 import React from "react";
 
 import type { Metadata } from "next";
-import CreateProjectPenerbit from "@/app/components/createProjectPenerbit/CreateProjectPenerbit";
+import CreateProjectPenerbit from "@features/project/components/createProjectPenerbit/CreateProjectPenerbit";
 
 export const metadata: Metadata = {
   title: "Create Project | FuLusme",

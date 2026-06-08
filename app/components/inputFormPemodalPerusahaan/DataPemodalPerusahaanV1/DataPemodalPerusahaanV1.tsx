@@ -9,7 +9,7 @@ import { fetchJenisPerusahaan } from "@shared/lib/lookups/fetchJenisPerusahaan";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { useSearchParams } from "next/navigation";
 import { uploadMediaService } from "@shared/lib/mediaService";
-import FileInput from "../../inputFormPenerbit/_component/FileInput";
+import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";
 
 interface Props {
   formData: {

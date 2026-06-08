@@ -1,10 +1,10 @@
 "use client";
 
-import FileInput from "@/app/components/inputFormPenerbit/_component/FileInput";
-import FormButton from "@/app/components/inputFormPenerbit/_component/FormButton";
-import SectionPoint from "@/app/components/inputFormPenerbit/_component/SectionPoint";
-import Subtitle from "@/app/components/inputFormPenerbit/_component/SectionSubtitle";
-import TextField from "@/app/components/inputFormPenerbit/_component/TextField";
+import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";
+import FormButton from "@shared/ui/FormButton";
+import SectionPoint from "@features/project/components/inputFormPenerbit/_component/SectionPoint";
+import Subtitle from "@features/project/components/inputFormPenerbit/_component/SectionSubtitle";
+import TextField from "@features/project/components/inputFormPenerbit/_component/TextField";
 import ContainerSelfie from "./ContainerSelfie";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";

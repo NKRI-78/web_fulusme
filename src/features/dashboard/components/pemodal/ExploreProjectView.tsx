@@ -2,7 +2,7 @@ import { Project } from "@shared/types/project/IProject";
 import React from "react";
 import { PanelContainer } from "../PanelContainer";
 import GridView from "@shared/ui/GridView";
-import { ProjectCard } from "@/app/components/project/ProjectCard";
+import { ProjectCard } from "@features/project/components/project/ProjectCard";
 
 interface Props {
   projects: Project[];

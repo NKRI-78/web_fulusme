@@ -7,7 +7,7 @@ import { InvestorData } from "@shared/types/investor/IInvestorData";
 import { formatRupiah } from "@shared/lib/utils";
 import { Project } from "@shared/types/project/IProject";
 import GridView from "@shared/ui/GridView";
-import { ProjectCard } from "@/app/components/project/ProjectCard";
+import { ProjectCard } from "@features/project/components/project/ProjectCard";
 
 interface Props {
   profile: User | null;

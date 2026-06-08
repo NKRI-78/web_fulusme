@@ -1,6 +1,6 @@
 "use client";
 
-import FormButton from "@/app/components/inputFormPemodalPerusahaan/component/FormButton";
+import FormButton from "@shared/ui/FormButton";
 import SectionPoint from "@/app/components/inputFormPemodalPerusahaan/component/SectionPoint";
 import Subtitle from "@/app/components/inputFormPemodalPerusahaan/component/SectionSubtitle";
 import TextField from "@/app/components/inputFormPemodalPerusahaan/component/TextField";
@@ -14,7 +14,7 @@ import { useSearchParams } from "next/navigation";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { SessionData } from "@shared/lib/auth";
 import { uploadMediaService } from "@shared/lib/mediaService";
-import FileInput from "../inputFormPenerbit/_component/FileInput";
+import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";
 import api from "@/utils/axios";
 
 interface FormSchema {

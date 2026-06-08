@@ -1,7 +1,7 @@
 "use client";
 
-import FormButton from "@/app/components/inputFormPenerbit/_component/FormButton";
-import SectionPoint from "@/app/components/inputFormPenerbit/_component/SectionPoint";
+import FormButton from "@shared/ui/FormButton";
+import SectionPoint from "@features/project/components/inputFormPenerbit/_component/SectionPoint";
 import { Camera, CameraOff, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 

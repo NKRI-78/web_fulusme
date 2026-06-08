@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import PhotoUploaderContainer from "../inputFormPenerbit/_component/PhotoUploaderContainer";
-import VideoUploaderContainer from "../inputFormPenerbit/_component/VideoUploadContainer";
-import Subtitle from "../inputFormPemodalPerusahaan/component/SectionSubtitle";
-import SectionPoint from "../inputFormPenerbit/_component/SectionPoint";
+import PhotoUploaderContainer from "@features/project/components/inputFormPenerbit/_component/PhotoUploaderContainer";
+import VideoUploaderContainer from "@features/project/components/inputFormPenerbit/_component/VideoUploadContainer";
+import Subtitle from "@/app/components/inputFormPemodalPerusahaan/component/SectionSubtitle";
+import SectionPoint from "@features/project/components/inputFormPenerbit/_component/SectionPoint";
 import DocumentRow from "./DocumentRow";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormSection from "./FormSection";
-import FormButton from "../inputFormPemodalPerusahaan/component/FormButton";
+import FormButton from "@shared/ui/FormButton";
 import {
   Controller,
   FieldErrors,
@@ -22,7 +22,7 @@ import {
 } from "./form-schema";
 import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
-import FileInput from "../inputFormPenerbit/_component/FileInput";
+import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";
 import api from "@/utils/axios";
 
 

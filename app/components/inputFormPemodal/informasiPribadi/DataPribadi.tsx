@@ -9,7 +9,7 @@ import Select from "react-select";
 import UpdateRing from "../component/UpdateRing";
 import ContainerSelfie from "../component/ContainerSelfie";
 import { uploadMediaService } from "@shared/lib/mediaService";
-import FileInput from "../../inputFormPenerbit/_component/FileInput";
+import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";
 
 interface Props {
   formData: {

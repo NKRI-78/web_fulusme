@@ -5,7 +5,7 @@ import Select from "react-select";
 import UpdateRing from "../component/UpdateRing";
 import { NumericFormat } from "react-number-format";
 import { uploadMediaService } from "@shared/lib/mediaService";
-import FileInput from "../../inputFormPenerbit/_component/FileInput";
+import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";
 
 interface Props {
   formData: {
