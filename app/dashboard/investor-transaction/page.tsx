@@ -1,4 +1,4 @@
-import TransactionInvestorView from "@/app/components/dashboard/pemodal/TransactionInvestorView";
+import TransactionInvestorView from "@features/dashboard/components/pemodal/TransactionInvestorView";
 import { Metadata } from "next";
 import React from "react";
 

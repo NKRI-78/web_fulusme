@@ -1,5 +1,5 @@
 import { DashboardData } from "@shared/types/dashboard/dashboard";
-import { getDashboard } from "@/app/services/dashboard";
+import { getDashboard } from "@features/dashboard/services/dashboard";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface DashboardState {

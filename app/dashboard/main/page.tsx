@@ -1,4 +1,4 @@
-import { DashboardView } from "@/app/components/dashboard/DashboardView";
+import { DashboardView } from "@features/dashboard/components/DashboardView";
 import React from "react";
 
 const DashboardMainPage: React.FC = () => {
