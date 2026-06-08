@@ -1,7 +1,7 @@
 import { User } from "@shared/types/user/IUser";
 import { UserRoundMinus } from "lucide-react";
 import Image from "next/image";
-import FormButton from "../../inputFormPenerbit/_component/FormButton";
+import FormButton from "@/app/components/inputFormPenerbit/_component/FormButton";
 import { useRouter } from "next/navigation";
 
 export default function ProfilePemodalPerusahaan({

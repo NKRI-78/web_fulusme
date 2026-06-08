@@ -1,4 +1,4 @@
-import ProfileView from "@/app/components/auth/profile/ProfileView";
+import ProfileView from "@features/profile/components/ProfileView";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
