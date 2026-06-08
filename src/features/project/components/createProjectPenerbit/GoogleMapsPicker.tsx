@@ -5,8 +5,8 @@ import {
   Marker,
   useJsApiLoader,
 } from "@react-google-maps/api";
-import TextField from "@/app/components/inputFormPemodalPerusahaan/component/TextField";
-import SectionPoint from "@/app/components/inputFormPemodalPerusahaan/component/SectionPoint";
+import TextField from "@shared/ui/TextField";
+import SectionPoint from "@shared/ui/SectionPoint";
 
 interface MapsResult {
   lat: number;

@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import { TypeOption } from "@shared/lib/lookups/fetchJenisUsaha";
 import Select from "react-select";
 import { fetchJenisPerusahaan } from "@shared/lib/lookups/fetchJenisPerusahaan";
-import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
+import UpdateRing from "../../inputFormPemodal/component/UpdateRing";
 import { useSearchParams } from "next/navigation";
 import { uploadMediaService } from "@shared/lib/mediaService";
 import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";

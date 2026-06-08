@@ -1,28 +1,26 @@
 "use client";
 
 import FormButton from "@shared/ui/FormButton";
-import SectionPoint from "@/app/components/inputFormPemodalPerusahaan/component/SectionPoint";
+import SectionPoint from "@shared/ui/SectionPoint";
 import { Camera, CameraOff, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
 interface Props {
-  photoUrl?: string;
-  photoResult: (result: string | null) => void;
-  resetPhotoResult: () => void;
+  photoResult: (result: File | null) => void;
   errorText?: string;
+  defaultPhoto?: string;
   disabled?: boolean;
 }
 
 const ContainerSelfie: React.FC<Props> = ({
   photoResult,
-  resetPhotoResult,
   errorText,
-  photoUrl,
+  defaultPhoto,
   disabled = false,
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [photo, setPhoto] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<string | null>(defaultPhoto || null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
 
@@ -107,7 +105,13 @@ const ContainerSelfie: React.FC<Props> = ({
       const imageData = canvas.toDataURL("image/png");
       setPhoto(imageData);
 
-      photoResult(imageData);
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const fileName = `selfie-${new Date().toISOString()}.png`;
+          const file = new File([blob], fileName, { type: "image/png" });
+          photoResult(file);
+        }
+      }, "image/png");
 
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
@@ -124,7 +128,6 @@ const ContainerSelfie: React.FC<Props> = ({
 
   // *reset photo
   const resetPhoto = () => {
-    if (disabled) return;
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
     }
@@ -133,45 +136,57 @@ const ContainerSelfie: React.FC<Props> = ({
     setIsCameraActive(false);
     setErrorMessage("");
     setStream(null);
-    resetPhotoResult();
   };
 
-  const displayPhoto = photoUrl || photo;
+  useEffect(() => {
+    if (defaultPhoto) {
+      setPhoto(defaultPhoto);
+    }
+  }, [defaultPhoto]);
 
   return (
     <div
       className={
         isCameraActive
           ? "flex flex-col h-full bg-slate-50 px-4 pb-4 pt-2 rounded-md"
-          : "flex flex-col h-[240px] md:h-full bg-slate-50 px-4 pb-4 pt-2 rounded-md"
+          : "flex flex-col h-[240px] md:h-[350px] bg-slate-50 px-4 pb-4 pt-2 rounded-md"
       }
     >
       <SectionPoint text="Foto Selfie" className="mb-2" />
 
       <div
         onClick={() => {
-          if (isCameraActive || displayPhoto || disabled) return;
-          startCamera();
+          if (disabled) return;
+          if (!isCameraActive) {
+            startCamera();
+          }
         }}
         className={[
           "flex-1 flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-black overflow-hidden",
           disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
         ].join(" ")}
       >
-        {displayPhoto ? (
-          <div className="w-full relative">
+        {photo ? (
+          <div className="w-full relative flex flex-col items-center">
             <img
               alt="Foto Selfie"
-              src={displayPhoto}
+              src={photo}
               className="block w-full h-full object-cover"
             />
             <button
               type="button"
               onClick={resetPhoto}
-              className={`absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100 ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100"
             >
               <X className="w-4 h-4 text-gray-600" />
             </button>
+            <FormButton
+              type="outlined"
+              className="mt-2 mx-auto"
+              onClick={retakePhoto}
+            >
+              Ambil Ulang
+            </FormButton>
           </div>
         ) : isCameraActive ? (
           <div className="flex flex-col items-center w-full mb-2">

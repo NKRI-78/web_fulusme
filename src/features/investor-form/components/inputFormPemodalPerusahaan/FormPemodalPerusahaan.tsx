@@ -1,9 +1,9 @@
 "use client";
 
 import FormButton from "@shared/ui/FormButton";
-import SectionPoint from "@/app/components/inputFormPemodalPerusahaan/component/SectionPoint";
-import Subtitle from "@/app/components/inputFormPemodalPerusahaan/component/SectionSubtitle";
-import TextField from "@/app/components/inputFormPemodalPerusahaan/component/TextField";
+import SectionPoint from "@shared/ui/SectionPoint";
+import Subtitle from "@shared/ui/SectionSubtitle";
+import TextField from "@shared/ui/TextField";
 import ContainerSelfie from "./component/ContainerSelfie";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { setCookie } from "@shared/lib/cookie";
 import { getUser } from "@shared/lib/auth";
 import { useSearchParams } from "next/navigation";
-import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
+import UpdateRing from "../inputFormPemodal/component/UpdateRing";
 import { SessionData } from "@shared/lib/auth";
 import { uploadMediaService } from "@shared/lib/mediaService";
 import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";

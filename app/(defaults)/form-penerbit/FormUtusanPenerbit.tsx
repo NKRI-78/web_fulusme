@@ -9,7 +9,7 @@ import ContainerSelfie from "./ContainerSelfie";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { getUser } from "@shared/lib/auth";
-import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
+import UpdateRing from "@features/project/components/inputFormPenerbit/_component/UpdateRing";
 import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PIC_CACHE_KEY } from "./form-cache-key";
 import { UpdateFieldValue } from "./PenerbitParent";

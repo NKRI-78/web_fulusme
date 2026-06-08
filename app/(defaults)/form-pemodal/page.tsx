@@ -1,7 +1,7 @@
 import React from "react";
 
 import type { Metadata } from "next";
-import FormPemodal from "@/app/components/inputFormPemodal/FormPemodal";
+import FormPemodal from "@features/investor-form/components/inputFormPemodal/FormPemodal";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {

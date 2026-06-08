@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import PhotoUploaderContainer from "@features/project/components/inputFormPenerbit/_component/PhotoUploaderContainer";
 import VideoUploaderContainer from "@features/project/components/inputFormPenerbit/_component/VideoUploadContainer";
-import Subtitle from "@/app/components/inputFormPemodalPerusahaan/component/SectionSubtitle";
+import Subtitle from "@shared/ui/SectionSubtitle";
 import SectionPoint from "@features/project/components/inputFormPenerbit/_component/SectionPoint";
 import DocumentRow from "./DocumentRow";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -1,7 +1,7 @@
 import React from "react";
 
 import type { Metadata } from "next";
-import FormDataPemodalPerusahaan from "@/app/components/inputFormPemodalPerusahaan/FormDataPemodalPerusahaan";
+import FormDataPemodalPerusahaan from "@features/investor-form/components/inputFormPemodalPerusahaan/FormDataPemodalPerusahaan";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
