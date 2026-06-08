@@ -13,7 +13,7 @@ import { InvestorData } from "@shared/types/investor/IInvestorData";
 import DashboardUndefinedRole from "./UndefinedRole";
 import Center from "@shared/ui/Center";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";
-import { InboxResponse } from "../notif/inbox-interface";
+import { InboxResponse } from "@features/inbox/types";
 import DashboardPemodalPerusahaan from "./pemodal/DashboardPemodalPerusahaan";
 import api from "@/utils/axios";
 

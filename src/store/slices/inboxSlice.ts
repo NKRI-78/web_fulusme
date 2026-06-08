@@ -1,5 +1,5 @@
-import { InboxResponse } from "@/app/components/notif/inbox-interface";
-import { listInbox } from "@/app/services/inbox";
+import { InboxResponse } from "@features/inbox/types";
+import { listInbox } from "@features/inbox/services/inbox";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 export interface InboxState {

@@ -1,6 +1,6 @@
 "use server";
 
-import { InboxResponse } from "@/app/components/notif/inbox-interface";
+import { InboxResponse } from "@features/inbox/types";
 import { API_BACKEND } from "@shared/lib/constant";
 
 export async function fetchInboxAction(

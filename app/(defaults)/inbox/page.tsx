@@ -1,7 +1,7 @@
 import React from "react";
 
 import type { Metadata } from "next";
-import Inbox from "@/app/components/notif/inbox/Inbox";
+import Inbox from "@features/inbox/components/Inbox";
 
 export const metadata: Metadata = {
   title: "Inbox | FuLusme",

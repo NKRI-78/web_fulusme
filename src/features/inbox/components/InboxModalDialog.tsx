@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { InboxResponse } from "./inbox-interface";
+import { InboxResponse } from "../types";
 import GeneralDialog from "@shared/ui/GeneralDialog";
 
 interface Props {

@@ -2,9 +2,9 @@
 
 import useOnlineStatus from "@shared/hooks/useOnlineStatus";
 import { useEffect, useState } from "react";
-import { InboxResponse } from "../inbox-interface";
-import EmptyTransaction from "../InboxEmpty";
-import InboxCard from "../InboxCard";
+import { InboxResponse } from "@features/inbox/types";
+import EmptyTransaction from "@features/inbox/components/InboxEmpty";
+import InboxCard from "@features/inbox/components/InboxCard";
 import Swal from "sweetalert2";
 import { getUser } from "@shared/lib/auth";
 import TransactionInvestorPage from "../../dashboard/pemodal/TransactionInvestorView";

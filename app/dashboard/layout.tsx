@@ -17,7 +17,7 @@ import { usePathname } from "next/navigation";
 import { getTransactions } from "@/actions/fetchTransaction";
 import { SessionData } from "@shared/lib/auth";
 import { getDashboard } from "@/app/services/dashboard";
-import { listInboxByType } from "@/app/services/inbox";
+import { listInboxByType } from "@features/inbox/services/inbox";
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   children,

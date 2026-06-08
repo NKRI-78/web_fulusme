@@ -1,5 +1,5 @@
 import React from "react";
-import { InboxResponse } from "./inbox-interface";
+import { InboxResponse } from "../types";
 import moment from "moment";
 import "moment/locale/id";
 

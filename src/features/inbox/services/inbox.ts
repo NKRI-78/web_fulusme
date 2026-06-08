@@ -1,5 +1,5 @@
 import { api } from "@shared/lib/api-client";
-import { InboxResponse } from "@/app/components/notif/inbox-interface";
+import { InboxResponse } from "@features/inbox/types";
 
 interface InboxListResponse {
   status: number;

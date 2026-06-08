@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import InboxModalDialog from "../InboxModalDialog";
-import { InboxResponse } from "../inbox-interface";
-import InboxEmpty from "../InboxEmpty";
+import InboxModalDialog from "./InboxModalDialog";
+import { InboxResponse } from "../types";
+import InboxEmpty from "./InboxEmpty";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setBadge } from "@store/slices/badgeSlice";
 import { getUser } from "@shared/lib/auth";
-import InboxCard from "../InboxCard";
+import InboxCard from "./InboxCard";
 import { AppDispatch, RootState } from "@store/store";
 import { fetchInboxThunk, updateInboxes } from "@store/slices/inboxSlice";
 import { onSocketReady } from "@shared/lib/sockets";

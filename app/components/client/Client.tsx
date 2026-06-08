@@ -8,7 +8,7 @@ import ModalLogout from "@components/modal/logout/Logout";
 import FooterV2 from "@components/footer/FooterV2";
 
 import localFont from "next/font/local";
-import { SocketProvider } from "@/app/providers/socket-provider";
+import { SocketProvider } from "@features/inbox/providers/socket-provider";
 import SessionTimeoutProvider from "@features/auth/providers/session-timeout-provider";
 import { SessionData } from "@shared/lib/auth";
 import { SessionProvider } from "@features/auth/providers/session-provider";
