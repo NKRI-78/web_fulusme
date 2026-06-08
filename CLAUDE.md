@@ -113,60 +113,92 @@ This is a build/runtime incompatibility and is treated as the #1 blocker below.
 
 ## 3. TARGET ARCHITECTURE
 
+**Organizing axis: feature-based hybrid** (see Decisions Log §10-D10). Domain code
+is grouped by feature; only genuinely cross-feature code lives in `shared/`. This
+supersedes the earlier layer-based sketch (`components/ui` + flat `services/` +
+`lib/` as top-level), which is rejected — do not reintroduce it.
+
+> **Execution status is tracked in `MIGRATION.md`** (a temporary, deletable
+> checklist). This section is the binding *target*; `MIGRATION.md` is only the
+> *how/when*. When the migration completes, `MIGRATION.md` is deleted and this
+> charter remains the single source of truth.
+
 ```
 web_fulusme/
 ├── proxy.ts                      # Edge auth gate (Next 16). Reads httpOnly session cookie only.
 ├── next.config.mjs               # No webpack overrides. Images + headers only.
-├── src/                          # ← MOVE the app into src/ (single root, kills the dual-utils problem)
-│   ├── app/
+├── src/                          # Single application root (kills the dual-utils problem)
+│   ├── app/                      # ROUTING ONLY — thin page/layout, server data orchestration. No business logic.
 │   │   ├── layout.tsx            # Server root. Providers live in a thin client wrapper.
-│   │   ├── (marketing)/          # Public pages: home, about, terms, privacy, business-list
+│   │   ├── (marketing)/          # Public: home, about, terms, privacy, business-list
 │   │   ├── (auth)/               # login, register, forgot/change password
-│   │   ├── (dashboard)/          # Authenticated app. ONE dashboard tree (merge app/dashboard + (defaults) dashboard bits)
+│   │   ├── (dashboard)/          # Authenticated app. ONE dashboard tree (merge app/dashboard + (defaults))
 │   │   └── api/
 │   │       ├── auth/             # Login/logout/refresh route handlers → set httpOnly cookies
 │   │       └── (bff)/            # Thin proxy handlers if/when needed
-│   ├── components/
-│   │   ├── ui/                   # Pure, presentational, shared (Button, Modal, Tooltip, Pagination)
-│   │   └── features/             # Feature-scoped composites (auth/, dashboard/, forms/, sukuk/)
-│   ├── services/                 # Typed data access. ONE per domain. No UI, no Swal.
-│   ├── lib/
-│   │   ├── api-client.ts         # The ONLY axios/fetch wrapper. Server + client variants.
-│   │   ├── auth/                 # session read helpers (server-only)
-│   │   └── format/               # rupiah, date, npwp, filetype — pure functions
-│   ├── store/                    # RTK store + slices (UI/client state only)
-│   ├── hooks/                    # Reusable client hooks
-│   └── types/                    # API response + domain types (replaces app/interfaces)
+│   ├── features/                 # ← the heart. One folder per domain, self-contained.
+│   │   ├── auth/                 #   components/  services/  hooks/  types.ts  per feature
+│   │   ├── profile/
+│   │   ├── dashboard/
+│   │   ├── inbox/
+│   │   ├── project/             #   create-project, sukuk, penerbit forms, dokumen
+│   │   ├── investor-form/       #   pemodal / pemodal-perusahaan forms
+│   │   ├── payment/
+│   │   ├── transaction/        #   + portfolio
+│   │   └── content/            #   home, about, CMS-driven pages
+│   ├── shared/                   # Cross-feature ONLY — belongs to no single domain
+│   │   ├── ui/                   #   Button, Modal, Tooltip, Pagination, GridView (pure presentation)
+│   │   ├── lib/
+│   │   │   ├── api-client.ts     #   The ONLY axios/fetch wrapper. baseURL param (backend vs media).
+│   │   │   ├── auth/             #   session read helpers (server-only)
+│   │   │   ├── format/           #   rupiah, date, npwp, filetype — pure functions
+│   │   │   └── lookups/          #   wilayah / jenis-usaha / status — 'use cache' candidates
+│   │   ├── hooks/                #   useOnlineStatus, useLocalStorage, …
+│   │   └── types/                #   cross-feature API response + domain primitives
+│   └── store/                    # RTK store + slices (UI/client state only)
 └── .env.example                  # Committed template. Real .env* are gitignored.
 ```
 
-**Created:** `src/`, `src/types/`, `components/ui` vs `components/features` split,
-`lib/api-client.ts`, `.env.example`.
-**Reorganized:** `app/interfaces` → `src/types`; `app/lib` + `app/utils` + root
-`utils` + `app/helper` collapse into `src/services` + `src/lib`; `redux` →
-`src/store`; route groups renamed `(defaults)`→`(dashboard)`/`(marketing)`.
-**Deleted:** `app/features/*` template pages (verify each), dead `projectService.ts`
-(`link.com`), `Home.tsx`/pre-V2 components once V2 confirmed, `profileSlice` &
-`projectSlice` (never imported by `store.ts`), the second axios instance after
-unification.
+**Feature module rule:** one feature = one folder owning its `components/`,
+`services/`, `hooks/`, `types.ts`. Code used by ≥2 features graduates to
+`shared/` — not before.
 
-> If a full `src/` move is too large for one PR, the non-negotiable minimum is:
-> collapse the two `utils/` trees into one and introduce `lib/api-client.ts`.
+**Cross-feature import rule:** `features/A` must NOT import `features/B` at
+runtime. The only exception is **type-only** imports (`import type …`), which
+carry no runtime coupling. Anything shared at runtime goes through `shared/` or
+is passed down from a page.
+
+**Created:** `src/`, `src/features/*`, `src/shared/{ui,lib,hooks,types}`,
+`src/store`, `shared/lib/api-client.ts`, `.env.example`.
+**Reorganized:** `app/interfaces` → `shared/types` (+ per-feature `types.ts`);
+`app/lib` + `app/utils` + root `utils` + `app/helper` collapse into `shared/lib`
++ per-feature `services/`; `redux` → `src/store`; `(defaults)` split into
+`(marketing)`/`(auth)`/`(dashboard)`.
+**Deleted:** `app/features/*` template pages (verify each; keep `broadcast`,
+`register`), dead `projectService.ts` (`link.com`), `profileSlice` &
+`projectSlice` (never imported by `store.ts`), the second axios instance after
+unification, the stray `app/src/react-step.tsx`.
+
+> Non-negotiable minimum if the full move can't land at once: introduce
+> `shared/lib/api-client.ts` and collapse the two `utils/` trees first.
 
 ---
 
 ## 4. LAYER ARCHITECTURE & RULES
 
-| Layer                           | Single responsibility                             | May import                | May NOT import                                                            |
-| ------------------------------- | ------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------- |
-| `app/**/page.tsx`, `layout.tsx` | Routing, data orchestration (server), composition | services, components, lib | another page; `js-cookie`                                                 |
-| `components/ui`                 | Pure presentation                                 | nothing app-specific      | services, store, `next/navigation` data                                   |
-| `components/features`           | Feature UI, local interactivity                   | `ui`, hooks, store        | services directly for fetching (receive data via props/Server Components) |
-| `services`                      | One domain's API calls, typed in/out              | `lib/api-client`, `types` | React, components, `Swal`, `js-cookie`                                    |
-| `lib/api-client`                | HTTP transport + auth header + refresh            | `types`, env              | components, store                                                         |
-| `store`                         | Client/UI state only                              | `types`                   | services (except via thunks that call services), components               |
-| `hooks`                         | Reusable client behavior                          | store, lib                | services                                                                  |
-| `types`                         | Type definitions only                             | nothing                   | everything (leaf)                                                         |
+Layers cut *across* features. Within a feature folder the same rules apply to its
+`components/`, `services/`, `hooks/`, `types.ts`.
+
+| Layer                              | Single responsibility                             | May import                                 | May NOT import                                                            |
+| ---------------------------------- | ------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------- |
+| `app/**/page.tsx`, `layout.tsx`    | Routing, data orchestration (server), composition | feature services + components, `shared`    | another page; `js-cookie`                                                 |
+| `features/*/components`            | Feature UI, local interactivity                   | own feature, `shared/ui`, `shared/hooks`, `store` | another feature's components; services directly for first-paint fetching (receive data via props/Server Components) |
+| `features/*/services`              | One domain's API calls, typed in/out              | `shared/lib/api-client`, types             | React, components, `Swal`, `js-cookie`                                    |
+| `shared/ui`                        | Pure presentation                                 | nothing app-specific                       | features, services, store, `next/navigation` data                        |
+| `shared/lib/api-client`            | HTTP transport + auth header + refresh            | types, env                                 | components, store, features                                               |
+| `shared/lib/*`                     | Pure cross-feature helpers                        | types                                      | features, components, store                                               |
+| `store`                            | Client/UI state only                              | types                                      | components (except via thunks that call services)                        |
+| `shared/types`, `features/*/types` | Type definitions only                             | nothing                                    | everything (leaf)                                                        |
 
 **Hard rules**
 
@@ -176,6 +208,10 @@ unification.
   errors.
 - Auth token access is server-only. No `getToken()`/`getUser()` reading cookies
   in client code after the auth migration.
+- `features/A` never imports `features/B` at runtime — only `import type`. Share
+  runtime code via `shared/` or props from a page.
+- "Where does this go?" — if it serves one domain → that feature; if ≥2 →
+  `shared/`. There is no `utils/` or `helper/` bucket anymore.
 
 ---
 
@@ -379,6 +415,22 @@ is added.
 **D9 — Re-enable `reactStrictMode` after the React 19 upgrade.**
 _Decided:_ Flip to `true` once on React 19. _Why:_ Surfaces effect/lifecycle bugs
 the disabled flag is currently hiding.
+
+**D10 — Organize `src/` by feature, not by layer.**
+_Found:_ §3/§4 originally sketched a layer-based `src/` (`components/ui` +
+`components/features` + flat `services/` + `lib/` as siblings). _Decided:_ Adopt a
+**feature-based hybrid**: `src/features/<domain>/{components,services,hooks,types}`
+for domain code + `src/shared/{ui,lib,hooks,types}` for cross-feature code +
+`src/store`. _Why:_ The domains here are sharp and already half-grouped
+(`app/interfaces` is per-domain), so colocating a feature's UI + data + types is
+more navigable and scales better than a flat services/components split; it also
+makes "where does this go?" answerable by a single question (one domain →
+feature, ≥2 → shared). _Guardrail:_ no runtime `features/A → features/B` imports
+(type-only allowed), preventing the cross-coupling that pure feature folders
+risk. _Alternative rejected:_ the layer-based layout in the original §3 — valid,
+but groups by mechanism rather than by the thing a developer actually navigates
+(a feature), and tends to scatter one change across `components/`, `services/`,
+`types/`. _Execution:_ tracked in `MIGRATION.md`; this supersedes the prior §3/§4.
 
 ---
 
