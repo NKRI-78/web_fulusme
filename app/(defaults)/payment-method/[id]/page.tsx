@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PaymentMethod from "./PaymentMethod";
+import PaymentMethod from "@features/payment/components/payment-method/PaymentMethod";
 
 export const metadata: Metadata = {
   title: "Pilih Metode Pembayaran | CapBridge",

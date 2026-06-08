@@ -1,6 +1,6 @@
 // app/payment/[id]/page.tsx
 import type { Metadata } from "next";
-import PembayaranBCAWithDetail from "./PymentManual";
+import PembayaranBCAWithDetail from "@features/payment/components/payment-manual/PymentManual";
 
 export const metadata: Metadata = {
   title: "Pembayaran Administrasi | FuLusme",

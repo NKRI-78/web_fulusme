@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 
 import type { Metadata } from "next";
-import WaitingPayment from "./WaitingPayment";
+import WaitingPayment from "@features/payment/components/waiting-payment/WaitingPayment";
 
 export const metadata: Metadata = {
   title: "Menunggu Pembayaran | FuLusme",
