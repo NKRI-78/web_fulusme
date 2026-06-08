@@ -38,23 +38,8 @@
       "@app/*": [
         "./app/*"
       ],
-      "@redux/*": [
-        "./redux/*"
-      ],
-      "@lib/*": [
-        "./app/lib/*"
-      ],
       "@components/*": [
         "./app/components/*"
-      ],
-      "@contexts/*": [
-        "./app/contexts/*"
-      ],
-      "@interfaces/*": [
-        "./app/interfaces/*"
-      ],
-      "@hooks/*": [
-        "./app/hooks/*"
       ]
     }
   },
