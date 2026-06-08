@@ -20,7 +20,7 @@ import {
 
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "@redux/store";
+import { RootState } from "@store/store";
 
 import { LoadingSpinner } from "@components/loading/Spinner";
 import moment from 'moment';
@@ -29,7 +29,7 @@ import moment from 'moment';
 //   setIsLoading,
 //   setError,
 //   fetchContentListAsync,
-// } from "@redux/slices/contentSlice";
+// } from "@store/slices/contentSlice";
 
 // const useDebouncedValue = (value: string, delay: number) => {
 //   const [debounced, setDebounced] = useState(value);

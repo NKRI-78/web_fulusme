@@ -7,9 +7,9 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@redux/store";
+import { AppDispatch, RootState } from "@store/store";
 
-import { setShowLogoutModal } from "@redux/slices/modalSlice";
+import { setShowLogoutModal } from "@store/slices/modalSlice";
 
 const ModalLogout: React.FC = () => {
 

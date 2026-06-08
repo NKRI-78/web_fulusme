@@ -7,11 +7,11 @@ import InboxEmpty from "../InboxEmpty";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { setBadge } from "@/redux/slices/badgeSlice";
+import { setBadge } from "@store/slices/badgeSlice";
 import { getUser } from "@/app/lib/auth";
 import InboxCard from "../InboxCard";
-import { AppDispatch, RootState } from "@/redux/store";
-import { fetchInboxThunk, updateInboxes } from "@/redux/slices/inboxSlice";
+import { AppDispatch, RootState } from "@store/store";
+import { fetchInboxThunk, updateInboxes } from "@store/slices/inboxSlice";
 import { onSocketReady } from "@shared/lib/sockets";
 
 const Inbox = () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { getUser } from "@/app/lib/auth";
-import { RootState } from "@/redux/store";
+import { RootState } from "@store/store";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 

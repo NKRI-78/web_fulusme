@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import contentReducer from "@redux/slices/contentSlice";
-import modalReducer from "@redux/slices/modalSlice";
+import contentReducer from "@store/slices/contentSlice";
+import modalReducer from "@store/slices/modalSlice";
 import badgeReducer from "./slices/badgeSlice";
 import inboxReducer from "./slices/inboxSlice";
 import dashboardReducer from "./slices/dashboardSlice";

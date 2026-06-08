@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Tooltip from "@shared/ui/Tooltip";
 import { BellRing, Menu, X } from "lucide-react";
-import { AppDispatch, RootState } from "@redux/store";
+import { AppDispatch, RootState } from "@store/store";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import Modal from "@shared/ui/Modal";
@@ -19,8 +19,8 @@ import {
   FORM_PIC_CACHE_KEY,
 } from "@/app/(defaults)/form-penerbit/form-cache-key";
 import { removeAuthUser } from "@/app/lib/auth";
-import { fetchInboxThunk } from "@/redux/slices/inboxSlice";
-import { setBadge } from "@/redux/slices/badgeSlice";
+import { fetchInboxThunk } from "@store/slices/inboxSlice";
+import { setBadge } from "@store/slices/badgeSlice";
 import { getSocket } from "@shared/lib/sockets";
 import { useSession } from "@/app/providers/session-provider";
 import api from "@/utils/axios";

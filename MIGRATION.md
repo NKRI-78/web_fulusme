@@ -58,12 +58,12 @@ confirms zero usage.
 - [x] Rewrite all importers → `@shared/*` (sed pass over 96 files + 7 relative stragglers). `tsc --noEmit` 0 errors, `next build` green → commit.
 - ⚠️ Cross-layer debt to fix in feature phases: 3 shared files import `app/*` via `@/app/...` — `shared/hooks/useFileViewerModal`→viewer component, `shared/lib/mediaService`→`app/lib/auth`, `shared/ui/FileUpload`→`inputFormPenerbit/SectionPoint`. Acceptable temporarily; resolve when those features migrate.
 
-### Phase C — `store/` _(1 commit)_ — PR #1
-- [ ] `redux/` → `src/store/` (`store.ts` + `slices/`).
-- [ ] Rewrite `@redux/*` → `@store/*`. Drop dead slices.
-- [ ] `next build` green → commit.
+### Phase C — `store/` _(1 commit)_ — PR #1 ✅ DONE
+- [x] `redux/` → `src/store/` (`store.ts` + `slices/`). Dead `projectSlice` already dropped in Phase A.
+- [x] Rewrite `@redux/*` and `@/redux/*` → `@store/*` (12 files). Old `@redux/*` alias left in tsconfig (unused; removed in Phase F).
+- [x] `tsc --noEmit` clean, `next build` ✓ compiled successfully → commit.
 
-> **PR #1 = Phases A + B + C** (foundation). Features land in later PRs.
+> **PR #1 = Phases A + B + C** (foundation) ✅ COMPLETE. Features land in later PRs.
 
 ### Phase D — Features _(one commit each)_ — PR #2+
 Order: most independent → most dependent.

@@ -6,8 +6,8 @@ import {
   setSearch,
   fetchContentListAsync,
   fetchContentHistoryAsync,
-} from "@/redux/slices/contentSlice";
-import { RootState } from "@/redux/store";
+} from "@store/slices/contentSlice";
+import { RootState } from "@store/store";
 
 const SearchBar = () => {
   const dispatch = useDispatch<any>();

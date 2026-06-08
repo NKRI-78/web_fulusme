@@ -22,7 +22,7 @@ import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import { useRouter } from "next/navigation";
 import Modal from "@shared/ui/Modal";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { RootState } from "@store/store";
 import InputNominalLot from "../components/InputNominal";
 import api from "@/utils/axios";
 

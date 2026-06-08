@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@redux/store";
+import { AppDispatch } from "@store/store";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import Swal from "sweetalert2";
