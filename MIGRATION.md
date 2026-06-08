@@ -86,8 +86,9 @@ Each: `git mv` → rewrite imports (relative→alias) → `next build` green.
 - [ ] Move `app/layout.tsx`, `not-found.tsx`, `globals.css`, `fonts`, `favicon` → `src/app/`.
 
 ### Phase F — Final cleanup _(1 commit)_ — PR (final)
-- [ ] Delete now-empty: `app/lib`, `app/utils`, `app/helper`, `utils/`, `redux/`, `app/interfaces`, `app/services`, `app/providers`, `app/src`.
-- [ ] Remove old aliases from `tsconfig.json` (grep-confirm 0 usage).
+- [x] **Partial (2026-06-08):** Removed dead tsconfig aliases (`@redux`, `@lib`, `@hooks`, `@interfaces`, `@contexts` — all confirmed 0 usage). `app/src/` empty dir removed. `@components` kept (still needed by `Client.tsx` + `app/layout.tsx` — Phase E).
+- [ ] Delete `utils/` (2 shim files) after axios-cleanup follow-up clears the 37 importers.
+- [ ] Remove `@components` alias after Phase E updates `Client.tsx` and `app/layout.tsx`.
 - [ ] Confirm CLAUDE.md §3/§4/D10 still match reality.
 - [ ] **Delete this MIGRATION.md.**
 - [ ] `next build` + manual smoke test.
