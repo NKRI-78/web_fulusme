@@ -7,7 +7,7 @@ import EmptyTransaction from "@features/inbox/components/InboxEmpty";
 import InboxCard from "@features/inbox/components/InboxCard";
 import Swal from "sweetalert2";
 import { getUser } from "@shared/lib/auth";
-import TransactionInvestorPage from "@features/dashboard/components/pemodal/TransactionInvestorView";
+import TransactionInvestorPage from "./TransactionInvestorView";
 import Center from "@shared/ui/Center";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";

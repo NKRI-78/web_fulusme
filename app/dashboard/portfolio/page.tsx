@@ -1,4 +1,4 @@
-import PortfolioView from "@features/dashboard/components/pemodal/PortfolioView";
+import PortfolioView from "@features/transaction/components/PortfolioView";
 import React from "react";
 
 const PortfolioInvestorPage: React.FC = () => {

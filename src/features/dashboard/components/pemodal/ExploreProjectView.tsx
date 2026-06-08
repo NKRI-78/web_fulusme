@@ -1,6 +1,6 @@
 import { Project } from "@shared/types/project/IProject";
 import React from "react";
-import { PanelContainer } from "../PanelContainer";
+import { PanelContainer } from "@shared/ui/PanelContainer";
 import GridView from "@shared/ui/GridView";
 import { ProjectCard } from "@features/project/components/project/ProjectCard";
 

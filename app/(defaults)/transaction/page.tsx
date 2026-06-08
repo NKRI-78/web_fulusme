@@ -1,7 +1,7 @@
 import React from "react";
 
 import type { Metadata } from "next";
-import Transaction from "@/app/components/notif/transaction/Transaction";
+import Transaction from "@features/transaction/components/Transaction";
 
 export const metadata: Metadata = {
   title: "Transaksi | FuLusme",

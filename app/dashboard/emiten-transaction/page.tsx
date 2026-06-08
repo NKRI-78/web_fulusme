@@ -1,4 +1,4 @@
-import Transaction from "@/app/components/notif/transaction/Transaction";
+import Transaction from "@features/transaction/components/Transaction";
 import React from "react";
 
 const EmitenTransactionPage: React.FC = () => {

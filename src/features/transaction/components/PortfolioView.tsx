@@ -5,9 +5,9 @@ import {
   InvestorDataPortfolio,
 } from "@shared/types/investor/IInvestorData";
 import React, { useEffect, useState } from "react";
-import { PanelContainer } from "../PanelContainer";
+import { PanelContainer } from "@shared/ui/PanelContainer";
 import GridView from "@shared/ui/GridView";
-import PortfolioCard from "@/app/components/portfolio/PortfolioCard";
+import PortfolioCard from "./PortfolioCard";
 import { getUser } from "@shared/lib/auth";
 import Center from "@shared/ui/Center";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";

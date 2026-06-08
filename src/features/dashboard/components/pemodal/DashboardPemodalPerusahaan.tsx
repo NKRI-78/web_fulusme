@@ -1,5 +1,5 @@
 import React from "react";
-import { PanelContainer } from "../PanelContainer";
+import { PanelContainer } from "@shared/ui/PanelContainer";
 import { PanelContent } from "../PanelContent";
 import { UserSearch, Infinity } from "lucide-react";
 import { User } from "@shared/types/user/IUser";

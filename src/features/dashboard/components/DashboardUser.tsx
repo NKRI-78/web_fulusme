@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { UserRound, UserRoundCheck } from "lucide-react";
-import { PanelContainer } from "./PanelContainer";
+import { PanelContainer } from "@shared/ui/PanelContainer";
 import { PanelContent } from "./PanelContent";
 import Modal from "@shared/ui/Modal";
 import RegisterSelectRole from "@features/auth/components/register/RegisterSelectRole";

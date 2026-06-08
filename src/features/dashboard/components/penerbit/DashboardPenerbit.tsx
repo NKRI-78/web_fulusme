@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Building, UserSearch } from "lucide-react";
 import { Step, Stepper } from "react-form-stepper";
 import { PanelContent } from "../PanelContent";
-import { PanelContainer } from "../PanelContainer";
+import { PanelContainer } from "@shared/ui/PanelContainer";
 import { User } from "@shared/types/user/IUser";
 import GridView from "@shared/ui/GridView";
 import { ProjectCard } from "../PenerbitProjectCard";
