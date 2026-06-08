@@ -6,12 +6,12 @@ import { InboxResponse } from "../inbox-interface";
 import EmptyTransaction from "../InboxEmpty";
 import InboxCard from "../InboxCard";
 import Swal from "sweetalert2";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import TransactionInvestorPage from "../../dashboard/pemodal/TransactionInvestorView";
 import Center from "@shared/ui/Center";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";
-import { SessionData } from "@/app/lib/auth";
+import { SessionData } from "@shared/lib/auth";
 import api from "@/utils/axios";
 
 const Transaction = () => {

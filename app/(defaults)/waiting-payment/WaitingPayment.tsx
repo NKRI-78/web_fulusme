@@ -10,7 +10,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import moment from "moment";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import Link from "next/link";
 import SkeletonWaitingPayment from "./components/SkeletonWaitingPayment";
 import { motion } from "framer-motion";

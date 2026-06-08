@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import { SessionData } from "@/app/lib/auth";
+import { SessionData } from "@shared/lib/auth";
 
 const SessionContext = createContext<SessionData | null>(null);
 

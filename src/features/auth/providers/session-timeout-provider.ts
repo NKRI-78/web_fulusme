@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { logger } from "@shared/lib/logger";
-import { removeAuthUser } from "../lib/auth";
+import { removeAuthUser } from "@shared/lib/auth";
 
 const SESSION_LIMIT = 2 * 60 * 1000; // 2 menit
 const WARNING_TIME = 90 * 1000; // 1 menit 30 detik

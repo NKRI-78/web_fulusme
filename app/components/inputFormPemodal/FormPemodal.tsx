@@ -12,7 +12,7 @@ import ComponentDataPekerjaan from "./informasiPekerjaan/DataPekerjaan";
 import { IS_DEV, IS_PROD } from "@shared/lib/constant";
 import FileViewerModal from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
 import { setCookie } from "@shared/lib/cookie";
-import { getUser, saveAuthUser, syncRole, SessionData } from "@/app/lib/auth";
+import { getUser, saveAuthUser, syncRole, SessionData } from "@shared/lib/auth";
 import Tooltip from "@shared/ui/Tooltip";
 import api from "@/utils/axios";
 import axios from "axios";

@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { IS_DEV } from "@shared/lib/constant";
 import { penerbitUpdateKeys } from "./IUpdateRegistrationKey";
 import FormUtusanPenerbit from "./FormUtusanPenerbit";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import { ProfileUpdate } from "./IProfileUpdate";
 import {
   FORM_INDEX_CACHE_KEY,

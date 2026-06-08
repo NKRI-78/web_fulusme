@@ -14,7 +14,7 @@ import {
 import { getTransactions } from "@/actions/fetchTransaction";
 import { TransactionItem } from "@shared/types/transaction/transaction";
 import Pagination from "@shared/ui/pagination";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import GeneralDialog from "@shared/ui/GeneralDialog";
 import Swal from "sweetalert2";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";

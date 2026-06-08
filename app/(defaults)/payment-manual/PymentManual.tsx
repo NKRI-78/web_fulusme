@@ -15,7 +15,7 @@ import { Check, Copy, FileUp, FileText, Upload, X, Trash2 } from "lucide-react";
 import { formatRupiah } from "@shared/lib/format/formatRupiah";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import { uploadMediaService } from "@shared/lib/mediaService";
 import api from "@/utils/axios";
 

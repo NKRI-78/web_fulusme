@@ -1,14 +1,14 @@
 "use client";
 
 import { User } from "@shared/types/user/IUser";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import ProfilePenerbitView from "./ProfilePenerbitView";
 import ProfilePemodalPribadi from "./ProfilePemodalPribadiView";
 import ProfilePemodalPerusahaan from "./ProfilePemodalPerusahaanView";
-import { SessionData } from "@/app/lib/auth";
+import { SessionData } from "@shared/lib/auth";
 import api from "@/utils/axios";
 
 const ProfileView: React.FC = () => {

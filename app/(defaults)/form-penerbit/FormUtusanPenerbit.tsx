@@ -8,12 +8,12 @@ import TextField from "@/app/components/inputFormPenerbit/_component/TextField";
 import ContainerSelfie from "./ContainerSelfie";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PIC_CACHE_KEY } from "./form-cache-key";
 import { UpdateFieldValue } from "./PenerbitParent";
-import { syncRole } from "@/app/lib/auth";
+import { syncRole } from "@shared/lib/auth";
 import { uploadMediaService } from "@shared/lib/mediaService";
 import api from "@/utils/axios";
 

@@ -1,4 +1,4 @@
-import ChangePasswordFormState from "@/app/components/auth/change-password/ChangePasswordFormState";
+import ChangePasswordFormState from "@features/auth/components/change-password/ChangePasswordFormState";
 import type { Metadata } from "next";
 import Image from "next/image";
 

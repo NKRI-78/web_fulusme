@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { PanelContainer } from "../PanelContainer";
 import GridView from "@shared/ui/GridView";
 import PortfolioCard from "../../portfolio/PortfolioCard";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import Center from "@shared/ui/Center";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";

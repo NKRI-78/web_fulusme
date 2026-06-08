@@ -56,7 +56,7 @@ confirms zero usage.
 - [x] `shared/hooks/` ← `useOnlineStatus`, `useLocalStorage`, `useFileViewerModal`.
 - [x] `shared/types/` ← all `app/interfaces/*` (→ `src/shared/types`). Root `types/next-auth.d.ts` left in place (deleted with next-auth in D1).
 - [x] Rewrite all importers → `@shared/*` (sed pass over 96 files + 7 relative stragglers). `tsc --noEmit` 0 errors, `next build` green → commit.
-- ⚠️ Cross-layer debt to fix in feature phases: 3 shared files import `app/*` via `@/app/...` — `shared/hooks/useFileViewerModal`→viewer component, `shared/lib/mediaService`→`app/lib/auth`, `shared/ui/FileUpload`→`inputFormPenerbit/SectionPoint`. Acceptable temporarily; resolve when those features migrate.
+- ⚠️ Cross-layer debt to fix in feature phases: ~~`shared/lib/mediaService`→`app/lib/auth`~~ RESOLVED in D1 (auth.ts → shared/lib). Remaining: `shared/hooks/useFileViewerModal`→viewer component, `shared/ui/FileUpload`→`inputFormPenerbit/SectionPoint`. Resolve when those features migrate.
 
 ### Phase C — `store/` _(1 commit)_ — PR #1 ✅ DONE
 - [x] `redux/` → `src/store/` (`store.ts` + `slices/`). Dead `projectSlice` already dropped in Phase A.
@@ -68,7 +68,7 @@ confirms zero usage.
 ### Phase D — Features _(one commit each)_ — PR #2+
 Order: most independent → most dependent.
 
-- [ ] **D1 `auth`** — `components/auth/*` (rename `RegisterV2`→`Register`), `lib/auth.ts`, `hooks/useRole.ts`, `(defaults)/auth/*`, `providers/session-*`.
+- [x] **D1 `auth`** ✅ — `components/auth/{login,register,forgot-password,change-password}` → `features/auth/components`; `providers/session-{provider,timeout-provider}` → `features/auth/providers`. **`lib/auth.ts` → `shared/lib/auth.ts`** (NOT features: `getUser`/`saveAuthUser`/`syncRole`/`removeAuthUser`/`SessionData` are cross-feature session helpers used by ~30 files; per CLAUDE.md §3 `shared/lib/auth`). Deleted dead `hooks/useRole.ts` (0 importers) + `components/auth/verification` (0 refs). `Register` (page) ≠ `RegisterV2` (modal `RegisterForm`) — NOT dup versions, both kept (rename deferred). `components/auth/profile` left for D2. Route pages in `(defaults)/auth/*` stay until Phase E (imports updated). tsc clean, build ✓.
 - [ ] **D2 `profile`** — `components/auth/profile/*`, `services/profile.ts`, `(defaults)/profile`.
 - [ ] **D3 `inbox`** — `components/notif/*`, `services/inbox.ts`.
 - [ ] **D4 `dashboard`** — `components/dashboard/*`, `services/dashboard.ts`; merge `app/dashboard` + `(defaults)` dashboard bits into ONE tree.

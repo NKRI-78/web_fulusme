@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import Swal from "sweetalert2";
 import DashboardPemodal from "./pemodal/DashboardPemodal";
 import DashboardUser from "./DashboardUser";

@@ -6,7 +6,7 @@ import { FileViewerProvider } from "@shared/hooks/useFileViewerModal";
 import { Metadata } from "next";
 import { BASE_URL } from "@shared/lib/constant";
 import { cookies } from "next/headers";
-import { SessionData } from "@/app/lib/auth";
+import { SessionData } from "@shared/lib/auth";
 
 export const metadata: Metadata = {
   title: "Fulusme.id",

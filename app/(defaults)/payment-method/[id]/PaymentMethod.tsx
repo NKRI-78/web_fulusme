@@ -6,7 +6,7 @@ import { getToken } from "@shared/lib/tokenCache";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { API_PG } from "@shared/lib/constant";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import { PaymentMethodType } from "./components/types";
 import TransactionSummary from "./components/TransactionSummary";
 import ConfirmButton from "./components/ConfirmButton";

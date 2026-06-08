@@ -9,9 +9,9 @@ import FooterV2 from "@components/footer/FooterV2";
 
 import localFont from "next/font/local";
 import { SocketProvider } from "@/app/providers/socket-provider";
-import SessionTimeoutProvider from "@/app/providers/session-timeout-provider";
-import { SessionData } from "@/app/lib/auth";
-import { SessionProvider } from "@/app/providers/session-provider";
+import SessionTimeoutProvider from "@features/auth/providers/session-timeout-provider";
+import { SessionData } from "@shared/lib/auth";
+import { SessionProvider } from "@features/auth/providers/session-provider";
 import Navbar from "../navbar/Navbar";
 
 const geistSans = localFont({

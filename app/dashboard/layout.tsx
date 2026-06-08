@@ -11,11 +11,11 @@ import {
   PieChart,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { getUser } from "../lib/auth";
+import { getUser } from "@shared/lib/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getTransactions } from "@/actions/fetchTransaction";
-import { SessionData } from "@/app/lib/auth";
+import { SessionData } from "@shared/lib/auth";
 import { getDashboard } from "@/app/services/dashboard";
 import { listInboxByType } from "@/app/services/inbox";
 

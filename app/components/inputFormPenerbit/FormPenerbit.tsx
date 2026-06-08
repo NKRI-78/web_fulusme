@@ -18,7 +18,7 @@ import AddButton from "./_component/AddButton";
 import FormButton from "./_component/FormButton";
 import UpdateRing from "./_component/UpdateRing";
 
-import { getUser, saveAuthUser } from "@/app/lib/auth";
+import { getUser, saveAuthUser } from "@shared/lib/auth";
 
 import {
   MAX_DIREKTUR,

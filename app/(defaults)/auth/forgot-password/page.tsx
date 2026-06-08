@@ -1,4 +1,4 @@
-import ForgotPasswordForm from "@/app/components/auth/forgot-password/ForgotPasswordForm";
+import ForgotPasswordForm from "@features/auth/components/forgot-password/ForgotPasswordForm";
 import type { Metadata } from "next";
 import Image from "next/image";
 

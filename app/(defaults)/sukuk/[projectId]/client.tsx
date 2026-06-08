@@ -14,7 +14,7 @@ import Cookies from "js-cookie";
 import Custom404 from "@/app/not-found";
 import ProgressBar from "../components/ProgressBar";
 import { formatRupiah } from "@shared/lib/utils";
-import { getUser } from "@/app/lib/auth";
+import { getUser } from "@shared/lib/auth";
 import { Project } from "@shared/types/project/IProject";
 import GeneralDialog from "@shared/ui/GeneralDialog";
 import ShareDialog from "@/app/components/ShareDialog";

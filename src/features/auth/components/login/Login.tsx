@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import Swal from "sweetalert2";
 import Image from "next/image";
-import { SessionData } from "@/app/lib/auth";
+import { SessionData } from "@shared/lib/auth";
 import { clearTokenCache } from "@shared/lib/tokenCache";
 
 const errorTitles: Record<string, string> = {

@@ -8,9 +8,9 @@ import { AppDispatch, RootState } from "@store/store";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import Modal from "@shared/ui/Modal";
-import RegisterV2 from "../auth/register/RegisterV2";
-import RegisterOtp from "../auth/register/RegisterOtp";
-import RegisterSelectRole from "../auth/register/RegisterSelectRole";
+import RegisterV2 from "@features/auth/components/register/RegisterV2";
+import RegisterOtp from "@features/auth/components/register/RegisterOtp";
+import RegisterSelectRole from "@features/auth/components/register/RegisterSelectRole";
 import { User } from "@shared/types/user/IUser";
 import {
   FORM_INDEX_CACHE_KEY,
@@ -18,11 +18,11 @@ import {
   FORM_PENERBIT_2_CACHE_KEY,
   FORM_PIC_CACHE_KEY,
 } from "@/app/(defaults)/form-penerbit/form-cache-key";
-import { removeAuthUser } from "@/app/lib/auth";
+import { removeAuthUser } from "@shared/lib/auth";
 import { fetchInboxThunk } from "@store/slices/inboxSlice";
 import { setBadge } from "@store/slices/badgeSlice";
 import { getSocket } from "@shared/lib/sockets";
-import { useSession } from "@/app/providers/session-provider";
+import { useSession } from "@features/auth/providers/session-provider";
 import api from "@/utils/axios";
 
 const PRIMARY_COLOR = "#10565C";
