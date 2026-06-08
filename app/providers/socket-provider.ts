@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { disconnectSocket, initSocket } from "../utils/sockets";
+import { disconnectSocket, initSocket } from "@shared/lib/sockets";
 
 export function SocketProvider({ userId }: { userId: string }) {
   useEffect(() => {

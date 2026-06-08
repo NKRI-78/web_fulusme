@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
 import "moment/locale/id";
-import { Broadcast } from "@/app/interfaces/broadcast/IBroadcast";
+import { Broadcast } from "@shared/types/broadcast/IBroadcast";
 import Image from "next/image";
 
 interface Props {

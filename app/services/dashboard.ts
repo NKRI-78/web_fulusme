@@ -1,8 +1,8 @@
-import { api } from "@/app/lib/api-client";
+import { api } from "@shared/lib/api-client";
 import {
   DashboardData,
   DashboardResponse,
-} from "@/app/interfaces/dashboard/dashboard";
+} from "@shared/types/dashboard/dashboard";
 
 export async function getDashboard(): Promise<DashboardData> {
   const res = await api.get<DashboardResponse>("/api/v1/dashboard/investor");

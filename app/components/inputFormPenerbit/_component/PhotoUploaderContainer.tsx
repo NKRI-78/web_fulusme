@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FolderUp, X, Image as ImageIcon } from "lucide-react";
 import Swal from "sweetalert2";
 import SectionPoint from "./SectionPoint";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 
 interface PhotoUploaderContainerProps {
   fileOnChange: (urls: string[]) => void;

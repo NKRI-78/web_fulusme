@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
-import { inferFileName } from "@/app/lib/fileType";
+import { inferFileName } from "@shared/lib/format/fileType";
 
 export default function FilePreview({
   src,

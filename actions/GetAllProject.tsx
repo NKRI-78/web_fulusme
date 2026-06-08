@@ -1,6 +1,6 @@
 "use client";
 
-import { ProjectResponse } from "@/app/interfaces/project/IProject";
+import { ProjectResponse } from "@shared/types/project/IProject";
 import api from "@/utils/axios";
 
 export async function getAllProject() {

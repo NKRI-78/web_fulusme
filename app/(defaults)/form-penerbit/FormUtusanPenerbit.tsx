@@ -14,7 +14,7 @@ import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PIC_CACHE_KEY } from "./form-cache-key";
 import { UpdateFieldValue } from "./PenerbitParent";
 import { syncRole } from "@/app/lib/auth";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 import api from "@/utils/axios";
 
 interface FormSchema {

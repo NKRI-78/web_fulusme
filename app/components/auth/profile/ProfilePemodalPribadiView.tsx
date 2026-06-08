@@ -1,5 +1,5 @@
-import { User } from "@/app/interfaces/user/IUser";
-import { formatRupiah } from "@/app/lib/utils";
+import { User } from "@shared/types/user/IUser";
+import { formatRupiah } from "@shared/lib/utils";
 import { FileText } from "lucide-react";
 import Image from "next/image";
 

@@ -1,4 +1,4 @@
-import { DashboardData } from "@/app/interfaces/dashboard/dashboard";
+import { DashboardData } from "@shared/types/dashboard/dashboard";
 import { getDashboard } from "@/app/services/dashboard";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 

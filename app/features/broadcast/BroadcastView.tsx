@@ -1,7 +1,7 @@
 "use client";
 
-import CircularProgressIndicator from "@/app/components/CircularProgressIndicator";
-import { Broadcast } from "@/app/interfaces/broadcast/IBroadcast";
+import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
+import { Broadcast } from "@shared/types/broadcast/IBroadcast";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import BroadcastCard from "./BroadcastCard";

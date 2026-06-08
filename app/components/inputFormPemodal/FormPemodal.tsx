@@ -9,14 +9,14 @@ import { useSearchParams } from "next/navigation";
 
 import ComponentDataPribadi from "./informasiPribadi/DataPribadi";
 import ComponentDataPekerjaan from "./informasiPekerjaan/DataPekerjaan";
-import { IS_DEV, IS_PROD } from "@/app/utils/constant";
+import { IS_DEV, IS_PROD } from "@shared/lib/constant";
 import FileViewerModal from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
-import { setCookie } from "@/app/helper/cookie";
+import { setCookie } from "@shared/lib/cookie";
 import { getUser, saveAuthUser, syncRole, SessionData } from "@/app/lib/auth";
-import Tooltip from "../Tooltip";
+import Tooltip from "@shared/ui/Tooltip";
 import api from "@/utils/axios";
 import axios from "axios";
-import { logger } from "@/utils/logger";
+import { logger } from "@shared/lib/logger";
 
 export const pemodalKeys: string[] = ["ktp-upload", "npwp-upload"];
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { formatRupiah } from "@/app/utils/formatRupiah";
+import { formatRupiah } from "@shared/lib/format/formatRupiah";
 
 type PaymentItem = {
   id: number;

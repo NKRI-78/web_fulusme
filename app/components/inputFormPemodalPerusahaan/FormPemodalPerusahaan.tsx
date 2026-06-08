@@ -8,12 +8,12 @@ import ContainerSelfie from "./component/ContainerSelfie";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import { setCookie } from "@/app/helper/cookie";
+import { setCookie } from "@shared/lib/cookie";
 import { getUser } from "@/app/lib/auth";
 import { useSearchParams } from "next/navigation";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { SessionData } from "@/app/lib/auth";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 import FileInput from "../inputFormPenerbit/_component/FileInput";
 import api from "@/utils/axios";
 

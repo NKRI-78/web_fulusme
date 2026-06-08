@@ -37,7 +37,7 @@ import { UpdateFieldValue } from "@/app/(defaults)/form-penerbit/PenerbitParent"
 import { IFormPublisher } from "./IFormPublisher";
 import FileInput from "./_component/FileInput";
 import Subtitle from "./_component/SectionSubtitle";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 import api from "@/utils/axios";
 
 type Props = {

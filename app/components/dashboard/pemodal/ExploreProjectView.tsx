@@ -1,7 +1,7 @@
-import { Project } from "@/app/interfaces/project/IProject";
+import { Project } from "@shared/types/project/IProject";
 import React from "react";
 import { PanelContainer } from "../PanelContainer";
-import GridView from "../../GridView";
+import GridView from "@shared/ui/GridView";
 import { ProjectCard } from "../../project/ProjectCard";
 
 interface Props {

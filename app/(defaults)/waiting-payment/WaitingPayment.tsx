@@ -15,8 +15,8 @@ import Link from "next/link";
 import SkeletonWaitingPayment from "./components/SkeletonWaitingPayment";
 import { motion } from "framer-motion";
 import CaraPembayaran from "./components/HowToPayment";
-import { onSocketReady } from "@/app/utils/sockets";
-import { logger } from "@/utils/logger";
+import { onSocketReady } from "@shared/lib/sockets";
+import { logger } from "@shared/lib/logger";
 import api from "@/utils/axios";
 
 export interface PaymentMethod {

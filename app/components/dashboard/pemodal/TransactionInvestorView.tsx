@@ -12,18 +12,18 @@ import {
   Info,
 } from "lucide-react";
 import { getTransactions } from "@/actions/fetchTransaction";
-import { TransactionItem } from "@/app/interfaces/transaction/transaction";
-import Pagination from "../../pagination/pagination";
+import { TransactionItem } from "@shared/types/transaction/transaction";
+import Pagination from "@shared/ui/pagination";
 import { getUser } from "@/app/lib/auth";
-import GeneralDialog from "../../GeneralDialog";
+import GeneralDialog from "@shared/ui/GeneralDialog";
 import Swal from "sweetalert2";
-import { AnimatedWrapper } from "../../AnimatedWrapper";
-import Center from "../../Center";
-import CircularProgressIndicator from "../../CircularProgressIndicator";
+import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";
+import Center from "@shared/ui/Center";
+import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
 import { useRouter } from "next/navigation";
-import Tooltip from "../../Tooltip";
+import Tooltip from "@shared/ui/Tooltip";
 import api from "@/utils/axios";
 
 export default function TransactionInvestorView() {

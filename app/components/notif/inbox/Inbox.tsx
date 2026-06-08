@@ -12,7 +12,7 @@ import { getUser } from "@/app/lib/auth";
 import InboxCard from "../InboxCard";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchInboxThunk, updateInboxes } from "@/redux/slices/inboxSlice";
-import { onSocketReady } from "@/app/utils/sockets";
+import { onSocketReady } from "@shared/lib/sockets";
 
 const Inbox = () => {
   // data hook

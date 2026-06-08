@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { setCookie } from "@/app/helper/cookie";
+import { setCookie } from "@shared/lib/cookie";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
-import { AuthResponse } from "@/app/interfaces/auth/auth";
+import { AuthResponse } from "@shared/types/auth/auth";
 import api from "@/utils/axios";
 import axios from "axios";
 

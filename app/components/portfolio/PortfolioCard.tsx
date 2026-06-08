@@ -1,5 +1,5 @@
-import { InvestorDataPortfolio } from "@/app/interfaces/investor/IInvestorData";
-import { formatRupiah } from "@/app/lib/utils";
+import { InvestorDataPortfolio } from "@shared/types/investor/IInvestorData";
+import { formatRupiah } from "@shared/lib/utils";
 import Link from "next/link";
 import React from "react";
 

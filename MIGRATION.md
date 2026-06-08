@@ -47,15 +47,16 @@ confirms zero usage.
 - [x] Deleted dead `redux/slices/projectSlice.ts` (not imported by `store.ts` or anywhere). `profileSlice` already gone in Phase 2.
 - [x] `next build` green → commit.
 
-### Phase B — `shared/` _(1 commit)_ — PR #1
-- [ ] `shared/lib/api-client.ts` ← `app/lib/api-client.ts`; fold `utils/axios.ts` + `utils/axios_media.ts` into it via `baseURL` param.
-- [ ] `shared/lib/format/` ← `price.ts`, `npwp-formart.ts` (→ `npwp.ts`), `fileType.ts`, `formatRupiah.ts`.
-- [ ] `shared/lib/lookups/` ← `fetchWilayah.ts`, `fetchJenisUsaha.ts`, `fetchJenisPerusahaan.ts`, `fetchStatusPerushaan.ts`.
-- [ ] `shared/lib/` ← `storage.ts`, `utils.ts`, `cookie.ts`, `constant.ts`, `sockets.ts`, `logger.ts`, `tokenCache.ts`.
-- [ ] `shared/ui/` ← `Button`, `Tooltip`, `GeneralDialog`, `pagination/*`, `GridView`, `Center`, `CircularProgressIndicator`.
-- [ ] `shared/hooks/` ← `useOnlineStatus`, `useLocalStorage`, `useFileViewerModal`.
-- [ ] `shared/types/` ← all `app/interfaces/*` + root `types/next-auth.d.ts`.
-- [ ] Rewrite all importers → `@shared/*`. `next build` green → commit.
+### Phase B — `shared/` _(1 commit)_ — PR #1 ✅ DONE
+- [x] `shared/lib/api-client.ts` ← `app/lib/api-client.ts`. `utils/axios.ts` + `axios_media.ts` already thin shims (Phase 2) — kept as shims re-exporting `@shared/lib/api-client` (37 files import `@/utils/axios`; their migration is the out-of-scope axios cleanup). `logger.ts` + `tokenCache.ts` moved too.
+- [x] `shared/lib/format/` ← `price`, `npwp-formart`, `fileType`, `formatRupiah` (kept filenames; npwp rename deferred).
+- [x] `shared/lib/lookups/` ← `fetchWilayah`, `fetchJenisUsaha`, `fetchJenisPerusahaan`, `fetchStatusPerushaan`, `jenisUsaha`.
+- [x] `shared/lib/` ← `storage`, `utils`, `cookie`, `constant`, `sockets`, `logger`, `tokenCache`, `crop-around-label`, `mediaService` (from helper).
+- [x] `shared/ui/` ← `Button`, `Tooltip`, `GeneralDialog`, `pagination`, `GridView`, `Center`, `CircularProgressIndicator`, `AnimatedWrapper`, `CountDownTimer`, `Modal`/`FileUpload`/`CompressorImage` (from helper). `app/helper` + `app/utils` now fully deleted.
+- [x] `shared/hooks/` ← `useOnlineStatus`, `useLocalStorage`, `useFileViewerModal`.
+- [x] `shared/types/` ← all `app/interfaces/*` (→ `src/shared/types`). Root `types/next-auth.d.ts` left in place (deleted with next-auth in D1).
+- [x] Rewrite all importers → `@shared/*` (sed pass over 96 files + 7 relative stragglers). `tsc --noEmit` 0 errors, `next build` green → commit.
+- ⚠️ Cross-layer debt to fix in feature phases: 3 shared files import `app/*` via `@/app/...` — `shared/hooks/useFileViewerModal`→viewer component, `shared/lib/mediaService`→`app/lib/auth`, `shared/ui/FileUpload`→`inputFormPenerbit/SectionPoint`. Acceptable temporarily; resolve when those features migrate.
 
 ### Phase C — `store/` _(1 commit)_ — PR #1
 - [ ] `redux/` → `src/store/` (`store.ts` + `slices/`).

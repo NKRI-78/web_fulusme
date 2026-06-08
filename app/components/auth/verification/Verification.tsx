@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatInputRupiah } from "@app/lib/utils";
+import { formatInputRupiah } from "@shared/lib/utils";
 
 export default function VerifikasiPage() {
   const [noKtp, setNoKtp] = useState("");

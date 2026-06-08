@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import PublisherForm from "./FormPenerbit";
 import FormPenerbit from "@/app/components/inputFormPenerbit/FormPenerbit";
 import { useRouter, useSearchParams } from "next/navigation";
-import { IS_DEV } from "@/app/utils/constant";
+import { IS_DEV } from "@shared/lib/constant";
 import { penerbitUpdateKeys } from "./IUpdateRegistrationKey";
 import FormUtusanPenerbit from "./FormUtusanPenerbit";
 import { getUser } from "@/app/lib/auth";
@@ -16,7 +16,7 @@ import {
   FORM_PIC_CACHE_KEY,
 } from "./form-cache-key";
 import Swal from "sweetalert2";
-import CircularProgressIndicator from "@/app/components/CircularProgressIndicator";
+import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import api from "@/utils/axios";
 
 export interface UpdateFieldValueManajemen {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FileText } from "lucide-react";
 import Swal from "sweetalert2";
 import clsx from "clsx";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 import path from "path";
 
 const IMAGE_MIME = ["image/png", "image/jpeg"];

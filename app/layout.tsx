@@ -2,9 +2,9 @@ import "./globals.css";
 import "reactjs-tiptap-editor/style.css";
 
 import ClientLayout from "@components/client/Client";
-import { FileViewerProvider } from "./hooks/useFileViewerModal";
+import { FileViewerProvider } from "@shared/hooks/useFileViewerModal";
 import { Metadata } from "next";
-import { BASE_URL } from "./utils/constant";
+import { BASE_URL } from "@shared/lib/constant";
 import { cookies } from "next/headers";
 import { SessionData } from "@/app/lib/auth";
 

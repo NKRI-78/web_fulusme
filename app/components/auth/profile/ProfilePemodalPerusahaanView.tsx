@@ -1,4 +1,4 @@
-import { User } from "@/app/interfaces/user/IUser";
+import { User } from "@shared/types/user/IUser";
 import { UserRoundMinus } from "lucide-react";
 import Image from "next/image";
 import FormButton from "../../inputFormPenerbit/_component/FormButton";

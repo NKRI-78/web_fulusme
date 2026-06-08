@@ -3,15 +3,15 @@
 import {
   InvestorData,
   InvestorDataPortfolio,
-} from "@/app/interfaces/investor/IInvestorData";
+} from "@shared/types/investor/IInvestorData";
 import React, { useEffect, useState } from "react";
 import { PanelContainer } from "../PanelContainer";
-import GridView from "../../GridView";
+import GridView from "@shared/ui/GridView";
 import PortfolioCard from "../../portfolio/PortfolioCard";
 import { getUser } from "@/app/lib/auth";
-import Center from "../../Center";
-import CircularProgressIndicator from "../../CircularProgressIndicator";
-import { AnimatedWrapper } from "../../AnimatedWrapper";
+import Center from "@shared/ui/Center";
+import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
+import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";
 import { FolderOpen } from "lucide-react";
 import api from "@/utils/axios";
 

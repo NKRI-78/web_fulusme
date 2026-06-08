@@ -1,5 +1,5 @@
 import api from "@/utils/axios";
-import { getCookie, setCookie } from "@app/helper/cookie";
+import { getCookie, setCookie } from "@shared/lib/cookie";
 import React, { useState } from "react";
 import Countdown from "react-countdown";
 import OTPInput from "react-otp-input";

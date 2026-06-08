@@ -3,8 +3,8 @@ import { Building, UserSearch } from "lucide-react";
 import { Step, Stepper } from "react-form-stepper";
 import { PanelContent } from "../PanelContent";
 import { PanelContainer } from "../PanelContainer";
-import { User } from "@/app/interfaces/user/IUser";
-import GridView from "../../GridView";
+import { User } from "@shared/types/user/IUser";
+import GridView from "@shared/ui/GridView";
 import { ProjectCard } from "../PenerbitProjectCard";
 
 interface Props {

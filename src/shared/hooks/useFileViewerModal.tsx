@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-import FileViewerModal from "../(defaults)/viewer/components/FilePriviewModal";
+import FileViewerModal from "@/app/(defaults)/viewer/components/FilePriviewModal";
 
 type ContextType = {
   openFile: (src: string) => void;

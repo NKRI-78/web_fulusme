@@ -3,8 +3,8 @@ import axios, {
   AxiosInstance,
   InternalAxiosRequestConfig,
 } from "axios";
-import { logger } from "@/utils/logger";
-import { clearTokenCache, getToken, rotateToken } from "@/utils/tokenCache";
+import { logger } from "@shared/lib/logger";
+import { clearTokenCache, getToken, rotateToken } from "@shared/lib/tokenCache";
 
 // Endpoints that must NOT have a Bearer header injected.
 const AUTH_ENDPOINTS = [

@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { getToken } from "@/utils/tokenCache";
+import { getToken } from "@shared/lib/tokenCache";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { API_PG } from "@/app/utils/constant";
+import { API_PG } from "@shared/lib/constant";
 import { getUser } from "@/app/lib/auth";
 import { PaymentMethodType } from "./components/types";
 import TransactionSummary from "./components/TransactionSummary";
 import ConfirmButton from "./components/ConfirmButton";
 import ProjectCardSkeleton from "./components/ProjectCardSkeleton";
-import { Project } from "@/app/interfaces/project/IProject";
+import { Project } from "@shared/types/project/IProject";
 import Custom404 from "@/app/not-found";
 import ProjectCardCheckout from "./components/ProjectCardDummy";
 import api from "@/utils/axios";

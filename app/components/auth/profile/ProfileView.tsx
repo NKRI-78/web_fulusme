@@ -1,10 +1,10 @@
 "use client";
 
-import { User } from "@/app/interfaces/user/IUser";
+import { User } from "@shared/types/user/IUser";
 import { getUser } from "@/app/lib/auth";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import CircularProgressIndicator from "../../CircularProgressIndicator";
+import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import ProfilePenerbitView from "./ProfilePenerbitView";
 import ProfilePemodalPribadi from "./ProfilePemodalPribadiView";
 import ProfilePemodalPerusahaan from "./ProfilePemodalPerusahaanView";

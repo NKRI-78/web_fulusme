@@ -7,7 +7,7 @@ import { PDFDocument } from "pdf-lib";
 import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getUser } from "@/app/lib/auth";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 import api from "@/utils/axios";
 
 interface FormData {

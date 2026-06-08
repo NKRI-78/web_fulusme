@@ -1,4 +1,4 @@
-import Tooltip from "@/app/components/Tooltip";
+import Tooltip from "@shared/ui/Tooltip";
 
 interface ProgressBarProps {
   percentage: number; // bisa float, contoh 0.25

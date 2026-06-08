@@ -1,4 +1,4 @@
-import { api } from "@/app/lib/api-client";
+import { api } from "@shared/lib/api-client";
 import { InboxResponse } from "@/app/components/notif/inbox-interface";
 
 interface InboxListResponse {

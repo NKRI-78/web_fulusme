@@ -3,12 +3,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { TypeOption } from "@/app/utils/fetchJenisUsaha";
+import { TypeOption } from "@shared/lib/lookups/fetchJenisUsaha";
 import Select from "react-select";
-import { fetchJenisPerusahaan } from "@/app/utils/fetchJenisPerusahaan";
+import { fetchJenisPerusahaan } from "@shared/lib/lookups/fetchJenisPerusahaan";
 import UpdateRing from "@/app/components/inputFormPemodal/component/UpdateRing";
 import { useSearchParams } from "next/navigation";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 import FileInput from "../../inputFormPenerbit/_component/FileInput";
 
 interface Props {

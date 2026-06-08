@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { logger } from "@/utils/logger";
+import { logger } from "@shared/lib/logger";
 import { removeAuthUser } from "../lib/auth";
 
 const SESSION_LIMIT = 2 * 60 * 1000; // 2 menit

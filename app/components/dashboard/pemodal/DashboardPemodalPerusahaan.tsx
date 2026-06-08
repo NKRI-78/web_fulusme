@@ -2,11 +2,11 @@ import React from "react";
 import { PanelContainer } from "../PanelContainer";
 import { PanelContent } from "../PanelContent";
 import { UserSearch, Infinity } from "lucide-react";
-import { User } from "@/app/interfaces/user/IUser";
-import { InvestorData } from "@/app/interfaces/investor/IInvestorData";
-import { formatRupiah } from "@/app/lib/utils";
-import { Project } from "@/app/interfaces/project/IProject";
-import GridView from "../../GridView";
+import { User } from "@shared/types/user/IUser";
+import { InvestorData } from "@shared/types/investor/IInvestorData";
+import { formatRupiah } from "@shared/lib/utils";
+import { Project } from "@shared/types/project/IProject";
+import GridView from "@shared/ui/GridView";
 import { ProjectCard } from "../../project/ProjectCard";
 
 interface Props {

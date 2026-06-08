@@ -2,16 +2,16 @@
 
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import Tooltip from "../Tooltip";
+import Tooltip from "@shared/ui/Tooltip";
 import { BellRing, Menu, X } from "lucide-react";
 import { AppDispatch, RootState } from "@redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
-import Modal from "@/app/helper/Modal";
+import Modal from "@shared/ui/Modal";
 import RegisterV2 from "../auth/register/RegisterV2";
 import RegisterOtp from "../auth/register/RegisterOtp";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
-import { User } from "@/app/interfaces/user/IUser";
+import { User } from "@shared/types/user/IUser";
 import {
   FORM_INDEX_CACHE_KEY,
   FORM_PENERBIT_1_CACHE_KEY,
@@ -21,7 +21,7 @@ import {
 import { removeAuthUser } from "@/app/lib/auth";
 import { fetchInboxThunk } from "@/redux/slices/inboxSlice";
 import { setBadge } from "@/redux/slices/badgeSlice";
-import { getSocket } from "@/app/utils/sockets";
+import { getSocket } from "@shared/lib/sockets";
 import { useSession } from "@/app/providers/session-provider";
 import api from "@/utils/axios";
 

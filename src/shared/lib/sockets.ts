@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+import { logger } from "@shared/lib/logger";
 import { io, Socket } from "socket.io-client";
 
 let socket: Socket | null = null;

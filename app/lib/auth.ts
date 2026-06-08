@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { clearTokenCache } from "@/utils/tokenCache";
+import { clearTokenCache } from "@shared/lib/tokenCache";
 
 export interface SessionData {
   id: string;

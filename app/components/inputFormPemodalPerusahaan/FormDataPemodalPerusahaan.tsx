@@ -8,9 +8,9 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import FileViewer from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
 import { useSearchParams } from "next/navigation";
-import { setCookie } from "@/app/helper/cookie";
+import { setCookie } from "@shared/lib/cookie";
 import { getUser, saveAuthUser, syncRole } from "@/app/lib/auth";
-import Tooltip from "../Tooltip";
+import Tooltip from "@shared/ui/Tooltip";
 import api from "@/utils/axios";
 import axios from "axios";
 

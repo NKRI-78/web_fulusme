@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Building, X } from "lucide-react";
 import { ProjectCard } from "../project/ProjectCard";
 import { getAllProject } from "@/actions/GetAllProject";
-import { Project } from "@/app/interfaces/project/IProject";
-import GeneralDialog from "../GeneralDialog";
+import { Project } from "@shared/types/project/IProject";
+import GeneralDialog from "@shared/ui/GeneralDialog";
 
 const BussinesList: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -1,6 +1,6 @@
 import ProgressBar from "@/app/(defaults)/sukuk/components/ProgressBar";
-import { Project } from "@/app/interfaces/project/IProject";
-import { formatRupiah } from "@/app/lib/utils";
+import { Project } from "@shared/types/project/IProject";
+import { formatRupiah } from "@shared/lib/utils";
 import { useRouter } from "next/navigation";
 
 export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {

@@ -6,12 +6,12 @@ import Image from "next/image";
 import { ProjectCard } from "@/app/components/project/ProjectCard";
 import { getUser } from "@/app/lib/auth";
 import { getAllProject } from "@/actions/GetAllProject";
-import Modal from "@/app/helper/Modal";
+import Modal from "@shared/ui/Modal";
 import RegisterOtp from "../auth/register/RegisterOtp";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
 import RegisterV2 from "../auth/register/RegisterV2";
-import { Project } from "@/app/interfaces/project/IProject";
-import GridView from "../GridView";
+import { Project } from "@shared/types/project/IProject";
+import GridView from "@shared/ui/GridView";
 import { HelpButton, HelpButtonPosition } from "./HelpButton";
 
 const HomeV2: React.FC = () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import api from "@/utils/axios";
-import { logger } from "@/utils/logger";
+import { logger } from "@shared/lib/logger";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";

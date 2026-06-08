@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { FolderUp, X } from "lucide-react";
 import SectionPoint from "./SectionPoint";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 
 interface VideoUploaderContainerProps {
   fileOnChange: (videoUrl: string) => void;

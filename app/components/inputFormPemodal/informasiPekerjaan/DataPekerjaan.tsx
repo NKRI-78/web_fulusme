@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import Select from "react-select";
 import UpdateRing from "../component/UpdateRing";
 import { NumericFormat } from "react-number-format";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 import FileInput from "../../inputFormPenerbit/_component/FileInput";
 
 interface Props {

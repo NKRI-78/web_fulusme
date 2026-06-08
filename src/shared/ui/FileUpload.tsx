@@ -1,7 +1,7 @@
 import { FaFileAlt } from "react-icons/fa";
 import React, { useRef, useState } from "react";
 import { useFileViewerModal } from "../hooks/useFileViewerModal";
-import SectionPoint from "../components/inputFormPenerbit/_component/SectionPoint";
+import SectionPoint from "@/app/components/inputFormPenerbit/_component/SectionPoint";
 
 type FileUploadProps = {
   label: string;

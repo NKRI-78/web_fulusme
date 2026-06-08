@@ -3,8 +3,8 @@
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
-import { inferFileName } from "@/app/lib/fileType";
-import Modal from "@/app/helper/Modal";
+import { inferFileName } from "@shared/lib/format/fileType";
+import Modal from "@shared/ui/Modal";
 
 export default function FilePreviewModalV2({
   src,

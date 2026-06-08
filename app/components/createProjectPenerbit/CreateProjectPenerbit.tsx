@@ -21,7 +21,7 @@ import {
 } from "./form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CurrencyField from "../inputFormPenerbit/_component/CurrencyField";
-import { fetchProvinces } from "@/app/lib/fetchWilayah";
+import { fetchProvinces } from "@shared/lib/lookups/fetchWilayah";
 
 type OptionType = { value: string; label: string; zip_code: string };
 import Swal from "sweetalert2";

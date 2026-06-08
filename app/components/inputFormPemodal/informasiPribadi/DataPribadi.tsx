@@ -8,7 +8,7 @@ import "flatpickr/dist/flatpickr.min.css";
 import Select from "react-select";
 import UpdateRing from "../component/UpdateRing";
 import ContainerSelfie from "../component/ContainerSelfie";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 import FileInput from "../../inputFormPenerbit/_component/FileInput";
 
 interface Props {

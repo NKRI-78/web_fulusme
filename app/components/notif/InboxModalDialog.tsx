@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { InboxResponse } from "./inbox-interface";
-import GeneralDialog from "../GeneralDialog";
+import GeneralDialog from "@shared/ui/GeneralDialog";
 
 interface Props {
   role?: string;

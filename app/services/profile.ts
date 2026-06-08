@@ -1,5 +1,5 @@
-import { api } from "@/app/lib/api-client";
-import { User } from "@/app/interfaces/user/IUser";
+import { api } from "@shared/lib/api-client";
+import { User } from "@shared/types/user/IUser";
 
 interface ProfileResponse {
   status: number;

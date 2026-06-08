@@ -1,7 +1,7 @@
 import React from "react";
 import { FileText } from "lucide-react";
 import Swal from "sweetalert2";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 
 const IMAGE_MIME = ["image/png", "image/jpeg"];
 const DOC_MIME = [

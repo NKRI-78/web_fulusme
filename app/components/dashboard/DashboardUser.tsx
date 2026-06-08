@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { UserRound, UserRoundCheck } from "lucide-react";
 import { PanelContainer } from "./PanelContainer";
 import { PanelContent } from "./PanelContent";
-import Modal from "@/app/helper/Modal";
+import Modal from "@shared/ui/Modal";
 import RegisterSelectRole from "../auth/register/RegisterSelectRole";
 import RegisterOtp from "../auth/register/RegisterOtp";
 import { SessionData } from "@/app/lib/auth";

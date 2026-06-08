@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchContentHistories, fetchContentList } from '@lib/contentService';
-import { Content } from '@interfaces/content/content';
-import { ContentHistory, ContentHistoryDataItem } from '@interfaces/content/content-history';
+import { Content } from '@shared/types/content/content';
+import { ContentHistory, ContentHistoryDataItem } from '@shared/types/content/content-history';
 
 export const fetchContentListAsync = createAsyncThunk('content/list',
   async (search: string) => {

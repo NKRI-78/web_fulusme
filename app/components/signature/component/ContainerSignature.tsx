@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import Swal from "sweetalert2";
-import { uploadMediaService } from "@/app/helper/mediaService";
+import { uploadMediaService } from "@shared/lib/mediaService";
 
 function getSignatureDataUrlWithWhiteBackground(
   canvas: HTMLCanvasElement,
