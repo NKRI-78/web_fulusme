@@ -2,7 +2,7 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { useEffect } from "react";
-import { FaFileAlt, FaTrash } from "react-icons/fa";
+import { FileText, Trash2 } from "lucide-react";
 
 // Type untuk data per jabatan
 type JabatanData = {
@@ -111,7 +111,7 @@ export default function JabatanForm() {
               onClick={() => remove(index)}
               className="absolute right-0 top-0 text-red-500 hover:text-red-700 flex items-center text-sm"
             >
-              <FaTrash className="mr-1" /> Hapus
+              <Trash2 className="mr-1 w-4 h-4" /> Hapus
             </button>
           )}
 
@@ -141,7 +141,7 @@ export default function JabatanForm() {
 
           <div className="flex gap-4 mb-2">
             <label className="flex items-center gap-2 bg-gray-800 text-white py-2 px-4 rounded cursor-pointer">
-              <FaFileAlt /> Upload KTP
+              <FileText className="w-4 h-4" /> Upload KTP
               <input
                 type="file"
                 accept="application/pdf"
@@ -151,7 +151,7 @@ export default function JabatanForm() {
             </label>
 
             <label className="flex items-center gap-2 bg-gray-800 text-white py-2 px-4 rounded cursor-pointer">
-              <FaFileAlt /> Upload NPWP
+              <FileText className="w-4 h-4" /> Upload NPWP
               <input
                 type="file"
                 accept="application/pdf"

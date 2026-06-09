@@ -61,7 +61,12 @@ const Login: React.FC = () => {
         const message =
           errorMessages[rawMessage] ??
           "Terjadi kesalahan saat login. Silakan coba lagi.";
-        return Swal.fire({ icon: "error", title, text: message, confirmButtonColor: "#10565C" });
+        return Swal.fire({
+          icon: "error",
+          title,
+          text: message,
+          confirmButtonColor: "#10565C",
+        });
       }
 
       const userData: SessionData = payload.data;
