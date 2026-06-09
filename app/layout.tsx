@@ -1,12 +1,24 @@
 import "./globals.css";
 import "reactjs-tiptap-editor/style.css";
 
-import ClientLayout from "@components/client/Client";
-import { FileViewerProvider } from "@shared/hooks/useFileViewerModal";
+import Providers from "./providers";
 import { Metadata } from "next";
 import { BASE_URL } from "@shared/lib/constant";
 import { cookies } from "next/headers";
 import { SessionData } from "@shared/lib/auth";
+import localFont from "next/font/local";
+
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+});
 
 export const metadata: Metadata = {
   title: "Fulusme.id",
@@ -53,10 +65,10 @@ export default async function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body>
-        <FileViewerProvider>
-          <ClientLayout session={session}>{children}</ClientLayout>
-        </FileViewerProvider>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <Providers session={session}>{children}</Providers>
       </body>
     </html>
   );

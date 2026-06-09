@@ -1,13 +1,11 @@
+import { Metadata } from "next";
 import ProfileView from "@features/profile/components/ProfileView";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Fulusme | Profile",
+  title: "Profile | FuLusme",
   description: "Profile",
 };
 
-const ProfilePage: React.FC = () => {
+export default function ProfilePage() {
   return <ProfileView />;
-};
-
-export default ProfilePage;
+}

@@ -6,7 +6,7 @@ import { z } from "zod";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import FileViewer from "@/app/(defaults)/viewer/components/FilePreviewModalV2";
+import FileViewer from "@/app/(standalone)/viewer/components/FilePreviewModalV2";
 import { useSearchParams } from "next/navigation";
 import { setCookie } from "@shared/lib/cookie";
 import { getUser, saveAuthUser, syncRole } from "@shared/lib/auth";
