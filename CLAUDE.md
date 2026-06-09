@@ -6,6 +6,15 @@
 > made — see the **Decisions Log** (§10). "It depends" is not an acceptable
 > answer in this document.
 
+> **STATUS (2026-06-09).** Phases 0–3 + the `src/` feature-based move (Phases
+> A–F of `MIGRATION.md`) and Phase E (route groups + provider shell) are
+> **done**. The §2 assessment below is the original audit; each item is now
+> tagged **[RESOLVED] / [PARTIAL] / [OPEN]**. Still open: `reactStrictMode`
+> flip, `any` burn-down (~121), service-less `Swal` in components (~100, allowed
+> per D7), 4 raw `<img>`, the 34 `@/utils/axios` shim importers (axios-cleanup
+> follow-up), the lingering `next-auth` dependency, and the `role-sync` trust
+> issue (§5/§9). `MIGRATION.md` tracks the remaining structural cleanup.
+
 ---
 
 ## 1. PROJECT OVERVIEW
@@ -13,15 +22,15 @@
 | Concern        | Current                                                                                                                               | Target                                                                    |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | Framework      | Next.js **16.1.6** (App Router)                                                                                                       | Next.js 16.x (App Router)                                                 |
-| React          | **18.3.1** (pinned)                                                                                                                   | **19.x** (required by Next 16)                                            |
+| React          | **19.1.0** ✅ (upgraded)                                                                                                                   | **19.x** (required by Next 16)                                            |
 | Bundler        | Turbopack (Next 16 default)                                                                                                           | Turbopack — keep, no custom webpack                                       |
 | Language       | TypeScript 5, `strict: true`                                                                                                          | unchanged                                                                 |
 | Styling        | Tailwind CSS 3.4 + local Geist fonts                                                                                                  | Tailwind 3.x (4.x optional, separate effort)                              |
-| State mgmt     | Redux Toolkit 2.x + `react-redux` 9 (5 slices wired, 2 dead)                                                                          | RTK for genuine client/UI state only                                      |
-| Data fetching  | `axios` (2 hand-rolled instances) + scattered raw `axios.*` + Redux thunks + `useEffect`                                              | Server Components + single `api-client`; React Query only where justified |
-| Auth (current) | `js-cookie` plaintext `user`/`token`/`role` cookies, NextAuth v4 credentials route (unused-ish), `proxy.ts` reads plaintext cookie    | `httpOnly` cookies + `proxy.ts` Thin Proxy                                |
+| State mgmt     | Redux Toolkit 2.x in `src/store` (UI/client state); dead slices removed ✅                                                                          | RTK for genuine client/UI state only                                      |
+| Data fetching  | Single `shared/lib/api-client` ✅ + typed `features/*/services` ✅; Server-Component-first **[PARTIAL]** (many client fetches remain); 34 `@/utils/axios` shim importers **[OPEN]**                                              | Server Components + single `api-client`; React Query only where justified |
+| Auth (current) | `httpOnly` `auth_token`/`auth_role` + client-readable `session` cookie ✅; `src/proxy.ts` reads httpOnly ✅; NextAuth route deleted (dep lingers) **[OPEN]**    | `httpOnly` cookies + `proxy.ts` Thin Proxy                                |
 | Backend        | Multiple external REST hosts (`api-staging-capbridge`, `api-sabi`, `api.gateway`, `api.wilayah.site`) — **no single source of truth** | One `NEXT_PUBLIC_API_BACKEND` base + typed service layer                  |
-| Routing        | Root `app/`, one route group `(defaults)`, a second un-grouped `dashboard/` tree, plus a stray `app/features/` template tree          | Consolidated under route groups                                           |
+| Routing        | `src/app/` with `(marketing)`/`(auth)`/`(dashboard)`/`(standalone)` route groups; one dashboard tree; chrome via group layouts ✅          | Consolidated under route groups                                           |
 
 **Headline:** the project was upgraded to Next.js 16 by bumping `next` in
 `package.json`, but **React was left at 18.3.1**. Next.js 16 requires React 19.
@@ -30,6 +39,8 @@ This is a build/runtime incompatibility and is treated as the #1 blocker below.
 ---
 
 ## 2. CURRENT STATE ASSESSMENT
+
+> **Resolution status (2026-06-09).** [RESOLVED] 1, 2, 4, 5, 6, 10, 12, 13 · [PARTIAL] 3, 7, 8, 9 · [OPEN] 11, 14, 15, 16. Partials: (3) `proxy.ts` reads httpOnly but `role-sync` still trusts a client-supplied role (§5/§9); (7) `api-client` unified yet `contentService` still hardcodes a host; (8) `utils`/`helper`/`interfaces` collapsed into `shared` + per-feature, but root `utils/` axios shims linger (34 importers); (9) services exist yet several views (ProfileView, forms) still fetch via raw axios and per-route dedup is incomplete. Open items are the §STATUS-banner follow-ups.
 
 ### 🔴 Critical (security / data integrity / breaks on Next 16)
 
@@ -125,12 +136,13 @@ supersedes the earlier layer-based sketch (`components/ui` + flat `services/` +
 
 ```
 web_fulusme/
-├── proxy.ts                      # Edge auth gate (Next 16). Reads httpOnly session cookie only.
 ├── next.config.mjs               # No webpack overrides. Images + headers only.
 ├── src/                          # Single application root (kills the dual-utils problem)
+│   ├── proxy.ts                  # Edge auth gate (Next 16). MUST live in src/ now app is under src/ — Next only registers it here. Reads httpOnly cookie only.
 │   ├── app/                      # ROUTING ONLY — thin page/layout, server data orchestration. No business logic.
-│   │   ├── layout.tsx            # Server root. Providers live in a thin client wrapper.
-│   │   ├── (marketing)/          # Public: home, about, terms, privacy, business-list
+│   │   ├── layout.tsx            # Server root. Providers in thin client wrapper (providers.tsx).
+│   │   ├── (marketing)/          # Public: home, about, terms, privacy, business-list, pasar-sekunder, sukuk
+│   │   ├── (standalone)/         # Bare, no chrome: viewer
 │   │   ├── (auth)/               # login, register, forgot/change password
 │   │   ├── (dashboard)/          # Authenticated app. ONE dashboard tree (merge app/dashboard + (defaults))
 │   │   └── api/
@@ -261,7 +273,7 @@ is "logged out", second paint is "logged in".
 
 | Change                                                 | Affects this repo?                  | Location / status                                                                                                                        |
 | ------------------------------------------------------ | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| React 19 required                                      | **YES — blocker**                   | `package.json` react 18.3.1. Upgrade to 19.                                                                                              |
+| React 19 required                                      | **RESOLVED** ✅                      | `package.json` now react/react-dom 19.1.0, `@types/react` 19.                                                                            |
 | `middleware.ts` → `proxy.ts`                           | Already migrated                    | `proxy.ts` present, no `middleware.ts`. ✅ but logic insecure (§5).                                                                      |
 | Async `params`/`searchParams`                          | Partially handled                   | Dynamic routes already `await params` (`sukuk/[projectId]/page.tsx`, `payment-manual/[id]/page.tsx`, `payment-method/[id]/page.tsx`). ✅ |
 | `next/image` defaults / `<img>`                        | Minor                               | 6 raw `<img>` files to convert.                                                                                                          |
