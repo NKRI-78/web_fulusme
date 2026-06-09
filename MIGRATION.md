@@ -80,16 +80,17 @@ Order: most independent → most dependent.
 
 Each: `git mv` → rewrite imports (relative→alias) → `next build` green.
 
-### Phase E — Routing & app shell _(1 commit)_ — PR (final)
-- [ ] Split `(defaults)` → `(marketing)` / `(auth)` / `(dashboard)`.
-- [ ] Shrink `Client.tsx` to a provider-only shell; replace the `pathname ===` footer chain with route-group layouts.
-- [ ] Move `app/layout.tsx`, `not-found.tsx`, `globals.css`, `fonts`, `favicon` → `src/app/`.
+### Phase E — Routing & app shell ✅ DONE (3 commits)
+- [x] Split `(defaults)` → `(marketing)` / `(auth)` / `(dashboard)` + `(standalone)` (viewer). Chrome decided per audience by route-group layouts (user decision 2026-06-09: "rapikan per audience" — app/form/profile pages lose marketing footer). All URLs preserved; proxy.ts matcher unaffected.
+- [x] `Client.tsx` → `src/app/providers.tsx`: thin client provider shell (Redux/Session/Socket/SessionTimeout/FileViewer + global logout modal), no chrome, no `pathname ===` chain. Geist fonts moved to `<body>` in server root layout. `/profile` made self-contained; legacy `/auth/profile` deleted. Dead shell deleted: Footer(V1), Header, app/content/Content, modal/role/Role, standalone NotifIcon.
+- [x] Shell components → `src/shared/ui` (Navbar, FooterV2, Logout, ShareDialog); `features/broadcast` → `features/content/components/broadcast`. `app/components` + `app/features` removed. `@components` alias dropped.
+- [x] `app/` → `src/app/` (routing-only). `@/app/...` → `@app/...`; `@app` alias → `./src/app/*`. **`proxy.ts` → `src/proxy.ts`** (Next 16 only registers the edge proxy from `src/` once app is under src/ — verified in build output; otherwise auth gate silently dropped).
 
 ### Phase F — Final cleanup _(1 commit)_ — PR (final)
-- [x] **Partial (2026-06-08):** Removed dead tsconfig aliases (`@redux`, `@lib`, `@hooks`, `@interfaces`, `@contexts` — all confirmed 0 usage). `app/src/` empty dir removed. `@components` kept (still needed by `Client.tsx` + `app/layout.tsx` — Phase E).
-- [ ] Delete `utils/` (2 shim files) after axios-cleanup follow-up clears the 37 importers.
-- [ ] Remove `@components` alias after Phase E updates `Client.tsx` and `app/layout.tsx`.
-- [ ] Confirm CLAUDE.md §3/§4/D10 still match reality.
+- [x] Removed dead tsconfig aliases (`@redux`, `@lib`, `@hooks`, `@interfaces`, `@contexts`, `@components` — all 0 usage). `app/src/` empty dir removed.
+- [ ] Delete `utils/` (2 axios shim files, root) after axios-cleanup follow-up clears the 34 `@/utils/axios` importers. **Blocked by out-of-scope axios-cleanup.**
+- [ ] Move root `actions/` (4 `@/actions` importers) and `types/` (ambient `.d.ts`) into `src/`; then `@/*` could flip from `./*` to `./src/*`. **Coupled with the utils/ removal above** (all three are the last root-level `@/` targets).
+- [ ] Confirm CLAUDE.md §3/§4/D10 still match reality (update §1 routing row + §2 items now resolved).
 - [ ] **Delete this MIGRATION.md.**
 - [ ] `next build` + manual smoke test.
 
