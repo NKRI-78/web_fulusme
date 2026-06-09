@@ -17,7 +17,7 @@ import {
   FORM_PENERBIT_1_CACHE_KEY,
   FORM_PENERBIT_2_CACHE_KEY,
   FORM_PIC_CACHE_KEY,
-} from "@/app/(dashboard)/form-penerbit/form-cache-key";
+} from "@app/(dashboard)/form-penerbit/form-cache-key";
 import { removeAuthUser } from "@shared/lib/auth";
 import { fetchInboxThunk } from "@store/slices/inboxSlice";
 import { setBadge } from "@store/slices/badgeSlice";

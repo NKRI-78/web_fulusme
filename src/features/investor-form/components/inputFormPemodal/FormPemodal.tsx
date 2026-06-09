@@ -10,7 +10,7 @@ import { useSearchParams } from "next/navigation";
 import ComponentDataPribadi from "./informasiPribadi/DataPribadi";
 import ComponentDataPekerjaan from "./informasiPekerjaan/DataPekerjaan";
 import { IS_DEV, IS_PROD } from "@shared/lib/constant";
-import FileViewerModal from "@/app/(standalone)/viewer/components/FilePreviewModalV2";
+import FileViewerModal from "@app/(standalone)/viewer/components/FilePreviewModalV2";
 import { setCookie } from "@shared/lib/cookie";
 import { getUser, saveAuthUser, syncRole, SessionData } from "@shared/lib/auth";
 import Tooltip from "@shared/ui/Tooltip";

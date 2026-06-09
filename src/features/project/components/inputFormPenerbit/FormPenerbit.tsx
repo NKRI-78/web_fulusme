@@ -26,14 +26,14 @@ import {
   FormPenerbitSchema,
   FormPenerbitValues,
 } from "./formPenerbit.schema";
-import { ProfileUpdate } from "@/app/(dashboard)/form-penerbit/IProfileUpdate";
+import { ProfileUpdate } from "@app/(dashboard)/form-penerbit/IProfileUpdate";
 import {
   FORM_INDEX_CACHE_KEY,
   FORM_PENERBIT_1_CACHE_KEY,
   FORM_PENERBIT_2_CACHE_KEY,
   FORM_PIC_CACHE_KEY,
-} from "@/app/(dashboard)/form-penerbit/form-cache-key";
-import { UpdateFieldValue } from "@/app/(dashboard)/form-penerbit/PenerbitParent";
+} from "@app/(dashboard)/form-penerbit/form-cache-key";
+import { UpdateFieldValue } from "@app/(dashboard)/form-penerbit/PenerbitParent";
 import { IFormPublisher } from "./IFormPublisher";
 import FileInput from "./_component/FileInput";
 import Subtitle from "./_component/SectionSubtitle";

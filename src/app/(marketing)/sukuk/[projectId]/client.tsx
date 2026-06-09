@@ -11,7 +11,7 @@ import { Navigation, Thumbs } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import Cookies from "js-cookie";
-import Custom404 from "@/app/not-found";
+import Custom404 from "@app/not-found";
 import ProgressBar from "../components/ProgressBar";
 import { formatRupiah } from "@shared/lib/utils";
 import { getUser } from "@shared/lib/auth";

@@ -12,7 +12,7 @@ import TransactionSummary from "./components/TransactionSummary";
 import ConfirmButton from "./components/ConfirmButton";
 import ProjectCardSkeleton from "./components/ProjectCardSkeleton";
 import { Project } from "@shared/types/project/IProject";
-import Custom404 from "@/app/not-found";
+import Custom404 from "@app/not-found";
 import ProjectCardCheckout from "./components/ProjectCardDummy";
 import api from "@/utils/axios";
 

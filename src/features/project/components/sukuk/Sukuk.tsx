@@ -10,7 +10,7 @@ import { Navigation, Thumbs } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import { useParams } from "next/navigation";
-import Custom404 from "@/app/not-found";
+import Custom404 from "@app/not-found";
 import api from "@/utils/axios";
 
 type Project = {

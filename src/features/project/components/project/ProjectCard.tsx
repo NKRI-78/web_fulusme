@@ -1,4 +1,4 @@
-import ProgressBar from "@/app/(marketing)/sukuk/components/ProgressBar";
+import ProgressBar from "@app/(marketing)/sukuk/components/ProgressBar";
 import { Project } from "@shared/types/project/IProject";
 import { formatRupiah } from "@shared/lib/utils";
 import { useRouter } from "next/navigation";
