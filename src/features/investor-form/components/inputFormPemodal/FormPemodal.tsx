@@ -14,7 +14,7 @@ import FileViewerModal from "@app/(standalone)/viewer/components/FilePreviewModa
 import { setCookie } from "@shared/lib/cookie";
 import { getUser, saveAuthUser, syncRole, SessionData } from "@shared/lib/auth";
 import Tooltip from "@shared/ui/Tooltip";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 import axios from "axios";
 import { logger } from "@shared/lib/logger";
 

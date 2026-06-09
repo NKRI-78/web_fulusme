@@ -24,7 +24,7 @@ import { PhoneInput } from "./components/PhoneInput";
 import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PENERBIT_1_CACHE_KEY } from "./form-cache-key";
 import { uploadMediaService } from "@shared/lib/mediaService";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 import SectionPoint from "@features/project/components/inputFormPenerbit/_component/SectionPoint";
 
 export const alamatSchema = z.object({

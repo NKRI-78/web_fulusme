@@ -11,7 +11,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { useParams } from "next/navigation";
 import Custom404 from "@app/not-found";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 type Project = {
   id: string;

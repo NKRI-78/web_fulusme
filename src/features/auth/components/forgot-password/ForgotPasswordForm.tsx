@@ -1,6 +1,6 @@
 "use client";
 
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 import { logger } from "@shared/lib/logger";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";

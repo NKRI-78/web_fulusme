@@ -1,6 +1,6 @@
 import { TransactionResponse } from "@shared/types/transaction/transaction";
 import { API_BACKEND } from "@shared/lib/constant";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 export async function getTransactions(page: number = 1, limit: number = 5) {
   try {

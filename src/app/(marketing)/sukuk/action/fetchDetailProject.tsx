@@ -1,4 +1,4 @@
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 export async function fetchDetailProject(projectId: string) {
   try {

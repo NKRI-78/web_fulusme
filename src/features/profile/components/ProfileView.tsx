@@ -9,7 +9,7 @@ import ProfilePenerbitView from "./ProfilePenerbitView";
 import ProfilePemodalPribadi from "./ProfilePemodalPribadiView";
 import ProfilePemodalPerusahaan from "./ProfilePemodalPerusahaanView";
 import { SessionData } from "@shared/lib/auth";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 const ProfileView: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);

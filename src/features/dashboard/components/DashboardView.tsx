@@ -15,7 +15,7 @@ import Center from "@shared/ui/Center";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";
 import { InboxResponse } from "@features/inbox/types";
 import DashboardPemodalPerusahaan from "./pemodal/DashboardPemodalPerusahaan";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 export const DashboardView: React.FC = () => {
   const user = getUser();

@@ -24,7 +24,7 @@ import Modal from "@shared/ui/Modal";
 import { useSelector } from "react-redux";
 import { RootState } from "@store/store";
 import InputNominalLot from "../components/InputNominal";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 type Props = {
   projectId: string;

@@ -6,14 +6,17 @@
 > made — see the **Decisions Log** (§10). "It depends" is not an acceptable
 > answer in this document.
 
-> **STATUS (2026-06-09).** Phases 0–3 + the `src/` feature-based move (Phases
-> A–F of `MIGRATION.md`) and Phase E (route groups + provider shell) are
-> **done**. The §2 assessment below is the original audit; each item is now
-> tagged **[RESOLVED] / [PARTIAL] / [OPEN]**. Still open: `reactStrictMode`
-> flip, `any` burn-down (~121), service-less `Swal` in components (~100, allowed
-> per D7), 4 raw `<img>`, the 34 `@/utils/axios` shim importers (axios-cleanup
-> follow-up), the lingering `next-auth` dependency, and the `role-sync` trust
-> issue (§5/§9). `MIGRATION.md` tracks the remaining structural cleanup.
+> **STATUS (2026-06-09).** The full structural migration is **complete**: Phases
+> 0–3, the `src/` feature-based move, route groups + provider shell (Phase E),
+> and the final cleanup (axios shims removed — every call now goes through
+> `@shared/lib/api-client`; `utils/`/`actions/`/`types/` folded into `src/`;
+> `@/*` now points at `./src/*`). The whole app lives under `src/`. The
+> temporary `MIGRATION.md` tracker has been deleted; this charter is the single
+> source of truth. The §2 assessment below is the original audit; each item is
+> now tagged **[RESOLVED] / [PARTIAL] / [OPEN]**. Still open (quality/security,
+> not structure): `reactStrictMode` flip, `any` burn-down (~121), service-less
+> `Swal` in components (~100, allowed per D7), 4 raw `<img>`, the lingering
+> `next-auth` dependency, and the `role-sync` trust issue (§5/§9).
 
 ---
 
@@ -27,7 +30,7 @@
 | Language       | TypeScript 5, `strict: true`                                                                                                          | unchanged                                                                 |
 | Styling        | Tailwind CSS 3.4 + local Geist fonts                                                                                                  | Tailwind 3.x (4.x optional, separate effort)                              |
 | State mgmt     | Redux Toolkit 2.x in `src/store` (UI/client state); dead slices removed ✅                                                                          | RTK for genuine client/UI state only                                      |
-| Data fetching  | Single `shared/lib/api-client` ✅ + typed `features/*/services` ✅; Server-Component-first **[PARTIAL]** (many client fetches remain); 34 `@/utils/axios` shim importers **[OPEN]**                                              | Server Components + single `api-client`; React Query only where justified |
+| Data fetching  | Single `shared/lib/api-client` ✅ + typed `features/*/services` ✅; Server-Component-first **[PARTIAL]** (many client fetches remain)                                              | Server Components + single `api-client`; React Query only where justified |
 | Auth (current) | `httpOnly` `auth_token`/`auth_role` + client-readable `session` cookie ✅; `src/proxy.ts` reads httpOnly ✅; NextAuth route deleted (dep lingers) **[OPEN]**    | `httpOnly` cookies + `proxy.ts` Thin Proxy                                |
 | Backend        | Multiple external REST hosts (`api-staging-capbridge`, `api-sabi`, `api.gateway`, `api.wilayah.site`) — **no single source of truth** | One `NEXT_PUBLIC_API_BACKEND` base + typed service layer                  |
 | Routing        | `src/app/` with `(marketing)`/`(auth)`/`(dashboard)`/`(standalone)` route groups; one dashboard tree; chrome via group layouts ✅          | Consolidated under route groups                                           |
@@ -40,7 +43,7 @@ This is a build/runtime incompatibility and is treated as the #1 blocker below.
 
 ## 2. CURRENT STATE ASSESSMENT
 
-> **Resolution status (2026-06-09).** [RESOLVED] 1, 2, 4, 5, 6, 10, 12, 13 · [PARTIAL] 3, 7, 8, 9 · [OPEN] 11, 14, 15, 16. Partials: (3) `proxy.ts` reads httpOnly but `role-sync` still trusts a client-supplied role (§5/§9); (7) `api-client` unified yet `contentService` still hardcodes a host; (8) `utils`/`helper`/`interfaces` collapsed into `shared` + per-feature, but root `utils/` axios shims linger (34 importers); (9) services exist yet several views (ProfileView, forms) still fetch via raw axios and per-route dedup is incomplete. Open items are the §STATUS-banner follow-ups.
+> **Resolution status (2026-06-09).** [RESOLVED] 1, 2, 4, 5, 6, 8, 10, 12, 13 · [PARTIAL] 3, 7, 9 · [OPEN] 11, 14, 15, 16. Partials: (3) `proxy.ts` reads httpOnly but `role-sync` still trusts a client-supplied role (§5/§9); (7) `api-client` unified yet `contentService` still hardcodes a host; (9) services exist yet several views (ProfileView, forms) still fetch via raw axios and per-route dedup is incomplete. Open items are the §STATUS-banner follow-ups.
 
 ### 🔴 Critical (security / data integrity / breaks on Next 16)
 
@@ -129,10 +132,9 @@ is grouped by feature; only genuinely cross-feature code lives in `shared/`. Thi
 supersedes the earlier layer-based sketch (`components/ui` + flat `services/` +
 `lib/` as top-level), which is rejected — do not reintroduce it.
 
-> **Execution status is tracked in `MIGRATION.md`** (a temporary, deletable
-> checklist). This section is the binding *target*; `MIGRATION.md` is only the
-> *how/when*. When the migration completes, `MIGRATION.md` is deleted and this
-> charter remains the single source of truth.
+> **The migration to this target is complete** (the temporary `MIGRATION.md`
+> tracker has been deleted). The tree below is the binding structure and now
+> matches reality; this charter is the single source of truth.
 
 ```
 web_fulusme/
@@ -442,7 +444,7 @@ feature, ≥2 → shared). _Guardrail:_ no runtime `features/A → features/B` i
 risk. _Alternative rejected:_ the layer-based layout in the original §3 — valid,
 but groups by mechanism rather than by the thing a developer actually navigates
 (a feature), and tends to scatter one change across `components/`, `services/`,
-`types/`. _Execution:_ tracked in `MIGRATION.md`; this supersedes the prior §3/§4.
+`types/`. _Execution:_ complete (tracker `MIGRATION.md` deleted); this supersedes the prior §3/§4.
 
 ---
 

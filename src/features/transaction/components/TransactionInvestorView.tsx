@@ -24,7 +24,7 @@ import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
 import { useRouter } from "next/navigation";
 import Tooltip from "@shared/ui/Tooltip";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 export default function TransactionInvestorView() {
   const router = useRouter();

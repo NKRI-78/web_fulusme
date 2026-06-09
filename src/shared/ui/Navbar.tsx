@@ -23,7 +23,7 @@ import { fetchInboxThunk } from "@store/slices/inboxSlice";
 import { setBadge } from "@store/slices/badgeSlice";
 import { getSocket } from "@shared/lib/sockets";
 import { useSession } from "@features/auth/providers/session-provider";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 const PRIMARY_COLOR = "#10565C";
 const ON_PRIMARY_COLOR = "#FFFFFF";

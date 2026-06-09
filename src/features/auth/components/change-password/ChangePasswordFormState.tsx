@@ -1,6 +1,6 @@
 "use client";
 
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 import axios from "axios";
 import { ArrowLeft, CheckCircle, Eye, EyeOff, XCircle } from "lucide-react";
 import Image from "next/image";

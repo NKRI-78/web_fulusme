@@ -8,7 +8,7 @@ import { setCookie } from "@shared/lib/cookie";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
 import { AuthResponse } from "@shared/types/auth/auth";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 import axios from "axios";
 
 const passwordRegex =

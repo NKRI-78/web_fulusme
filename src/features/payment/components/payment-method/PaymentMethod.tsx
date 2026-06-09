@@ -14,7 +14,7 @@ import ProjectCardSkeleton from "./components/ProjectCardSkeleton";
 import { Project } from "@shared/types/project/IProject";
 import Custom404 from "@app/not-found";
 import ProjectCardCheckout from "./components/ProjectCardDummy";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 const PaymentMethod = ({ id }: { id: string }) => {
   const [methods, setMethods] = useState<PaymentMethodType[]>([]);

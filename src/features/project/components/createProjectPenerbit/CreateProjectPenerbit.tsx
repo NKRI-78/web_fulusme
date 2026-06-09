@@ -30,7 +30,7 @@ import FormButton from "@shared/ui/FormButton";
 import MonthSelection from "@features/project/components/inputFormPenerbit/_component/MonthSelection";
 import GoogleMapPicker from "./GoogleMapsPicker";
 import FormAlamat from "./FormAlamat";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 const FORM_CACHE_KEY = "createProjectPenerbitCache";
 

@@ -1,7 +1,7 @@
 import axios, { AxiosProgressEvent } from "axios";
 import { compressImage } from "@shared/ui/CompressorImage";
 import { getUser } from "@shared/lib/auth";
-import api_media from "@/utils/axios_media";
+import { apiMedia as api_media } from "@shared/lib/api-client";
 
 export interface MediaServiceResponse<T extends object> {
   ok: boolean;

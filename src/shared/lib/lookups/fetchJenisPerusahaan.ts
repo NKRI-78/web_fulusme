@@ -1,4 +1,4 @@
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 export type TypeOption = { value: string; label: string };
 

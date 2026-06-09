@@ -274,7 +274,7 @@ const HomeV2: React.FC = () => {
               rel="noopener noreferrer"
             >
               <Image
-                src="/images/get-in-on-playstore.svg"
+                src="/images/playstore-logo.svg"
                 alt="Get it on Google Play"
                 width={145}
                 height={50}

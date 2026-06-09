@@ -17,7 +17,7 @@ import {
 } from "./form-cache-key";
 import Swal from "sweetalert2";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 export interface UpdateFieldValueManajemen {
   id: string;

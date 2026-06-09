@@ -17,7 +17,7 @@ import { motion } from "framer-motion";
 import CaraPembayaran from "./components/HowToPayment";
 import { onSocketReady } from "@shared/lib/sockets";
 import { logger } from "@shared/lib/logger";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 export interface PaymentMethod {
   id: number;

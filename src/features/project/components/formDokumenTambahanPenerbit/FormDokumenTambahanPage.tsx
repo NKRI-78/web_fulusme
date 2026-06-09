@@ -23,7 +23,7 @@ import {
 import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
 import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 
 const FORM_CACHE_KEY = "formDokumenPelengkapPenerbitCache";

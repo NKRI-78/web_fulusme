@@ -12,7 +12,7 @@ import Center from "@shared/ui/Center";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";
 import { SessionData } from "@shared/lib/auth";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 const Transaction = () => {
   // data hook

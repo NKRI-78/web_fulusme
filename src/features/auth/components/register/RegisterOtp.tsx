@@ -1,4 +1,4 @@
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 import { getCookie, setCookie } from "@shared/lib/cookie";
 import React, { useState } from "react";
 import Countdown from "react-countdown";

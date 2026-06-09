@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getUser } from "@shared/lib/auth";
 import { uploadMediaService } from "@shared/lib/mediaService";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 interface FormData {
   signature: string;

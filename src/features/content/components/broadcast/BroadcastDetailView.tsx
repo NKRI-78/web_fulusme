@@ -9,7 +9,7 @@ import moment from "moment";
 import "moment/locale/id";
 import { useParams } from "next/navigation";
 import DOMPurify from "dompurify";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 const BroadcastDetailView = () => {
   const params = useParams();

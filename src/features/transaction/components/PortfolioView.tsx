@@ -13,7 +13,7 @@ import Center from "@shared/ui/Center";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";
 import { FolderOpen } from "lucide-react";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 const PortfolioView: React.FC = () => {
   const [loading, setLoading] = useState(true);

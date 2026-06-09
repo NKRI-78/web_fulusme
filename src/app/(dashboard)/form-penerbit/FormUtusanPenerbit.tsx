@@ -15,7 +15,8 @@ import { FORM_PIC_CACHE_KEY } from "./form-cache-key";
 import { UpdateFieldValue } from "./PenerbitParent";
 import { syncRole } from "@shared/lib/auth";
 import { uploadMediaService } from "@shared/lib/mediaService";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
+import { logger } from "@shared/lib/logger";
 
 interface FormSchema {
   photo: string;
@@ -87,8 +88,10 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
   //* inject fullname to field
   // mendapatkan data user untuk didambil value fullname-nya kemudian di-inject kedalam localstorage
   useEffect(() => {
+    logger.info("useEffect hasProfile?", profile != null);
     if (profile) {
       const fullnameFromRemote = profile.fullname;
+      logger.info("fullnameFromRemote", fullnameFromRemote);
 
       // jika update data maka set semua nilai
       if (isUpdate) {

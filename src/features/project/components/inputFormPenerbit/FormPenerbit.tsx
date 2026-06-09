@@ -38,7 +38,7 @@ import { IFormPublisher } from "./IFormPublisher";
 import FileInput from "./_component/FileInput";
 import Subtitle from "./_component/SectionSubtitle";
 import { uploadMediaService } from "@shared/lib/mediaService";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 type Props = {
   profile: ProfileUpdate | null;

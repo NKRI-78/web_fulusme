@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { setCookie } from "@shared/lib/cookie";
 import { getUser, saveAuthUser, syncRole } from "@shared/lib/auth";
 import Tooltip from "@shared/ui/Tooltip";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 import axios from "axios";
 
 const FormDataPemodalPerusahaan: React.FC = () => {

@@ -15,7 +15,7 @@ import UpdateRing from "../inputFormPemodal/component/UpdateRing";
 import { SessionData } from "@shared/lib/auth";
 import { uploadMediaService } from "@shared/lib/mediaService";
 import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 interface FormSchema {
   photo: string;

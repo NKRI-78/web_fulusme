@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import BroadcastCard from "./BroadcastCard";
 import { useRouter } from "next/navigation";
 import { Inbox } from "lucide-react";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 const BroadcastView = () => {
   const router = useRouter();

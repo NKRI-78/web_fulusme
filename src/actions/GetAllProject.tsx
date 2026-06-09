@@ -1,7 +1,7 @@
 "use client";
 
 import { ProjectResponse } from "@shared/types/project/IProject";
-import api from "@/utils/axios";
+import { api } from "@shared/lib/api-client";
 
 export async function getAllProject() {
   try {
