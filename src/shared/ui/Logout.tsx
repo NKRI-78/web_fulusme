@@ -2,14 +2,11 @@
 
 import React from "react";
 
-import Cookies from "js-cookie";
-
-import { useRouter } from "next/navigation";
-
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@store/store";
 
 import { setShowLogoutModal } from "@store/slices/modalSlice";
+import { removeAuthUser } from "@shared/lib/auth";
 
 const ModalLogout: React.FC = () => {
 
@@ -17,15 +14,19 @@ const ModalLogout: React.FC = () => {
 
     const showLogoutModal = useSelector((state: RootState) => state.modal.showLogoutModal);
 
-    const router = useRouter();
-
     const handleLogout = async () => {
-      Cookies.remove("token");
-      Cookies.remove("user_id");
-      
-      router.push("/auth/login"); 
+      dispatch(setShowLogoutModal(false));
 
-      dispatch(setShowLogoutModal(false))
+      // Clear auth cookies (httpOnly + session) then hard-reload so the server
+      // re-renders logged-out and stale client state is torn down. Same flow as
+      // the auto-logout path in SessionTimeoutProvider.
+      try {
+        await removeAuthUser();
+      } catch {
+        // force the user out even if the logout call fails
+      }
+
+      window.location.href = "/auth/login";
     };
  
     return (   

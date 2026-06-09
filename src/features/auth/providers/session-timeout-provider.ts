@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { logger } from "@shared/lib/logger";
 import { removeAuthUser } from "@shared/lib/auth";
@@ -35,8 +34,6 @@ export default function SessionTimeoutProvider({
   isAuthenticated: boolean;
   children: React.ReactNode;
 }) {
-  const router = useRouter();
-
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const warningRef = useRef<NodeJS.Timeout | null>(null);
   const expiredRef = useRef(false);
@@ -68,12 +65,20 @@ export default function SessionTimeoutProvider({
     logger.info("SESSION EXPIRED");
 
     clearTimers();
-
-    router.push("/auth/login");
-    router.refresh();
-
-    await removeAuthUser();
     clearSessionExpiry();
+
+    // Clear auth cookies BEFORE navigating, then do a hard reload. A full
+    // document load re-renders the server tree with cleared cookies so the
+    // session context resets (navbar reverts to logged-out) and every stale
+    // client timer/socket/thunk is torn down — avoids the post-logout
+    // "refresh token expired" error from lingering authed fetches.
+    try {
+      await removeAuthUser();
+    } catch {
+      // even if the logout call fails, force the user out
+    }
+
+    window.location.href = "/auth/login";
   };
 
   const resetTimer = (source = "activity") => {

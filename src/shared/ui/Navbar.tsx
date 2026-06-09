@@ -80,9 +80,14 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     if (session) {
-      api.get(`/api/v1/profile`).then((res) => {
-        setProfile(res.data.data);
-      });
+      api
+        .get(`/api/v1/profile`)
+        .then((res) => {
+          setProfile(res.data.data);
+        })
+        .catch(() => {
+          // session may have just been revoked (logout in flight) — ignore
+        });
     }
   }, [session]);
 
