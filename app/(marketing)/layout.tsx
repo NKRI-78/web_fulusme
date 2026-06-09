@@ -1,5 +1,5 @@
-import Navbar from "@components/navbar/Navbar";
-import FooterV2 from "@components/footer/FooterV2";
+import Navbar from "@shared/ui/Navbar";
+import FooterV2 from "@shared/ui/FooterV2";
 
 /** Public marketing chrome: navbar + footer. */
 export default function MarketingLayout({

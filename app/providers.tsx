@@ -8,7 +8,7 @@ import SessionTimeoutProvider from "@features/auth/providers/session-timeout-pro
 import { SessionProvider } from "@features/auth/providers/session-provider";
 import { FileViewerProvider } from "@shared/hooks/useFileViewerModal";
 import { SessionData } from "@shared/lib/auth";
-import ModalLogout from "@components/modal/logout/Logout";
+import ModalLogout from "@shared/ui/Logout";
 
 /**
  * Thin client provider shell. Owns ONLY cross-cutting providers (Redux, session,

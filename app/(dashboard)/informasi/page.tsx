@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import BroadcastView from "@/app/features/broadcast/BroadcastView";
+import BroadcastView from "@features/content/components/broadcast/BroadcastView";
 
 export const metadata: Metadata = {
   title: "Informasi | FuLusme",

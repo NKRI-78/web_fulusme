@@ -37,9 +37,6 @@
       ],
       "@app/*": [
         "./app/*"
-      ],
-      "@components/*": [
-        "./app/components/*"
       ]
     }
   },

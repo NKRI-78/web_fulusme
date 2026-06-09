@@ -1,4 +1,4 @@
-import Navbar from "@components/navbar/Navbar";
+import Navbar from "@shared/ui/Navbar";
 
 /** Authenticated app chrome: navbar only, no footer. */
 export default function DashboardGroupLayout({

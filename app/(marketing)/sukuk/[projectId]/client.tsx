@@ -17,7 +17,7 @@ import { formatRupiah } from "@shared/lib/utils";
 import { getUser } from "@shared/lib/auth";
 import { Project } from "@shared/types/project/IProject";
 import GeneralDialog from "@shared/ui/GeneralDialog";
-import ShareDialog from "@/app/components/ShareDialog";
+import ShareDialog from "@shared/ui/ShareDialog";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import { useRouter } from "next/navigation";
 import Modal from "@shared/ui/Modal";
