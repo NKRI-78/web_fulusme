@@ -1,6 +1,6 @@
 import axios, { AxiosProgressEvent } from "axios";
 import { compressImage } from "@shared/ui/CompressorImage";
-import { getUser } from "@shared/lib/auth";
+import { getToken } from "@shared/lib/tokenCache";
 import { apiMedia as api_media } from "@shared/lib/api-client";
 
 export interface MediaServiceResponse<T extends object> {
@@ -30,7 +30,7 @@ export async function uploadMediaService(
   formData.append("subfolder", "fulusme");
   formData.append("media", compressedFile);
 
-  if (!getUser()) {
+  if (!(await getToken())) {
     return { ok: false, message: "Unauthorized", error_code: "unauthorized" };
   }
 
@@ -62,7 +62,7 @@ export async function uploadMediaService(
 export async function getMediaService(
   mediaId: string,
 ): Promise<MediaServiceResponse<GetMediaData>> {
-  if (!getUser()) {
+  if (!(await getToken())) {
     return { ok: false, message: "Unauthorized", error_code: "unauthorized" };
   }
 

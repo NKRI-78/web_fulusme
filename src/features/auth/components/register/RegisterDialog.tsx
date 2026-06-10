@@ -1,68 +1,36 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { setCookie } from "@shared/lib/cookie";
 import Swal from "sweetalert2";
 import { Eye, EyeOff } from "lucide-react";
-import { AuthResponse } from "@shared/types/auth/auth";
-import { api } from "@shared/lib/api-client";
-import axios from "axios";
+import { clearTokenCache } from "@shared/lib/tokenCache";
+import { RegisterSchema, registerSchema } from "../../schema/register.schema";
+import { useRouter } from "next/navigation";
 
-const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]\/+=~`]).{8,}$/;
-
-export const schema = z
-  .object({
-    name: z.string().min(2, "Nama wajib diisi"),
-
-    phone: z
-      .string({ required_error: "No. Tlp wajib diisi" })
-      .min(10, "No. Tlp minimal 10 digit")
-      .max(13, "No. Tlp maksimal 13 digit"),
-
-    email: z.string().email("Format email tidak valid"),
-
-    password: z
-      .string()
-      .min(8, "Password minimal 8 karakter")
-      .regex(/^\S+$/, "Password tidak boleh mengandung spasi")
-      .regex(
-        passwordRegex,
-        "Password harus mengandung huruf besar, huruf kecil, angka, dan karakter spesial",
-      ),
-
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Konfirmasi password tidak cocok",
-    path: ["confirmPassword"],
-  });
-
-type RegisterFormSchema = z.infer<typeof schema>;
-
-export default function RegisterForm({
+export default function RegisterDialog({
   onNext,
-  onClose,
 }: {
-  onNext?: () => void;
+  onNext?: (email: string) => void;
   onClose?: () => void;
 }) {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfrimPass] = useState(false);
+  const [isAgree, setIsAgree] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormSchema>({
-    resolver: zodResolver(schema),
+  } = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
     mode: "onChange",
   });
-  const [isChecked, setIsChecked] = useState(false);
-  const [showModal, setShowModal] = useState(false);
 
   const handleNumberInput = (e: React.FormEvent<HTMLInputElement>) => {
     e.currentTarget.value = e.currentTarget.value
@@ -70,7 +38,7 @@ export default function RegisterForm({
       .slice(0, 13);
   };
 
-  const onSubmit = async (data: RegisterFormSchema) => {
+  const onSubmit = async (data: RegisterSchema) => {
     setLoading(true);
 
     const payload = {
@@ -80,37 +48,40 @@ export default function RegisterForm({
       password: data.password,
     };
 
-    setLoading(true);
     try {
-      const response = await api.post(`/api/v1/auth/register`, payload);
+      // Tokens are set as httpOnly cookies by the Route Handler.
+      // The response body only contains non-sensitive session fields.
+      clearTokenCache(); // ensure stale cache is cleared before new session
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-      const result: AuthResponse = response.data;
+      const result = await res.json().catch(() => ({}));
 
-      setCookie("user", JSON.stringify(result.data));
-      onNext?.();
-    } catch (err: any) {
-      let errorMessage = "Terjadi kesalahan. Silakan coba lagi.";
-      if (axios.isAxiosError(err)) {
-        if (err.response) {
-          const msg =
-            err.response.data?.message || JSON.stringify(err.response.data);
-          if (msg === "USER_ALREADY_EXIST" || msg === "REGISTRATION_FAILED") {
-            errorMessage =
-              "Email sudah digunakan. Silakan masuk atau gunakan email lain.";
-          }
-        } else if (err.request) {
-          errorMessage = "Tidak ada respon dari server.";
-        } else {
-          errorMessage = err.message;
-        }
-      } else {
-        errorMessage = err.message || String(err);
+      if (!res.ok) {
+        const msg = result?.message;
+        const errorMessage =
+          msg === "USER_ALREADY_EXIST" || msg === "REGISTRATION_FAILED"
+            ? "Email sudah digunakan. Silakan masuk atau gunakan email lain."
+            : "Terjadi kesalahan. Silakan coba lagi.";
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: errorMessage,
+        });
+        return;
       }
 
+      router.refresh();
+
+      onNext?.(data.email);
+    } catch {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: errorMessage,
+        text: "Tidak ada respon dari server.",
       });
     } finally {
       setLoading(false);
@@ -187,17 +158,17 @@ export default function RegisterForm({
             <div className="relative">
               <input
                 {...register("password")}
-                type={showPassword ? "text" : "password"}
+                type={showPass ? "text" : "password"}
                 placeholder="Password"
                 className="w-full border border-gray-300 px-4 py-2 rounded"
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowPass(!showPass)}
                 className="absolute right-3 top-3 text-gray-500"
                 aria-label="Toggle password visibility"
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
               {errors.password ? (
                 <p className="text-red-500 text-xs mt-1">
@@ -215,17 +186,17 @@ export default function RegisterForm({
             <div className="relative">
               <input
                 {...register("confirmPassword")}
-                type={showPasswordConfirm ? "text" : "password"}
+                type={showConfirmPass ? "text" : "password"}
                 placeholder="Konfirmasi Password"
                 className="w-full border border-gray-300 px-4 py-2 rounded"
               />
               <button
                 type="button"
-                onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                onClick={() => setShowConfrimPass(!showConfirmPass)}
                 className="absolute right-3 top-3 text-gray-500"
                 aria-label="Toggle password visibility"
               >
-                {showPasswordConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showConfirmPass ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
               {errors.confirmPassword && (
                 <p className="text-red-500 text-xs mt-1">
@@ -238,8 +209,8 @@ export default function RegisterForm({
               <input
                 type="checkbox"
                 name="disclamer"
-                checked={isChecked}
-                onChange={(e) => setIsChecked(e.target.checked)}
+                checked={isAgree}
+                onChange={(e) => setIsAgree(e.target.checked)}
                 className="form-checkbox text-[#4821C2]"
               />
               <label>
@@ -259,9 +230,9 @@ export default function RegisterForm({
 
             <button
               type="submit"
-              disabled={!isChecked || loading}
+              disabled={!isAgree || loading}
               className={`w-full py-2 rounded ${
-                !isChecked || loading
+                !isAgree || loading
                   ? "bg-gray-400 cursor-not-allowed text-white"
                   : "bg-green-500 text-white"
               }`}

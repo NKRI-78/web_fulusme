@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 const SECURE = process.env.NODE_ENV === "production";
 
 const SESSION_OPTS = {
-  httpOnly: false,
+  httpOnly: true,
   secure: SECURE,
   sameSite: "lax" as const,
   path: "/",

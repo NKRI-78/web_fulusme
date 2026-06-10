@@ -25,7 +25,7 @@ import {
 import { formatRupiah } from "@shared/lib/format/formatRupiah";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import DetailPembayaran from "./components/DetailPembayaran";
 import { uploadMediaService } from "@shared/lib/mediaService";
 import { api } from "@shared/lib/api-client";
@@ -138,6 +138,7 @@ export default function PembayaranBCAWithDetail({
   accountOwner = "PT Fintek Andalan Solusi Teknologi",
   logoSrc = "/images/bank/bca-logo.png",
 }: Props) {
+  const session = useSession();
   /* ----------------- state umum ----------------- */
   const [copiedRek, setCopiedRek] = useState(false);
   const [copiedTotal, setCopiedTotal] = useState(false);
@@ -160,7 +161,7 @@ export default function PembayaranBCAWithDetail({
   useEffect(() => {
     (async () => {
       try {
-        if (!getUser()) {
+        if (!session) {
           setLoading(false);
           return;
         }
@@ -247,7 +248,7 @@ export default function PembayaranBCAWithDetail({
   /* ----------------- submit ----------------- */
   const onSubmit = async ({ proof }: FormValues) => {
     try {
-      if (!getUser()) return;
+      if (!session) return;
 
       // 1) upload media
       const uploadMediaResult = await uploadMediaService(file);

@@ -1,25 +1,22 @@
 "use client";
 
 import { User } from "@shared/types/user/IUser";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import ProfilePenerbitView from "./ProfilePenerbitView";
 import ProfilePemodalPribadi from "./ProfilePemodalPribadiView";
 import ProfilePemodalPerusahaan from "./ProfilePemodalPerusahaanView";
-import { SessionData } from "@shared/lib/auth";
 import { api } from "@shared/lib/api-client";
 
 const ProfileView: React.FC = () => {
+  const userSession = useSession();
   const [loading, setLoading] = useState<boolean>(true);
   const [profile, setProfile] = useState<User | null>(null);
-  const [userSession, setUserSession] = useState<SessionData | null>(null);
 
   useEffect(() => {
-    const session = getUser();
-    if (session) {
-      setUserSession(session);
+    if (userSession) {
       const fetchProfile = async () => {
         try {
           const res = await api.get(`/api/v1/profile`);

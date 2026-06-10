@@ -8,9 +8,9 @@ import { AppDispatch, RootState } from "@store/store";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import Modal from "@shared/ui/Modal";
-import RegisterV2 from "@features/auth/components/register/RegisterV2";
-import RegisterOtp from "@features/auth/components/register/RegisterOtp";
-import RegisterSelectRole from "@features/auth/components/register/RegisterSelectRole";
+import RegisterModal from "@/features/auth/components/register/RegisterDialog";
+import RegisterOtpDialog from "@features/auth/components/register/RegisterOtpDialog";
+import RegisterRoleDialog from "@/features/auth/components/register/RegisterRoleDialog";
 import { User } from "@shared/types/user/IUser";
 import {
   FORM_INDEX_CACHE_KEY,
@@ -44,6 +44,7 @@ const Navbar: React.FC = () => {
   const [step, setStep] = useState<
     "register" | "otp" | "role" | "login" | null
   >(null);
+  const [registerEmail, setRegisterEmail] = useState("");
   const [profile, setProfile] = useState<User | null>(null);
 
   const closeModal = () => setStep(null);
@@ -552,13 +553,23 @@ const Navbar: React.FC = () => {
       </Nav>
 
       <Modal isOpen={step === "register"} onClose={closeModal}>
-        <RegisterV2 onNext={() => setStep("otp")} onClose={closeModal} />
+        <RegisterModal
+          onNext={(email) => {
+            setRegisterEmail(email);
+            setStep("otp");
+          }}
+          onClose={closeModal}
+        />
       </Modal>
       <Modal isOpen={step === "otp"} onClose={closeModal}>
-        <RegisterOtp onNext={() => setStep("role")} onClose={closeModal} />
+        <RegisterOtpDialog
+          email={registerEmail || session?.email || ""}
+          onNext={() => setStep("role")}
+          onClose={closeModal}
+        />
       </Modal>
       <Modal isOpen={step === "role"} onClose={closeModal}>
-        <RegisterSelectRole onClose={closeModal} />
+        <RegisterRoleDialog onClose={closeModal} />
       </Modal>
     </>
   );

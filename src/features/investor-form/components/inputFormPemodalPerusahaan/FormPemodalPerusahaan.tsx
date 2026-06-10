@@ -8,11 +8,9 @@ import ContainerSelfie from "./component/ContainerSelfie";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import { setCookie } from "@shared/lib/cookie";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import { useSearchParams } from "next/navigation";
 import UpdateRing from "../inputFormPemodal/component/UpdateRing";
-import { SessionData } from "@shared/lib/auth";
 import { uploadMediaService } from "@shared/lib/mediaService";
 import FileInput from "@features/project/components/inputFormPenerbit/_component/FileInput";
 import { api } from "@shared/lib/api-client";
@@ -60,7 +58,7 @@ const FormPemodalPerusahaan: React.FC = () => {
 
   const [errors, setErrors] = useState<ErrorSchema>({});
   const [profile, setProfile] = useState<any>(null);
-  const [user, setUser] = useState<SessionData | null>(null);
+  const user = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const isUpdate = searchParams.get("update") === "true";
@@ -98,10 +96,7 @@ const FormPemodalPerusahaan: React.FC = () => {
   //* load profile
 
   useEffect(() => {
-    const userCookie = getUser();
-    if (!userCookie) return;
-
-    setUser(userCookie);
+    if (!user) return;
 
     const fetchProfile = async () => {
       try {
@@ -157,7 +152,7 @@ const FormPemodalPerusahaan: React.FC = () => {
     if (isValid) {
       setLoading(true);
       try {
-        const userData = getUser();
+        const userData = user;
 
         if (userData) {
           const urlPhotoSelfie = await uploadFotoSelfie(formFields.photo);
@@ -174,14 +169,6 @@ const FormPemodalPerusahaan: React.FC = () => {
           };
 
           await api.post(`/api/v1/auth/register-as-emiten`, payload);
-
-          setCookie(
-            "user",
-            JSON.stringify({
-              ...userData,
-              role: "investor institusi",
-            }),
-          );
 
           await Swal.fire({
             icon: "success",
@@ -245,7 +232,7 @@ const FormPemodalPerusahaan: React.FC = () => {
 
       if (swalResult.isConfirmed) {
         try {
-          const userData = getUser();
+          const userData = user;
 
           if (!userData) return;
 
@@ -264,14 +251,6 @@ const FormPemodalPerusahaan: React.FC = () => {
           };
 
           await api.put(`/api/v1/document/update/${dataType}`, payload);
-
-          setCookie(
-            "user",
-            JSON.stringify({
-              ...userData,
-              role: "investor institusi",
-            }),
-          );
 
           await Swal.fire({
             icon: "success",

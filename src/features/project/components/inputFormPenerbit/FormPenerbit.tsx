@@ -18,7 +18,9 @@ import AddButton from "./_component/AddButton";
 import FormButton from "@shared/ui/FormButton";
 import UpdateRing from "./_component/UpdateRing";
 
-import { getUser, saveAuthUser } from "@shared/lib/auth";
+import { saveAuthUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
+import { useRouter } from "next/navigation";
 
 import {
   MAX_DIREKTUR,
@@ -92,6 +94,8 @@ const FormPenerbit: React.FC<Props> = ({
   onSubmidCallback,
   onUpdateCallback,
 }) => {
+  const session = useSession();
+  const router = useRouter();
   const [isReady, setIsReady] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -201,7 +205,7 @@ const FormPenerbit: React.FC<Props> = ({
     setLoading(true);
     try {
       const draft = localStorage.getItem(FORM_PENERBIT_1_CACHE_KEY);
-      const userData = getUser();
+      const userData = session;
 
       if (!draft || !userData) return;
 
@@ -294,9 +298,9 @@ const FormPenerbit: React.FC<Props> = ({
         showConfirmButton: false,
       });
 
-      const user = getUser();
-      if (user) {
+      if (session) {
         await saveAuthUser({ fulfilled_registration: true });
+        router.refresh();
       }
 
       onSubmidCallback();

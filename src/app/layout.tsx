@@ -1,5 +1,4 @@
 import "./globals.css";
-import "reactjs-tiptap-editor/style.css";
 
 import Providers from "./providers";
 import { Metadata } from "next";

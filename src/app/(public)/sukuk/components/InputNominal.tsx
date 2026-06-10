@@ -1,6 +1,6 @@
 "use client";
 
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import { RootState } from "@store/store";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -32,7 +32,7 @@ export default function InputNominalLot({
     (state: RootState) => state.dashboard,
   );
 
-  const user = getUser();
+  const user = useSession();
 
   // ✅ cek status user
   const rekEfek = dashboardData?.rek_efek === true;

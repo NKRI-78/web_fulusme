@@ -8,8 +8,8 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import FileViewer from "@app/(standalone)/viewer/components/FilePreviewModalV2";
 import { useSearchParams } from "next/navigation";
-import { setCookie } from "@shared/lib/cookie";
-import { getUser, saveAuthUser, syncRole } from "@shared/lib/auth";
+import { saveAuthUser, syncRole } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import Tooltip from "@shared/ui/Tooltip";
 import { api } from "@shared/lib/api-client";
 import axios from "axios";
@@ -69,6 +69,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
   });
 
   const router = useRouter();
+  const user = useSession();
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewFileUrl, setPreviewFileUrl] = useState<string | undefined>(
@@ -129,7 +130,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
   useEffect(() => {
     if (!isUpdate) return;
 
-    if (!getUser()) return;
+    if (!user) return;
 
     const fetchProfile = async () => {
       try {
@@ -506,10 +507,9 @@ const FormDataPemodalPerusahaan: React.FC = () => {
       localStorage.removeItem("formPemodalPerusahaan");
       Cookies.remove("formPemodalPerusahaan");
 
-      const userData = getUser();
-
       await syncRole("investor institusi");
       await saveAuthUser({ fulfilled_registration: true });
+      router.refresh();
 
       router.push("/dashboard");
     } catch (error) {
@@ -592,7 +592,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
       if (swalResult.isConfirmed) {
         try {
           setLoading(true);
-          const userData = getUser();
+          const userData = user;
 
           if (!userData) return;
 
@@ -609,14 +609,6 @@ const FormDataPemodalPerusahaan: React.FC = () => {
           };
 
           await api.put(`/api/v1/document/update/${dataType}`, payload);
-
-          setCookie(
-            "user",
-            JSON.stringify({
-              ...userData,
-              role: "investor institusi",
-            }),
-          );
 
           await Swal.fire({
             icon: "success",

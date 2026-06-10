@@ -3,8 +3,8 @@ import { UserRound, UserRoundCheck } from "lucide-react";
 import { PanelContainer } from "@shared/ui/PanelContainer";
 import { PanelContent } from "./PanelContent";
 import Modal from "@shared/ui/Modal";
-import RegisterSelectRole from "@features/auth/components/register/RegisterSelectRole";
-import RegisterOtp from "@features/auth/components/register/RegisterOtp";
+import RegisterRoleDialog from "@/features/auth/components/register/RegisterRoleDialog";
+import RegisterOtpDialog from "@features/auth/components/register/RegisterOtpDialog";
 import { SessionData } from "@shared/lib/auth";
 
 const DashboardUser: React.FC<{
@@ -56,9 +56,13 @@ const DashboardUser: React.FC<{
       </PanelContainer>
 
       <Modal isOpen={showOtpModal} onClose={handleClose}>
-        {step === "role" && <RegisterSelectRole onClose={handleClose} />}
+        {step === "role" && <RegisterRoleDialog onClose={handleClose} />}
         {step === "otp" && (
-          <RegisterOtp onNext={() => setStep("role")} onClose={handleClose} />
+          <RegisterOtpDialog
+            email={user?.email ?? ""}
+            onNext={() => setStep("role")}
+            onClose={handleClose}
+          />
         )}
       </Modal>
     </>

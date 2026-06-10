@@ -14,14 +14,12 @@ import {
 import { getTransactions } from "@/actions/fetchTransaction";
 import { TransactionItem } from "@shared/types/transaction/transaction";
 import Pagination from "@shared/ui/pagination";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import GeneralDialog from "@shared/ui/GeneralDialog";
 import Swal from "sweetalert2";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";
 import Center from "@shared/ui/Center";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
-import "tippy.js/dist/tippy.css";
-import "tippy.js/animations/shift-away.css";
 import { useRouter } from "next/navigation";
 import Tooltip from "@shared/ui/Tooltip";
 import { api } from "@shared/lib/api-client";
@@ -53,12 +51,7 @@ export default function TransactionInvestorView() {
 
   const totalPages = Math.ceil(totalItems / limit);
 
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    const u = getUser();
-    setUser(u);
-  }, []);
+  const user = useSession();
 
   const fetchData = async (p: number) => {
     try {

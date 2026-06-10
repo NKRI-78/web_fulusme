@@ -1,8 +1,8 @@
 import Navbar from "@shared/ui/Navbar";
 import FooterV2 from "@shared/ui/FooterV2";
 
-/** Public marketing chrome: navbar + footer. */
-export default function MarketingLayout({
+/** Public chrome: navbar + footer. */
+export default function PublicLayout({
   children,
 }: {
   children: React.ReactNode;

@@ -5,10 +5,9 @@ import InboxModalDialog from "./InboxModalDialog";
 import { InboxResponse } from "../types";
 import InboxEmpty from "./InboxEmpty";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setBadge } from "@store/slices/badgeSlice";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import InboxCard from "./InboxCard";
 import { AppDispatch, RootState } from "@store/store";
 import { fetchInboxThunk, updateInboxes } from "@store/slices/inboxSlice";
@@ -26,7 +25,7 @@ const Inbox = () => {
     loading,
     error,
   } = useSelector((state: RootState) => state.inbox);
-  const user = getUser();
+  const user = useSession();
 
   async function fetchInbox() {
     await dispatch(fetchInboxThunk());
@@ -58,25 +57,7 @@ const Inbox = () => {
 
   const router = useRouter();
 
-  const roleCookie = Cookies.get("role");
-  const userRoleCookie = Cookies.get("user");
-  let role = null;
-
-  if (roleCookie) {
-    try {
-      const parsed = JSON.parse(roleCookie);
-      role = parsed.role;
-    } catch {}
-  }
-
-  let roleUser = null;
-
-  if (userRoleCookie) {
-    try {
-      const parsed = JSON.parse(userRoleCookie);
-      roleUser = parsed.role;
-    } catch {}
-  }
+  const roleUser = user?.role ?? null;
 
   // update formKey liat: "app\(defaults)\form-penerbit\UpdateProfileInterface.ts" untuk detail key nya
   // admin mengirim key melalui field_4 yang nanti dicocokan dengan formKey

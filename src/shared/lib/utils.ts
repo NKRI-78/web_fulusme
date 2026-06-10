@@ -1,23 +1,6 @@
-import Cookies from "js-cookie";
 import DOMPurify from "dompurify";
 
 import moment from "moment";
-
-export const getUserId = (): string | undefined => {
-  return Cookies.get("user_id");
-};
-
-export const getUserName = (): string | undefined => {
-  return Cookies.get("username");
-};
-
-export const getUserEmail = (): string | undefined => {
-  return Cookies.get("email");
-};
-
-export const getToken = (): string | undefined => {
-  return Cookies.get("token");
-};
 
 export const handleDescriptionTruncate = (
   description: string,

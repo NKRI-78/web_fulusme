@@ -1,32 +1,21 @@
 import { api } from "@shared/lib/api-client";
-import { getCookie, setCookie } from "@shared/lib/cookie";
+import { clearTokenCache } from "@shared/lib/tokenCache";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Countdown from "react-countdown";
 import OTPInput from "react-otp-input";
 import Swal from "sweetalert2";
 
-type AuthResponse = {
-  data: any; // sesuaikan dengan shape data Anda
-  message?: string;
-  status?: string;
-};
-
-export default function RegisterOtp({
+export default function RegisterOtpDialog({
+  email,
   onNext,
   onClose,
 }: {
+  email: string;
   onNext?: () => void;
   onClose?: () => void;
 }) {
-  // Ambil user dari cookie (sesuaikan sumbernya jika perlu)
-  const cookie = getCookie("user");
-  const decoded = decodeURIComponent(cookie ?? "");
-  let user: any = {};
-  try {
-    user = JSON.parse(decoded || "{}");
-  } catch {
-    user = {};
-  }
+  const router = useRouter();
 
   const [isDisableResendOTP, setIsDisableResendOTP] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -37,9 +26,9 @@ export default function RegisterOtp({
   const handleResendOTP = async () => {
     try {
       setIsDisableResendOTP(true);
-      setExpiry(Date.now() + 60_000); // mulai countdown 60 detik
-
-      await api.post(`/api/v1/resend-otp`, { val: user?.email });
+      setExpiry(Date.now() + 60_000);
+      await api.post(`/api/v1/resend-otp`, { val: email });
+      router.refresh();
     } catch (err: any) {
       // Jika gagal, kembalikan state supaya user bisa coba lagi
       setIsDisableResendOTP(false);
@@ -57,16 +46,35 @@ export default function RegisterOtp({
     event.preventDefault();
     try {
       setLoading(true);
-      const response = await api.post(`/api/v1/verify-otp`, {
-        val: user?.email,
-        otp,
+      // Verification goes through the Route Handler so the refreshed
+      // tokens/session land in httpOnly cookies — never readable by JS.
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ val: email, otp }),
       });
 
-      const result: AuthResponse = response.data;
-      setCookie("user", JSON.stringify(result.data));
-      // localStorage.setItem("user", JSON.stringify(result.data));
+      const result = await res.json().catch(() => ({}));
 
-      setLoading(false);
+      if (!res.ok) {
+        const msg = result?.message ?? "Terjadi kesalahan";
+
+        if (msg === "USER_OR_OTP_IS_INVALID") {
+          setOtpErrorMessage("OTP tidak sesuai");
+        } else {
+          setOtpErrorMessage(msg);
+          Swal.fire({
+            title: "Permintaan Gagal!",
+            text: msg,
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+        }
+        return;
+      }
+
+      clearTokenCache(); // tokens were rotated — drop the stale cached one
+
       Swal.fire({
         title: "Berhasil",
         text: `Akun anda berhasil di verifikasi`,
@@ -75,21 +83,17 @@ export default function RegisterOtp({
       });
       setOtpErrorMessage("");
       onNext?.();
-    } catch (err: any) {
-      setLoading(false);
-      const msg = err?.response?.data?.message ?? "Terjadi kesalahan";
+    } catch {
+      const msg = "Tidak ada respon dari server.";
       setOtpErrorMessage(msg);
-
-      if (msg === "USER_OR_OTP_IS_INVALID") {
-        setOtpErrorMessage("OTP tidak sesuai");
-      } else {
-        Swal.fire({
-          title: "Permintaan Gagal!",
-          text: msg,
-          icon: "error",
-          confirmButtonText: "Ok",
-        });
-      }
+      Swal.fire({
+        title: "Permintaan Gagal!",
+        text: msg,
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,7 +125,7 @@ export default function RegisterOtp({
           Masukan Kode OTP, untuk Melanjutkan
         </div>
         <p className="text-sm mb-6">
-          Masukkan OTP yang dikirimkan melalui email {user?.email ?? "-"} untuk
+          Masukkan OTP yang dikirimkan melalui email {email || "-"} untuk
           memverifikasi akun
         </p>
 

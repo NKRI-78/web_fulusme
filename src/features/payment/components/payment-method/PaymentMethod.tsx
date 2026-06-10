@@ -6,7 +6,7 @@ import { getToken } from "@shared/lib/tokenCache";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { API_PG } from "@shared/lib/constant";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import { PaymentMethodType } from "./components/types";
 import TransactionSummary from "./components/TransactionSummary";
 import ConfirmButton from "./components/ConfirmButton";
@@ -17,6 +17,7 @@ import ProjectCardCheckout from "./components/ProjectCardDummy";
 import { api } from "@shared/lib/api-client";
 
 const PaymentMethod = ({ id }: { id: string }) => {
+  const session = useSession();
   const [methods, setMethods] = useState<PaymentMethodType[]>([]);
   const [selectedMethod, setSelectedMethod] =
     useState<PaymentMethodType | null>(null);
@@ -42,7 +43,7 @@ const PaymentMethod = ({ id }: { id: string }) => {
   const baseAmount = amount;
 
   useEffect(() => {
-    if (!getUser()) return;
+    if (!session) return;
     setLoading(true);
     (async () => {
       const token = await getToken();
@@ -90,8 +91,7 @@ const PaymentMethod = ({ id }: { id: string }) => {
         lot: totalLot,
       };
 
-      const userData = getUser();
-      if (userData) {
+      if (session) {
         const result = await api.post(`/api/v1/project/payment`, payload);
         router.replace(`/waiting-payment?orderId=${result.data.data.id}`);
       }

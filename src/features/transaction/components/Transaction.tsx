@@ -6,18 +6,17 @@ import { InboxResponse } from "@features/inbox/types";
 import EmptyTransaction from "@features/inbox/components/InboxEmpty";
 import InboxCard from "@features/inbox/components/InboxCard";
 import Swal from "sweetalert2";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import TransactionInvestorPage from "./TransactionInvestorView";
 import Center from "@shared/ui/Center";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";
-import { SessionData } from "@shared/lib/auth";
 import { api } from "@shared/lib/api-client";
 
 const Transaction = () => {
   // data hook
   const [transactions, setTransactions] = useState<InboxResponse[]>([]);
-  const [user, setUser] = useState<SessionData | null>(null);
+  const user = useSession();
 
   // state hook
   const [loading, setLoading] = useState<boolean>(true);
@@ -34,7 +33,7 @@ const Transaction = () => {
   const fetchTransaction = async () => {
     setLoading(true);
     try {
-      if (getUser()) {
+      if (user) {
         const res = await api.get(`/api/v1/inbox/list`);
         if (!res.data["data"]) {
           setTransactions([]);
@@ -90,11 +89,6 @@ const Transaction = () => {
       });
     }
   };
-
-  useEffect(() => {
-    const u = getUser();
-    if (u) setUser(u);
-  }, []);
 
   return user?.role == "investor" ? (
     <TransactionInvestorPage />

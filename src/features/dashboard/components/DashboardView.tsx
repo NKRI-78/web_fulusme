@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import Swal from "sweetalert2";
 import DashboardPemodal from "./pemodal/DashboardPemodal";
 import DashboardUser from "./DashboardUser";
@@ -18,7 +18,7 @@ import DashboardPemodalPerusahaan from "./pemodal/DashboardPemodalPerusahaan";
 import { api } from "@shared/lib/api-client";
 
 export const DashboardView: React.FC = () => {
-  const user = getUser();
+  const user = useSession();
 
   const [loading, setLoading] = useState(true);
 

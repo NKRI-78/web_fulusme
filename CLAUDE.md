@@ -22,18 +22,18 @@
 
 ## 1. PROJECT OVERVIEW
 
-| Concern        | Current                                                                                                                               | Target                                                                    |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Framework      | Next.js **16.1.6** (App Router)                                                                                                       | Next.js 16.x (App Router)                                                 |
-| React          | **19.1.0** ✅ (upgraded)                                                                                                                   | **19.x** (required by Next 16)                                            |
-| Bundler        | Turbopack (Next 16 default)                                                                                                           | Turbopack — keep, no custom webpack                                       |
-| Language       | TypeScript 5, `strict: true`                                                                                                          | unchanged                                                                 |
-| Styling        | Tailwind CSS 3.4 + local Geist fonts                                                                                                  | Tailwind 3.x (4.x optional, separate effort)                              |
-| State mgmt     | Redux Toolkit 2.x in `src/store` (UI/client state); dead slices removed ✅                                                                          | RTK for genuine client/UI state only                                      |
-| Data fetching  | Single `shared/lib/api-client` ✅ + typed `features/*/services` ✅; Server-Component-first **[PARTIAL]** (many client fetches remain)                                              | Server Components + single `api-client`; React Query only where justified |
-| Auth (current) | `httpOnly` `auth_token`/`auth_role` + client-readable `session` cookie ✅; `src/proxy.ts` reads httpOnly ✅; NextAuth route deleted (dep lingers) **[OPEN]**    | `httpOnly` cookies + `proxy.ts` Thin Proxy                                |
-| Backend        | Multiple external REST hosts (`api-staging-capbridge`, `api-sabi`, `api.gateway`, `api.wilayah.site`) — **no single source of truth** | One `NEXT_PUBLIC_API_BACKEND` base + typed service layer                  |
-| Routing        | `src/app/` with `(marketing)`/`(auth)`/`(dashboard)`/`(standalone)` route groups; one dashboard tree; chrome via group layouts ✅          | Consolidated under route groups                                           |
+| Concern        | Current                                                                                                                                                      | Target                                                                    |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| Framework      | Next.js **16.1.6** (App Router)                                                                                                                              | Next.js 16.x (App Router)                                                 |
+| React          | **19.1.0** ✅ (upgraded)                                                                                                                                     | **19.x** (required by Next 16)                                            |
+| Bundler        | Turbopack (Next 16 default)                                                                                                                                  | Turbopack — keep, no custom webpack                                       |
+| Language       | TypeScript 5, `strict: true`                                                                                                                                 | unchanged                                                                 |
+| Styling        | Tailwind CSS 3.4 + local Geist fonts                                                                                                                         | Tailwind 3.x (4.x optional, separate effort)                              |
+| State mgmt     | Redux Toolkit 2.x in `src/store` (UI/client state); dead slices removed ✅                                                                                   | RTK for genuine client/UI state only                                      |
+| Data fetching  | Single `shared/lib/api-client` ✅ + typed `features/*/services` ✅; Server-Component-first **[PARTIAL]** (many client fetches remain)                        | Server Components + single `api-client`; React Query only where justified |
+| Auth (current) | `httpOnly` `auth_token`/`auth_role` + client-readable `session` cookie ✅; `src/proxy.ts` reads httpOnly ✅; NextAuth route deleted (dep lingers) **[OPEN]** | `httpOnly` cookies + `proxy.ts` Thin Proxy                                |
+| Backend        | Multiple external REST hosts (`api-staging-capbridge`, `api-sabi`, `api.gateway`, `api.wilayah.site`) — **no single source of truth**                        | One `NEXT_PUBLIC_API_BACKEND` base + typed service layer                  |
+| Routing        | `src/app/` with `(marketing)`/`(auth)`/`(dashboard)`/`(standalone)` route groups; one dashboard tree; chrome via group layouts ✅                            | Consolidated under route groups                                           |
 
 **Headline:** the project was upgraded to Next.js 16 by bumping `next` in
 `package.json`, but **React was left at 18.3.1**. Next.js 16 requires React 19.
@@ -109,8 +109,8 @@ This is a build/runtime incompatibility and is treated as the #1 blocker below.
 
 11. **`any` everywhere.** ~147 occurrences across `app/`+`redux/`. Catch blocks
     are uniformly `catch (e: any)`; cookie helpers take `(key: any, value: any)`.
-12. **Versioned dead duplicates.** `Home.tsx` _and_ `HomeV2.tsx` are both
-    imported; `RegisterV2`, `FooterV2`, `Navbar`, `DataPemodalPerusahaanV1`
+12. **Versioned dead duplicates.** `Home.tsx` _and_ `Home.tsx` are both
+    imported; `RegisterModal`, `FooterV2`, `Navbar`, `DataPemodalPerusahaanV1`
     coexist with predecessors. Old versions linger as dead/confusing code.
 13. **`Swal.fire` as the error layer.** Every service swallows errors into a
     SweetAlert toast (`authService`, `profileService`, `projectService`, …),
@@ -186,12 +186,13 @@ is passed down from a page.
 `src/store`, `shared/lib/api-client.ts`, `.env.example`.
 **Reorganized:** `app/interfaces` → `shared/types` (+ per-feature `types.ts`);
 `app/lib` + `app/utils` + root `utils` + `app/helper` collapse into `shared/lib`
-+ per-feature `services/`; `redux` → `src/store`; `(defaults)` split into
-`(marketing)`/`(auth)`/`(dashboard)`.
-**Deleted:** `app/features/*` template pages (verify each; keep `broadcast`,
-`register`), dead `projectService.ts` (`link.com`), `profileSlice` &
-`projectSlice` (never imported by `store.ts`), the second axios instance after
-unification, the stray `app/src/react-step.tsx`.
+
+- per-feature `services/`; `redux` → `src/store`; `(defaults)` split into
+  `(marketing)`/`(auth)`/`(dashboard)`.
+  **Deleted:** `app/features/*` template pages (verify each; keep `broadcast`,
+  `register`), dead `projectService.ts` (`link.com`), `profileSlice` &
+  `projectSlice` (never imported by `store.ts`), the second axios instance after
+  unification, the stray `app/src/react-step.tsx`.
 
 > Non-negotiable minimum if the full move can't land at once: introduce
 > `shared/lib/api-client.ts` and collapse the two `utils/` trees first.
@@ -200,19 +201,19 @@ unification, the stray `app/src/react-step.tsx`.
 
 ## 4. LAYER ARCHITECTURE & RULES
 
-Layers cut *across* features. Within a feature folder the same rules apply to its
+Layers cut _across_ features. Within a feature folder the same rules apply to its
 `components/`, `services/`, `hooks/`, `types.ts`.
 
-| Layer                              | Single responsibility                             | May import                                 | May NOT import                                                            |
-| ---------------------------------- | ------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------- |
-| `app/**/page.tsx`, `layout.tsx`    | Routing, data orchestration (server), composition | feature services + components, `shared`    | another page; `js-cookie`                                                 |
+| Layer                              | Single responsibility                             | May import                                        | May NOT import                                                                                                      |
+| ---------------------------------- | ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `app/**/page.tsx`, `layout.tsx`    | Routing, data orchestration (server), composition | feature services + components, `shared`           | another page; `js-cookie`                                                                                           |
 | `features/*/components`            | Feature UI, local interactivity                   | own feature, `shared/ui`, `shared/hooks`, `store` | another feature's components; services directly for first-paint fetching (receive data via props/Server Components) |
-| `features/*/services`              | One domain's API calls, typed in/out              | `shared/lib/api-client`, types             | React, components, `Swal`, `js-cookie`                                    |
-| `shared/ui`                        | Pure presentation                                 | nothing app-specific                       | features, services, store, `next/navigation` data                        |
-| `shared/lib/api-client`            | HTTP transport + auth header + refresh            | types, env                                 | components, store, features                                               |
-| `shared/lib/*`                     | Pure cross-feature helpers                        | types                                      | features, components, store                                               |
-| `store`                            | Client/UI state only                              | types                                      | components (except via thunks that call services)                        |
-| `shared/types`, `features/*/types` | Type definitions only                             | nothing                                    | everything (leaf)                                                        |
+| `features/*/services`              | One domain's API calls, typed in/out              | `shared/lib/api-client`, types                    | React, components, `Swal`, `js-cookie`                                                                              |
+| `shared/ui`                        | Pure presentation                                 | nothing app-specific                              | features, services, store, `next/navigation` data                                                                   |
+| `shared/lib/api-client`            | HTTP transport + auth header + refresh            | types, env                                        | components, store, features                                                                                         |
+| `shared/lib/*`                     | Pure cross-feature helpers                        | types                                             | features, components, store                                                                                         |
+| `store`                            | Client/UI state only                              | types                                             | components (except via thunks that call services)                                                                   |
+| `shared/types`, `features/*/types` | Type definitions only                             | nothing                                           | everything (leaf)                                                                                                   |
 
 **Hard rules**
 
@@ -275,7 +276,7 @@ is "logged out", second paint is "logged in".
 
 | Change                                                 | Affects this repo?                  | Location / status                                                                                                                        |
 | ------------------------------------------------------ | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| React 19 required                                      | **RESOLVED** ✅                      | `package.json` now react/react-dom 19.1.0, `@types/react` 19.                                                                            |
+| React 19 required                                      | **RESOLVED** ✅                     | `package.json` now react/react-dom 19.1.0, `@types/react` 19.                                                                            |
 | `middleware.ts` → `proxy.ts`                           | Already migrated                    | `proxy.ts` present, no `middleware.ts`. ✅ but logic insecure (§5).                                                                      |
 | Async `params`/`searchParams`                          | Partially handled                   | Dynamic routes already `await params` (`sukuk/[projectId]/page.tsx`, `payment-manual/[id]/page.tsx`, `payment-method/[id]/page.tsx`). ✅ |
 | `next/image` defaults / `<img>`                        | Minor                               | 6 raw `<img>` files to convert.                                                                                                          |
@@ -324,8 +325,8 @@ is "logged out", second paint is "logged in".
 ### Confirmed duplicates
 
 - `home/Home.tsx` (V1, imported by `(defaults)/page.tsx`) **and**
-  `home/HomeV2.tsx` both live; consolidate to one and delete the loser.
-- `RegisterV2`/`FooterV2`/`Navbar`/`DataPemodalPerusahaanV1` — drop the version
+  `home/Home.tsx` both live; consolidate to one and delete the loser.
+- `RegisterModal`/`FooterV2`/`Navbar`/`DataPemodalPerusahaanV1` — drop the version
   suffix and delete superseded files once a single canonical version is chosen.
 - Form validation logic is duplicated across `FormPemodal`,
   `FormPemodalPerusahaan`, `FormDataPemodalPerusahaan`, `FormPenerbit` — extract

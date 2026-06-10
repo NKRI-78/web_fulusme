@@ -4,18 +4,19 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ProjectCard } from "@features/project/components/project/ProjectCard";
-import { getUser } from "@shared/lib/auth";
-import { getAllProject } from "@/actions/GetAllProject";
+import { useSession } from "@features/auth/providers/session-provider";
 import Modal from "@shared/ui/Modal";
-import RegisterOtp from "@features/auth/components/register/RegisterOtp";
-import RegisterSelectRole from "@features/auth/components/register/RegisterSelectRole";
-import RegisterV2 from "@features/auth/components/register/RegisterV2";
+import RegisterOtpDialog from "@features/auth/components/register/RegisterOtpDialog";
+import RegisterRoleDialog from "@/features/auth/components/register/RegisterRoleDialog";
+import RegisterModal from "@/features/auth/components/register/RegisterDialog";
 import { Project } from "@shared/types/project/IProject";
 import GridView from "@shared/ui/GridView";
 import { HelpButton, HelpButtonPosition } from "./HelpButton";
+import { getAllProject } from "@/actions/getAllProject";
 
-const HomeV2: React.FC = () => {
+const Home: React.FC = () => {
   const router = useRouter();
+  const session = useSession();
 
   const [activeTab, setActiveTab] = useState<"Umum" | "Pemodal" | "Penerbit">(
     "Umum",
@@ -25,6 +26,7 @@ const HomeV2: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [step, setStep] = useState<"register" | "otp" | "role" | null>(null);
+  const [registerEmail, setRegisterEmail] = useState("");
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -225,7 +227,7 @@ const HomeV2: React.FC = () => {
     setStep(null);
   };
 
-  const isLoggedIn = Boolean(getUser());
+  const isLoggedIn = Boolean(session);
 
   return (
     <div>
@@ -276,8 +278,9 @@ const HomeV2: React.FC = () => {
               <Image
                 src="/images/playstore-logo.svg"
                 alt="Get it on Google Play"
-                width={145}
-                height={50}
+                width={180}
+                height={53}
+                className="w-[145px] h-auto"
               />
             </a>
           </div>
@@ -759,21 +762,26 @@ const HomeV2: React.FC = () => {
         <HelpButton />
       </HelpButtonPosition>
 
-      <Modal
-        isOpen={showOtpModal}
-        onClose={handleClose}
-        // title={step === "otp" ? "Verifikasi OTP" : "Pilih Role"}
-      >
+      <Modal isOpen={showOtpModal} onClose={handleClose}>
         {step === "register" && (
-          <RegisterV2 onNext={() => setStep("otp")} onClose={handleClose} />
+          <RegisterModal
+            onNext={(email) => {
+              setRegisterEmail(email);
+              setStep("otp");
+            }}
+          />
         )}
         {step === "otp" && (
-          <RegisterOtp onNext={() => setStep("role")} onClose={handleClose} />
+          <RegisterOtpDialog
+            email={registerEmail || session?.email || ""}
+            onNext={() => setStep("role")}
+            onClose={handleClose}
+          />
         )}
-        {step === "role" && <RegisterSelectRole onClose={handleClose} />}
+        {step === "role" && <RegisterRoleDialog onClose={handleClose} />}
       </Modal>
     </div>
   );
 };
 
-export default HomeV2;
+export default Home;

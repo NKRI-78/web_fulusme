@@ -2,7 +2,7 @@ import React from "react";
 
 import type { Metadata } from "next";
 
-import Login from "@features/auth/components/login/Login";
+import LoginForm from "@/features/auth/components/login/LoginForm";
 
 export const metadata: Metadata = {
   title: "Masuk | FuLusme",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 const LoginPage: React.FC = () => {
-  return <Login />;
+  return <LoginForm />;
 };
 
 export default LoginPage;

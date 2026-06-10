@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { PanelContainer } from "@shared/ui/PanelContainer";
 import GridView from "@shared/ui/GridView";
 import PortfolioCard from "./PortfolioCard";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import Center from "@shared/ui/Center";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import { AnimatedWrapper } from "@shared/ui/AnimatedWrapper";
@@ -16,6 +16,7 @@ import { FolderOpen } from "lucide-react";
 import { api } from "@shared/lib/api-client";
 
 const PortfolioView: React.FC = () => {
+  const session = useSession();
   const [loading, setLoading] = useState(true);
   const [investorData, setInvestorData] = useState<InvestorData | null>(null);
   const [portfolios, setPortofolios] = useState<InvestorDataPortfolio[]>([]);
@@ -24,7 +25,7 @@ const PortfolioView: React.FC = () => {
   useEffect(() => {
     setLoading(true);
 
-    const user = getUser();
+    const user = session;
 
     if (user) {
       const fetchInvestorData = async () => {

@@ -21,7 +21,7 @@ const errorMessages: Record<string, string> = {
     "Akun Anda sementara dikunci karena terlalu banyak percobaan login yang gagal. Silakan coba kembali dalam 15 menit.",
 };
 
-const Login: React.FC = () => {
+const LoginForm: React.FC = () => {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -228,4 +228,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default LoginForm;

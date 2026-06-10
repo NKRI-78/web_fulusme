@@ -46,6 +46,11 @@ function makeApiClient(
   // Inject Bearer token — skip auth endpoints so login/register don't send a stale token.
   instance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
+      // Allow axios to set Content-Type + boundary automatically for FormData uploads.
+      if (config.data instanceof FormData) {
+        delete config.headers["Content-Type"];
+      }
+
       const isAuthEndpoint = authEndpoints.includes(config.url ?? "");
       if (!isAuthEndpoint) {
         const token = await getToken();

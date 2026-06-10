@@ -57,10 +57,7 @@ export async function POST(req: NextRequest) {
   };
 
   res.cookies.set("auth_role", role, httpOnlyOpts);
-  res.cookies.set("session", JSON.stringify(updated), {
-    ...httpOnlyOpts,
-    httpOnly: false,
-  });
+  res.cookies.set("session", JSON.stringify(updated), httpOnlyOpts);
 
   return res;
 }

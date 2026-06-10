@@ -11,11 +11,10 @@ import {
   PieChart,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getTransactions } from "@/actions/fetchTransaction";
-import { SessionData } from "@shared/lib/auth";
 import { getDashboard } from "@features/dashboard/services/dashboard";
 import { listInboxByType } from "@features/inbox/services/inbox";
 
@@ -23,18 +22,17 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const pathname = usePathname();
+  const session = useSession();
 
   const [expand, setExpand] = useState<boolean>(true);
-  const [userData, setUserData] = useState<SessionData | null>(null);
 
   const [transactionCount, setTransactionCount] = useState<number>(0);
   const [portfolioCount, setPortfolioCount] = useState<number>(0);
 
   //* init state
   useEffect(() => {
-    const user = getUser();
+    const user = session;
     if (user) {
-      setUserData(user);
       if (user.role === "emiten") {
         const getTransactionCount = async () => {
           try {
@@ -68,13 +66,13 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
         getPortfolioCount();
       }
     }
-  }, []);
+  }, [session]);
 
   const getHeaderTitle = (): string => {
-    if (userData?.role === "emiten") {
+    if (session?.role === "emiten") {
       return "Penerbit";
     }
-    if (userData?.role === "investor") {
+    if (session?.role === "investor") {
       return "Pemodal";
     }
     return "Dashboard";
@@ -104,7 +102,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
           <SidebarMenuItem
             expand={expand}
             pathName="/dashboard/emiten-transaction"
-            showWhen={userData?.role === "emiten"}
+            showWhen={session?.role === "emiten"}
             title="Transaksi"
             icon={ArrowLeftRight}
             setActive={(p) => p === pathname}
@@ -116,8 +114,8 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
             expand={expand}
             pathName="/dashboard/investor-transaction"
             showWhen={
-              userData?.role === "investor" ||
-              userData?.role === "investor institusi"
+              session?.role === "investor" ||
+              session?.role === "investor institusi"
             }
             title="Transaction"
             icon={ArrowLeftRight}
@@ -128,8 +126,8 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
             expand={expand}
             pathName="/dashboard/portfolio"
             showWhen={
-              userData?.role === "investor" ||
-              userData?.role === "investor institusi"
+              session?.role === "investor" ||
+              session?.role === "investor institusi"
             }
             title="Portfolio"
             icon={PieChart}
@@ -140,8 +138,8 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
             expand={expand}
             pathName="/business-list"
             showWhen={
-              userData?.role === "investor" ||
-              userData?.role === "investor institusi"
+              session?.role === "investor" ||
+              session?.role === "investor institusi"
             }
             title="Explore Proyek"
             icon={Briefcase}

@@ -10,7 +10,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import moment from "moment";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import Link from "next/link";
 import SkeletonWaitingPayment from "./components/SkeletonWaitingPayment";
 import { motion } from "framer-motion";
@@ -70,12 +70,13 @@ const WaitingPayment = () => {
 
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
+  const session = useSession();
 
   const fetchDetailPayment = async () => {
     if (!orderId) return;
     setLoading(true);
 
-    if (getUser()) {
+    if (session) {
       try {
         const response = await api.get(
           `/api/v1/transaction/project/detail/${orderId}`,

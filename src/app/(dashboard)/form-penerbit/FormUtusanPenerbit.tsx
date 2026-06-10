@@ -7,8 +7,9 @@ import Subtitle from "@features/project/components/inputFormPenerbit/_component/
 import TextField from "@features/project/components/inputFormPenerbit/_component/TextField";
 import ContainerSelfie from "./ContainerSelfie";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import UpdateRing from "@features/project/components/inputFormPenerbit/_component/UpdateRing";
 import { ProfileUpdate } from "./IProfileUpdate";
 import { FORM_PIC_CACHE_KEY } from "./form-cache-key";
@@ -74,7 +75,8 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
 
   const formKey = profile?.form_key;
 
-  const user = getUser();
+  const user = useSession();
+  const router = useRouter();
 
   //* handle submit
   const handleSubmit = async () => {
@@ -156,6 +158,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
         await api.post(`/api/v1/auth/register-as-emiten`, payload);
 
         await syncRole("emiten");
+        router.refresh();
 
         await Swal.fire({
           icon: "success",

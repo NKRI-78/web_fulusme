@@ -11,12 +11,11 @@ import ComponentDataPribadi from "./informasiPribadi/DataPribadi";
 import ComponentDataPekerjaan from "./informasiPekerjaan/DataPekerjaan";
 import { IS_DEV, IS_PROD } from "@shared/lib/constant";
 import FileViewerModal from "@app/(standalone)/viewer/components/FilePreviewModalV2";
-import { setCookie } from "@shared/lib/cookie";
-import { getUser, saveAuthUser, syncRole, SessionData } from "@shared/lib/auth";
+import { saveAuthUser, syncRole } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import Tooltip from "@shared/ui/Tooltip";
 import { api } from "@shared/lib/api-client";
 import axios from "axios";
-import { logger } from "@shared/lib/logger";
 
 export const pemodalKeys: string[] = ["ktp-upload", "npwp-upload"];
 
@@ -85,7 +84,7 @@ const FormPemodal: React.FC = () => {
     form: string;
   };
   const router = useRouter();
-  const [user, setUser] = useState<SessionData | null>(null);
+  const user = useSession();
   const searchParams = useSearchParams();
   const isUpdate = searchParams.get("update") === "true";
   const form = searchParams.get("form");
@@ -95,10 +94,7 @@ const FormPemodal: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    const userCookie = getUser();
-    if (!userCookie) return;
-
-    setUser(userCookie);
+    if (!user) return;
 
     const fetchProfile = async () => {
       try {
@@ -1085,6 +1081,7 @@ const FormPemodal: React.FC = () => {
 
         await syncRole("investor");
         await saveAuthUser({ fulfilled_registration: true });
+        router.refresh();
 
         await Swal.fire({
           title: "Berhasil",

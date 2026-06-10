@@ -12,12 +12,12 @@ const httpOnlyOpts = {
 };
 
 export async function POST(req: NextRequest) {
-  const { email, password } = await req.json();
+  const { fullname, email, phone, password } = await req.json();
 
-  const backendRes = await fetch(`${API_BACKEND}/api/v1/auth/login`, {
+  const backendRes = await fetch(`${API_BACKEND}/api/v1/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ fullname, email, phone, password }),
   });
 
   const payload = await backendRes.json().catch(() => ({}));
@@ -28,16 +28,16 @@ export async function POST(req: NextRequest) {
 
   const auth = payload.data;
 
-  const res = NextResponse.json({
-    data: {
-      id: auth.id,
-      enabled: auth.enabled,
-      email: auth.email,
-      role: auth.role,
-      verify: auth.verify,
-      fulfilled_registration: auth.fulfilled_registration,
-    },
-  });
+  const session = {
+    id: auth.id,
+    enabled: auth.enabled,
+    email: auth.email,
+    role: auth.role,
+    verify: auth.verify,
+    fulfilled_registration: auth.fulfilled_registration,
+  };
+
+  const res = NextResponse.json({ data: session });
 
   // Tokens stored httpOnly — not readable by JS
   res.cookies.set("auth_token", auth.token, {
@@ -54,24 +54,10 @@ export async function POST(req: NextRequest) {
   });
 
   // Non-sensitive session info for client display (no tokens)
-  res.cookies.set(
-    "session",
-    JSON.stringify({
-      id: auth.id,
-      enabled: auth.enabled,
-      email: auth.email,
-      role: auth.role,
-      verify: auth.verify,
-      fulfilled_registration: auth.fulfilled_registration,
-    }),
-    {
-      httpOnly: true,
-      secure: SECURE,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    },
-  );
+  res.cookies.set("session", JSON.stringify(session), {
+    ...httpOnlyOpts,
+    maxAge: 60 * 60 * 24 * 7,
+  });
 
   return res;
 }

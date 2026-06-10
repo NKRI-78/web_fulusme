@@ -6,7 +6,7 @@ import DocumentPreview from "./component/DocumentPreview";
 import { PDFDocument } from "pdf-lib";
 import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import { uploadMediaService } from "@shared/lib/mediaService";
 import { api } from "@shared/lib/api-client";
 
@@ -17,6 +17,7 @@ interface FormData {
 const FormSignature: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const session = useSession();
 
   const pdfUrl = searchParams.get("pdf");
   const projectPaymentId = searchParams.get("field5");
@@ -28,7 +29,7 @@ const FormSignature: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!getUser()) {
+    if (!session) {
       Swal.fire({
         title: "Gagal",
         text: "Sesi tidak ditemukan, silakan login ulang.",

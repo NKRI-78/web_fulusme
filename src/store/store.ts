@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import contentReducer from "@store/slices/contentSlice";
 import modalReducer from "@store/slices/modalSlice";
 import badgeReducer from "./slices/badgeSlice";
 import inboxReducer from "./slices/inboxSlice";
@@ -13,7 +12,6 @@ enableMapSet();
 export const store = configureStore({
   reducer: {
     modal: modalReducer,
-    content: contentReducer,
     badge: badgeReducer,
     inbox: inboxReducer,
     dashboard: dashboardReducer,

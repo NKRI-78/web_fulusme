@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { IS_DEV } from "@shared/lib/constant";
 import { penerbitUpdateKeys } from "./IUpdateRegistrationKey";
 import FormUtusanPenerbit from "./FormUtusanPenerbit";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import { ProfileUpdate } from "./IProfileUpdate";
 import {
   FORM_INDEX_CACHE_KEY,
@@ -71,7 +71,7 @@ export default function MultiStepFormWrapper() {
 
   const [loadingUpdateDoc, setLoadingUpdateDoc] = useState<boolean>(false);
 
-  const userCookie = getUser();
+  const userCookie = useSession();
 
   //* load cache form index
   // jadi halaman penerbit terdiri dari 3 view: register pic, form penerbit 1, dan form penerbit 2

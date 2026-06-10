@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import Cookies from "js-cookie";
 
-export default function RegisterSelectRole({
+export default function RegisterRoleDialog({
   onNext,
   onClose,
 }: {
@@ -12,29 +11,8 @@ export default function RegisterSelectRole({
 
   const handleSelectRole = async (role: number, subRole?: string) => {
     try {
-      // const userCookie = Cookies.get("user");
-
-      // if (userCookie) {
-      //   const user = JSON.parse(userCookie);
-
-      //   const updatedUser = {
-      //     ...user,
-      //     role:
-      //       role === 2
-      //         ? "emiten"
-      //         : role === 9
-      //         ? "investor company"
-      //         : "investor",
-      //     subRole: subRole || undefined,
-      //     enabled: true,
-      //   };
-
-      //   Cookies.set("user", JSON.stringify(updatedUser));
-      // }
-
       onClose?.();
 
-      // Redirect sesuai role
       if (role === 2) {
         window.location.href = "/form-penerbit";
       } else if (role === 9) {

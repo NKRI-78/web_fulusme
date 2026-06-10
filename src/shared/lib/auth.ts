@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import { clearTokenCache } from "@shared/lib/tokenCache";
 
 export interface SessionData {
@@ -10,17 +9,9 @@ export interface SessionData {
   fulfilled_registration: boolean;
 }
 
-// Reads non-sensitive session info from the client-readable 'session' cookie.
-// Tokens (access + refresh) are stored httpOnly and never exposed to JS.
-export function getUser(): SessionData | null {
-  const raw = Cookies.get("session");
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as SessionData;
-  } catch {
-    return null;
-  }
-}
+// Session display data is read server-side from the httpOnly 'session' cookie
+// (app/layout.tsx) and distributed to client components via SessionProvider —
+// use the `useSession()` hook to read it, never a client-side cookie read.
 
 // Update non-privileged session fields (fulfilled_registration only).
 // Role is explicitly excluded — use syncRole() after a successful backend

@@ -10,11 +10,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import Cookies from "js-cookie";
 import Custom404 from "@app/not-found";
 import ProgressBar from "../components/ProgressBar";
 import { formatRupiah } from "@shared/lib/utils";
-import { getUser } from "@shared/lib/auth";
+import { useSession } from "@features/auth/providers/session-provider";
 import { Project } from "@shared/types/project/IProject";
 import GeneralDialog from "@shared/ui/GeneralDialog";
 import ShareDialog from "@shared/ui/ShareDialog";
@@ -39,9 +38,10 @@ const SukukClient = ({ projectId }: Props) => {
   const [project, setProject] = useState<Project | null>(null);
   const [isNotFound, setIsNotFound] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState<any>(null);
+  const session = useSession();
   const [hydrated, setHydrated] = useState(false);
-  const [role, setRole] = useState<string | null>(null);
+  const userData = session;
+  const role = session?.role ?? null;
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
   const {
@@ -58,15 +58,6 @@ const SukukClient = ({ projectId }: Props) => {
       ? (project.user_paid_amount / project.target_amount) * 100
       : 0;
   }
-
-  useEffect(() => {
-    const userCookie = getUser();
-    if (userCookie) {
-      try {
-        setRole(userCookie.role);
-      } catch (err) {}
-    }
-  }, []);
 
   //* fetch project detail by id
   useEffect(() => {
@@ -95,9 +86,6 @@ const SukukClient = ({ projectId }: Props) => {
 
   useEffect(() => {
     setHydrated(true);
-    const userCookie = Cookies.get("user");
-    const user = userCookie ? JSON.parse(userCookie) : null;
-    setUserData(user);
   }, []);
 
   const handleConfirm = (val: Record<string, any>) => {
