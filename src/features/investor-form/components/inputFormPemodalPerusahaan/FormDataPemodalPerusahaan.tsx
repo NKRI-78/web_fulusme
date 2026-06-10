@@ -507,7 +507,7 @@ const FormDataPemodalPerusahaan: React.FC = () => {
       localStorage.removeItem("formPemodalPerusahaan");
       Cookies.remove("formPemodalPerusahaan");
 
-      await syncRole("investor institusi");
+      await syncRole();
       await saveAuthUser({ fulfilled_registration: true });
       router.refresh();
 

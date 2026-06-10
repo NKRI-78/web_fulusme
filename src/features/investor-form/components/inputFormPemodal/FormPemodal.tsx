@@ -1079,7 +1079,7 @@ const FormPemodal: React.FC = () => {
 
         localStorage.removeItem("formPemodal");
 
-        await syncRole("investor");
+        await syncRole();
         await saveAuthUser({ fulfilled_registration: true });
         router.refresh();
 

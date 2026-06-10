@@ -27,13 +27,14 @@ export async function saveAuthUser(
 }
 
 // Sync the user's role into session cookies AFTER the backend has confirmed the
-// assignment via /api/v1/auth/assign/role. Only user → assigned-role transitions
-// are accepted server-side; lateral movement is blocked.
-export async function syncRole(role: string): Promise<void> {
+// assignment via /api/v1/auth/assign/role. The route handler fetches the
+// authoritative role from the backend (does not trust client-supplied values).
+// Only user → assigned-role transitions are accepted server-side; lateral
+// movement is blocked.
+export async function syncRole(): Promise<void> {
   await fetch("/api/auth/role-sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ role }),
   });
 }
 

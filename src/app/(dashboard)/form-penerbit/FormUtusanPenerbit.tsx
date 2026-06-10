@@ -157,7 +157,7 @@ const FormUtusanPenerbit: React.FC<FormUtusanPenerbitProps> = ({
 
         await api.post(`/api/v1/auth/register-as-emiten`, payload);
 
-        await syncRole("emiten");
+        await syncRole();
         router.refresh();
 
         await Swal.fire({
