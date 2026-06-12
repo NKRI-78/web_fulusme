@@ -5,7 +5,7 @@ import { UserSearch, Infinity } from "lucide-react";
 import { User } from "@shared/types/user/IUser";
 import { InvestorData } from "@shared/types/investor/IInvestorData";
 import { formatRupiah } from "@shared/lib/utils";
-import { Project } from "@shared/types/project/IProject";
+import { Project } from "@/features/project/type";
 import GridView from "@shared/ui/GridView";
 import { ProjectCard } from "@features/project/components/project/ProjectCard";
 

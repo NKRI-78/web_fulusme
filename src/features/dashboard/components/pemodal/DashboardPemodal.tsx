@@ -5,7 +5,7 @@ import { Infinity, UserSearch } from "lucide-react";
 import { User } from "@shared/types/user/IUser";
 import { InvestorData } from "@shared/types/investor/IInvestorData";
 import { formatRupiah } from "@shared/lib/utils";
-import { Project } from "@shared/types/project/IProject";
+import { Project } from "@/features/project/type";
 import GridView from "@shared/ui/GridView";
 import { ProjectCard } from "@features/project/components/project/ProjectCard";
 
@@ -35,8 +35,8 @@ const DashboardPemodal: React.FC<Props> = ({ profile, data, projects }) => {
           {data?.rek_efek
             ? "Anda tidak memiliki limit pembelian efek dan bebas berinvestasi di berbagai proyek tanpa batasan."
             : (data?.summary?.annual_income_idr ?? 0) >= 500_000_000
-            ? "Limit pembelian efek Anda sebesar 10% dari pendapatan tahunan."
-            : "Limit pembelian efek Anda sebesar 5% dari pendapatan tahunan."}
+              ? "Limit pembelian efek Anda sebesar 10% dari pendapatan tahunan."
+              : "Limit pembelian efek Anda sebesar 5% dari pendapatan tahunan."}
         </p>
       </div>
 

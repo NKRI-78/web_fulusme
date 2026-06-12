@@ -1,5 +1,7 @@
+"use client";
+
 import ProgressBar from "@/app/(public)/sukuk/components/ProgressBar";
-import { Project } from "@shared/types/project/IProject";
+import { Project } from "@/features/project/type";
 import { formatRupiah } from "@shared/lib/utils";
 import { useRouter } from "next/navigation";
 

@@ -1,4 +1,4 @@
-import { Project } from "@shared/types/project/IProject";
+import { Project } from "@/features/project/type";
 
 //* project card
 export const ProjectCard: React.FC<{

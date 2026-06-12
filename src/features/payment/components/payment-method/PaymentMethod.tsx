@@ -11,7 +11,7 @@ import { PaymentMethodType } from "./components/types";
 import TransactionSummary from "./components/TransactionSummary";
 import ConfirmButton from "./components/ConfirmButton";
 import ProjectCardSkeleton from "./components/ProjectCardSkeleton";
-import { Project } from "@shared/types/project/IProject";
+import { Project } from "@/features/project/type";
 import Custom404 from "@app/not-found";
 import ProjectCardCheckout from "./components/ProjectCardDummy";
 import { api } from "@shared/lib/api-client";

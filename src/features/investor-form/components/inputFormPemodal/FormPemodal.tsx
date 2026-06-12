@@ -4,13 +4,11 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import { useSearchParams } from "next/navigation";
 
 import ComponentDataPribadi from "./informasiPribadi/DataPribadi";
 import ComponentDataPekerjaan from "./informasiPekerjaan/DataPekerjaan";
 import { IS_DEV, IS_PROD } from "@shared/lib/constant";
-import FileViewerModal from "@app/(standalone)/viewer/components/FilePreviewModalV2";
 import { saveAuthUser, syncRole } from "@shared/lib/auth";
 import { useSession } from "@features/auth/providers/session-provider";
 import Tooltip from "@shared/ui/Tooltip";
@@ -208,11 +206,6 @@ const FormPemodal: React.FC = () => {
 
     fetchProfile();
   }, []);
-
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewFileUrl, setPreviewFileUrl] = useState<string | undefined>(
-    undefined,
-  );
 
   //* handle alert ketika halaman di reload / close
   useEffect(() => {
@@ -1111,7 +1104,6 @@ const FormPemodal: React.FC = () => {
           await api.put(`/api/v1/document/update/user/${dataType}`, payload);
           localStorage.removeItem("formPemodal");
           localStorage.removeItem("signature");
-          Cookies.remove("formPemodal");
 
           setSubmitted(true);
 
@@ -1193,15 +1185,10 @@ const FormPemodal: React.FC = () => {
             onAlamatChange={handleAlamatChange}
             errors={errorsPribadi}
             onBankChange={handleBank}
-            onLihatKTP={() => setPreviewOpen(true)}
+            onLihatKTP={() => {}}
             isUpdate={isUpdate}
             dataProfile={dataProfile}
             onUploadSelfie={handleUploadSelfie}
-          />
-          <FileViewerModal
-            src={dataPribadi.ktpUrl}
-            open={previewOpen}
-            onClose={() => setPreviewOpen(false)}
           />
         </div>
       )}
@@ -1224,29 +1211,12 @@ const FormPemodal: React.FC = () => {
             }
             onAlamatChange={handleAlamatPekerjaanChange}
             errors={errorsPekerjaan}
-            onLihatNPWP={() => {
-              setPreviewFileUrl(dataPekerjaan.npwpUrl);
-              setPreviewOpen(true);
-            }}
-            onLihatFotoPemodal={() => {
-              setPreviewFileUrl(dataPekerjaan.fotoPemodalUrl);
-              setPreviewOpen(true);
-            }}
-            onLihatSlipGaji={() => {
-              setPreviewFileUrl(dataPekerjaan.slipGajiUrl);
-              setPreviewOpen(true);
-            }}
+            onLihatNPWP={() => {}}
+            onLihatFotoPemodal={() => {}}
+            onLihatSlipGaji={() => {}}
             isUpdate={isUpdate}
             dataProfile={dataProfile}
             onBankChange={handleBankPekerjaan}
-          />
-          <FileViewerModal
-            src={previewFileUrl ?? ""}
-            open={previewOpen}
-            onClose={() => {
-              setPreviewOpen(false);
-              setPreviewFileUrl(undefined);
-            }}
           />
         </div>
       )}

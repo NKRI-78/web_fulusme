@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import DashboardPemodal from "./pemodal/DashboardPemodal";
 import DashboardUser from "./DashboardUser";
 import { DashboardPenerbit } from "./penerbit/DashboardPenerbit";
-import { Project } from "@shared/types/project/IProject";
+import { Project } from "@/features/project/type";
 import { User } from "@shared/types/user/IUser";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
 import { InvestorData } from "@shared/types/investor/IInvestorData";

@@ -1,4 +1,4 @@
-import { Project } from "@shared/types/project/IProject";
+import { Project } from "@/features/project/type";
 import React from "react";
 import { PanelContainer } from "@shared/ui/PanelContainer";
 import GridView from "@shared/ui/GridView";

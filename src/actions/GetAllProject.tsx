@@ -1,14 +1,10 @@
-"use client";
+import { fetchProjects } from "@/features/project/service";
+import { Project } from "@/features/project/type";
 
-import { ProjectResponse } from "@shared/types/project/IProject";
-import { api } from "@shared/lib/api-client";
-
-export async function getAllProject() {
+export async function getAllProject(): Promise<Project[] | null> {
   try {
-    const response = await api.get("/api/v1/project/list");
-    const data: ProjectResponse = await response.data;
-    return data;
-  } catch (error) {
+    return await fetchProjects();
+  } catch {
     return null;
   }
 }

@@ -1,4 +1,4 @@
-import { Project } from "../project/IProject";
+import { Project } from "../../../features/project/type";
 
 export interface User {
   id: string;

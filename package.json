@@ -10,7 +10,6 @@
     "local-dev": "next dev --hostname 192.168.1.25"
   },
   "dependencies": {
-    "@cyntler/react-doc-viewer": "^1.17.0",
     "@headlessui/react": "^2.2.4",
     "@hookform/resolvers": "^5.1.1",
     "@react-google-maps/api": "^2.20.7",

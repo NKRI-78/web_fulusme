@@ -4,9 +4,7 @@ import React, { useEffect, useState } from "react";
 import DataPemodalPerusahaanV1 from "./DataPemodalPerusahaanV1/DataPemodalPerusahaanV1";
 import { z } from "zod";
 import Swal from "sweetalert2";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import FileViewer from "@app/(standalone)/viewer/components/FilePreviewModalV2";
 import { useSearchParams } from "next/navigation";
 import { saveAuthUser, syncRole } from "@shared/lib/auth";
 import { useSession } from "@features/auth/providers/session-provider";
@@ -70,11 +68,6 @@ const FormDataPemodalPerusahaan: React.FC = () => {
 
   const router = useRouter();
   const user = useSession();
-
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewFileUrl, setPreviewFileUrl] = useState<string | undefined>(
-    undefined,
-  );
 
   const [errorsPemodalPerusahaan, setErrorsPemodalPerusahaan] = useState<
     Record<string, string[]>
@@ -505,7 +498,6 @@ const FormDataPemodalPerusahaan: React.FC = () => {
       });
 
       localStorage.removeItem("formPemodalPerusahaan");
-      Cookies.remove("formPemodalPerusahaan");
 
       await syncRole();
       await saveAuthUser({ fulfilled_registration: true });
@@ -620,7 +612,6 @@ const FormDataPemodalPerusahaan: React.FC = () => {
 
           localStorage.removeItem("pemodalPerusahaanCache");
           localStorage.removeItem("formPemodalPerusahaan");
-          Cookies.remove("formPemodalPerusahaan");
           router.replace("/dashboard");
         } catch (error: any) {
           Swal.fire({
@@ -659,35 +650,11 @@ const FormDataPemodalPerusahaan: React.FC = () => {
         onAlamatChange={handleAlamatChange}
         onCheckboxChange={handleCheckboxChange}
         errors={errorsPemodalPerusahaan}
-        onLihatAktaPendirianPerusahaan={() => {
-          setPreviewFileUrl(formData.aktaPendirianPerusahaanUrl);
-          setPreviewOpen(true);
-        }}
-        onLihatNpwpPerusahaan={() => {
-          setPreviewFileUrl(formData.npwpPerusahaanUrl);
-          setPreviewOpen(true);
-        }}
-        onLihatSkKumhamPerusahaan={() => {
-          setPreviewFileUrl(formData.skKumhamPerusahaanUrl);
-          setPreviewOpen(true);
-        }}
-        onLihatSkPendirianPerusahaan={() => {
-          setPreviewFileUrl(formData.skPendirianUrl);
-          setPreviewOpen(true);
-        }}
-        onLihatAktaPerubahanTerakhir={() => {
-          setPreviewFileUrl(formData.aktaPerubahanTerakhirUrl);
-          setPreviewOpen(true);
-        }}
-      />
-
-      <FileViewer
-        src={previewFileUrl ?? ""}
-        open={previewOpen}
-        onClose={() => {
-          setPreviewOpen(false);
-          setPreviewFileUrl(undefined);
-        }}
+        onLihatAktaPendirianPerusahaan={() => {}}
+        onLihatNpwpPerusahaan={() => {}}
+        onLihatSkKumhamPerusahaan={() => {}}
+        onLihatSkPendirianPerusahaan={() => {}}
+        onLihatAktaPerubahanTerakhir={() => {}}
       />
 
       <div className="mt-2 flex justify-end">

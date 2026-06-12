@@ -14,7 +14,7 @@ import Custom404 from "@app/not-found";
 import ProgressBar from "../components/ProgressBar";
 import { formatRupiah } from "@shared/lib/utils";
 import { useSession } from "@features/auth/providers/session-provider";
-import { Project } from "@shared/types/project/IProject";
+import { Project } from "@/features/project/type";
 import GeneralDialog from "@shared/ui/GeneralDialog";
 import ShareDialog from "@shared/ui/ShareDialog";
 import CircularProgressIndicator from "@shared/ui/CircularProgressIndicator";
