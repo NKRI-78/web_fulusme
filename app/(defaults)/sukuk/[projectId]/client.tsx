@@ -39,9 +39,8 @@ const SukukClient = ({ projectId }: Props) => {
   const [project, setProject] = useState<Project | null>(null);
   const [isNotFound, setIsNotFound] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [hydrated, setHydrated] = useState(false);
-  const [role, setRole] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
   const {
@@ -52,6 +51,8 @@ const SukukClient = ({ projectId }: Props) => {
 
   // const dispatch = useDispatch();
 
+  const auth = getUser();
+
   var percentage: number = 0;
   if (project != null) {
     percentage = project.target_amount
@@ -59,20 +60,16 @@ const SukukClient = ({ projectId }: Props) => {
       : 0;
   }
 
-  useEffect(() => {
-    const userCookie = getUser();
-    if (userCookie) {
-      try {
-        setRole(userCookie.role);
-      } catch (err) {}
-    }
-  }, []);
-
   //* fetch project detail by id
   useEffect(() => {
+    setHydrated(true);
     if (projectId) {
       const fetchProject = async () => {
         try {
+          const res = await api.get(`/api/v1/profile`);
+          const remoteProfile = res.data?.data;
+          setProfile(remoteProfile);
+
           const response = await api.get(`/api/v1/project/detail/${projectId}`);
           setProject(response.data.data);
         } catch (error: any) {
@@ -89,17 +86,6 @@ const SukukClient = ({ projectId }: Props) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   dispatch(fetchDashboardClient());
-  // }, []);
-
-  useEffect(() => {
-    setHydrated(true);
-    const userCookie = Cookies.get("user");
-    const user = userCookie ? JSON.parse(userCookie) : null;
-    setUserData(user);
-  }, []);
-
   const handleConfirm = (val: Record<string, any>) => {
     localStorage.setItem("invest_amount", JSON.stringify(val));
     router.push(`/payment-method/${projectId}`);
@@ -108,6 +94,8 @@ const SukukClient = ({ projectId }: Props) => {
   const isOpen = project?.funding_status === "OPEN";
   const isCompleted = project?.funding_status === "CLOSED";
   const isCancelled = project?.funding_status === "CANCELLED";
+  const enableBuyButton =
+    auth?.role != "emiten" && isOpen && profile.verify_investor == true;
 
   return isNotFound ? (
     <>
@@ -345,14 +333,14 @@ const SukukClient = ({ projectId }: Props) => {
                   </button>
                 </div>
 
-                {role !== "emiten" ? (
-                  hydrated && userData !== null ? (
+                {auth?.role !== "emiten" ? (
+                  hydrated && auth !== null ? (
                     <button
                       onClick={() => {
-                        if (!isOpen) return;
+                        if (!enableBuyButton) return;
                         return setShowModal(true);
                       }}
-                      className={`w-full text-white font-semibold py-2 rounded-md mt-4 ${!isOpen ? "bg-[#10565c]/30 cursor-not-allowed" : "bg-[#10565c] hover:bg-[#104348] cursor-pointer"}`}
+                      className={`w-full text-white font-semibold py-2 rounded-md mt-4 ${!enableBuyButton ? "bg-[#10565c]/30 cursor-not-allowed" : "bg-[#10565c] hover:bg-[#104348] cursor-pointer"}`}
                     >
                       {isCompleted ? "Project sudah terpenuhi" : "Beli Efek"}
                     </button>
