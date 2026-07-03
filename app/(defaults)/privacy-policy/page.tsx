@@ -201,6 +201,57 @@ export default function page() {
           </ol>
         </section>
 
+        {/* 5. KEBIJAKAN APU PPT, CDD, DAN VERIFIKASI PENGGUNA */}
+        <section id="apu-ppt-cdd-verifikasi" className="space-y-4 mt-10">
+          <h2 className="text-xl md:text-2xl font-semibold">
+            5. KEBIJAKAN APU PPT, CDD, DAN VERIFIKASI PENGGUNA
+          </h2>
+
+          <p>
+            Dalam menerapkan prinsip{" "}
+            <strong>Customer Due Diligence (CDD)</strong> serta mematuhi
+            regulasi{" "}
+            <strong>
+              Anti-Pencucian Uang dan Pencegahan Pendanaan Terorisme (APU PPT)
+            </strong>
+            , Fulusme mewajibkan verifikasi identitas bagi pengguna, terutama
+            yang bertindak sebagai <strong>Person in Charge (PIC)</strong> atau{" "}
+            <strong>Penerbit</strong> kampanye.
+          </p>
+
+          <p>
+            Untuk keperluan tersebut, Fulusme mengumpulkan data identitas
+            pengguna, termasuk foto wajah statis (<em>selfie</em>) dan
+            pemeriksaan keaktifan (<em>liveness check</em>) guna memvalidasi
+            identitas akun PIC/Penerbit. Seluruh data tersebut dienkripsi dan
+            disimpan secara aman pada server privat Fulusme sesuai standar
+            keamanan yang berlaku.
+          </p>
+
+          <p>
+            Data verifikasi hanya digunakan untuk keperluan identifikasi,
+            autentikasi, kepatuhan terhadap peraturan perundang-undangan,
+            pencegahan penyalahgunaan platform, serta pemenuhan kewajiban
+            Fulusme dalam menerapkan prinsip APU PPT dan CDD. Fulusme tidak akan
+            menyalahgunakan data tersebut maupun membagikannya kepada pihak
+            ketiga untuk tujuan komersial atau pemasaran, kecuali diwajibkan
+            oleh peraturan perundang-undangan atau permintaan resmi dari
+            otoritas yang berwenang.
+          </p>
+
+          <p>
+            Data wajah yang dikumpulkan sebagai bagian dari proses verifikasi
+            identitas akan disimpan selama akun pengguna berstatus aktif di
+            Platform Fulusme untuk memenuhi kewajiban hukum, kepatuhan terhadap
+            peraturan yang berlaku, serta ketentuan penyimpanan data transaksi
+            keuangan. Apabila pengguna menutup akunnya dan tidak lagi memiliki
+            rekam jejak transaksi, kewajiban hukum, atau kewajiban lain yang
+            mengharuskan penyimpanan data tersebut, maka data wajah akan dihapus
+            secara permanen dari sistem Fulusme sesuai dengan kebijakan retensi
+            data yang berlaku.
+          </p>
+        </section>
+
         {/* Footer */}
         <div className="mt-12 flex items-center justify-between text-sm text-slate-500">
           <p>© {new Date().getFullYear()} Fulusme. Semua hak dilindungi.</p>
