@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>reCAPTCHA Verification</title>
+
+    <!-- Memuat Script Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        background: transparent;
+        overflow: hidden;
+      }
+      .g-recaptcha {
+        margin-top: 15px;
+        /* Skala di bawah ini opsional, disesuaikan agar pas di layar HP */
+        transform: scale(1.05);
+        transform-origin: top center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Komponen Utama reCAPTCHA -->
+    <div
+      class="g-recaptcha"
+      data-sitekey="6Lc4gEgtAAAAADn4OwmlMvECWkbCdA4g-8GMD8gU"
+      data-callback="onToken"
+    ></div>
+
+    <script>
+      // Fungsi ini otomatis dipanggil Google saat user berhasil verifikasi (dapat centang)
+      function onToken(token) {
+        if (window.flutter_inappwebview) {
+          // Mengirimkan token kembali ke aplikasi Flutter kamu
+          window.flutter_inappwebview.callHandler("onCaptchaToken", token);
+        } else {
+          console.log(
+            "Flutter handler tidak terdeteksi (diakses lewat browser biasa).",
+          );
+        }
+      }
+    </script>
+  </body>
+</html>
