@@ -250,6 +250,78 @@ export default function page() {
             secara permanen dari sistem Fulusme sesuai dengan kebijakan retensi
             data yang berlaku.
           </p>
+
+          <h3 className="text-lg md:text-xl font-semibold mt-6">
+            5.1. Kebijakan Khusus Pemrosesan Data Wajah (Face Data)
+          </h3>
+
+          <p>
+            Dalam rangka penerapan prinsip <strong>Customer Due Diligence (CDD)</strong>{" "}
+            serta kepatuhan terhadap regulasi{" "}
+            <strong>
+              Anti-Pencucian Uang dan Pencegahan Pendanaan Terorisme (APU PPT)
+            </strong>
+            , Fulusme mengumpulkan dan memproses data biometrik berupa foto
+            wajah statis (<em>selfie</em>) dan pemeriksaan keaktifan (
+            <em>liveness check</em>). Terkait pemrosesan data tersebut, kami
+            berkomitmen pada transparansi berikut:
+          </p>
+
+          <ul className="list-disc list-inside space-y-4">
+            <li>
+              <span className="font-medium">
+                Durasi dan Alasan Penyimpanan Data:
+              </span>{" "}
+              Kami menyimpan data wajah Anda selama akun Anda aktif dan akan
+              menyimpannya hingga maksimal 5 (lima) tahun setelah akun Anda
+              ditutup atau dinonaktifkan. Durasi penyimpanan ini diwajibkan
+              oleh hukum yang berlaku di Indonesia (terkait regulasi APU PPT)
+              untuk keperluan audit, investigasi penipuan, dan penyusunan
+              rekam jejak transaksi keuangan. Setelah batas waktu tersebut,
+              data wajah Anda akan dihapus secara permanen dari sistem kami.
+            </li>
+            <li>
+              <span className="font-medium">
+                Berbagi Data dengan Pihak Ketiga:
+              </span>{" "}
+              Untuk memproses dan menyimpan data wajah secara aman, kami
+              menggunakan layanan infrastruktur komputasi awan dari Google
+              Cloud Platform (GCP) sebagai pihak ketiga. Kami membagikan data
+              ini kepada GCP semata-mata untuk keperluan infrastruktur
+              penyimpanan (<em>storage</em>) dan pemrosesan keamanan aplikasi,
+              bukan untuk tujuan komersial atau periklanan.
+            </li>
+            <li>
+              <span className="font-medium">
+                Penyimpanan oleh Pihak Ketiga:
+              </span>{" "}
+              Google Cloud Platform (GCP) menyimpan data wajah tersebut di
+              dalam server aman mereka yang terenkripsi, bertindak atas nama
+              dan instruksi Fulusme. Data tersebut disimpan oleh GCP selama
+              periode retensi yang sama (akun aktif + 5 tahun setelah
+              penutupan) karena data tersebut berada di dalam ekosistem
+              database Fulusme yang di-hosting di GCP. GCP mematuhi standar
+              keamanan tingkat tinggi, dan Anda dapat meninjau Kebijakan
+              Privasi Google Cloud di:{" "}
+              <a
+                href="https://cloud.google.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                https://cloud.google.com/privacy
+              </a>
+              .
+            </li>
+            <li>
+              <span className="font-medium">
+                Pengecualian Otoritas Hukum:
+              </span>{" "}
+              Selain Google Cloud untuk keperluan infrastruktur, data wajah
+              hanya akan diserahkan kepada instansi pemerintah atau penegak
+              hukum jika diwajibkan oleh peraturan perundang-undangan.
+            </li>
+          </ul>
         </section>
 
         {/* Footer */}
