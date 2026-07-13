@@ -3,6 +3,7 @@ import { UserRoundMinus } from "lucide-react";
 import Image from "next/image";
 import FormButton from "../../inputFormPenerbit/_component/FormButton";
 import { useRouter } from "next/navigation";
+import { mediaPreviewUrl } from "@/app/helper/mediaPreview";
 
 export default function ProfilePemodalPerusahaan({
   avatar,
@@ -167,7 +168,7 @@ export default function ProfilePemodalPerusahaan({
                         <td className="px-4 py-2">{doc.name}</td>
                         <td className="px-4 py-2 text-center flex items-center justify-center gap-2">
                           <a
-                            href={doc.url}
+                            href={mediaPreviewUrl(doc.url)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="px-2 py-1 bg-blue-50 border border-blue-200 text-blue-600 rounded-md text-xs hover:bg-blue-100 transition"
@@ -175,7 +176,7 @@ export default function ProfilePemodalPerusahaan({
                             Lihat
                           </a>
                           <a
-                            href={doc.url}
+                            href={mediaPreviewUrl(doc.url)}
                             download
                             className="px-2 py-1 bg-green-50 border border-green-200 text-green-600 rounded-md text-xs hover:bg-green-100 transition"
                           >

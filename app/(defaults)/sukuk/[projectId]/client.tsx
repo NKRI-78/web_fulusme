@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Check, X } from "lucide-react";
+import { mediaPreviewUrl } from "@/app/helper/mediaPreview";
 
 import type { Swiper as SwiperType } from "swiper";
 import Swal from "sweetalert2";
@@ -331,7 +332,7 @@ const SukukClient = ({ projectId }: Props) => {
                     className="bg-white text-xs text-black border px-4 py-2 rounded-md"
                     onClick={() => {
                       if (project?.doc_prospect) {
-                        window.open(project.doc_prospect, "_blank");
+                        window.open(mediaPreviewUrl(project.doc_prospect), "_blank");
                       }
                     }}
                   >

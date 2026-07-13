@@ -3,6 +3,7 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { useEffect } from "react";
 import { FaFileAlt, FaTrash } from "react-icons/fa";
+import { mediaPreviewUrl } from "@/app/helper/mediaPreview";
 
 // Type untuk data per jabatan
 type JabatanData = {
@@ -163,7 +164,7 @@ export default function JabatanForm() {
 
           {jabatanValues[index]?.fileKtpUrl && (
             <a
-              href={jabatanValues[index]?.fileKtpUrl}
+              href={mediaPreviewUrl(jabatanValues[index]?.fileKtpUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 underline text-sm block"
@@ -174,7 +175,7 @@ export default function JabatanForm() {
 
           {jabatanValues[index]?.fileNpwpUrl && (
             <a
-              href={jabatanValues[index]?.fileNpwpUrl}
+              href={mediaPreviewUrl(jabatanValues[index]?.fileNpwpUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 underline text-sm block"

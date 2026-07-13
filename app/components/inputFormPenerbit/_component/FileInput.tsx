@@ -3,6 +3,7 @@ import { FileText } from "lucide-react";
 import Swal from "sweetalert2";
 import clsx from "clsx";
 import { uploadMediaService } from "@/app/helper/mediaService";
+import { mediaPreviewUrl } from "@/app/helper/mediaPreview";
 import path from "path";
 
 const IMAGE_MIME = ["image/png", "image/jpeg"];
@@ -100,6 +101,20 @@ const FileInput: React.FC<FileInputProps> = ({
       const pathUrl = uploadMediaResponse.data.path;
       setInnerFileUrl(pathUrl);
       onChange(pathUrl);
+    } else if (uploadMediaResponse.error_code === "unsafe_file") {
+      Swal.fire({
+        icon: "error",
+        title: "File Berbahaya Terdeteksi",
+        text: uploadMediaResponse.message,
+        confirmButtonText: "Mengerti",
+      });
+    } else if (uploadMediaResponse.error_code === "type_mismatch") {
+      Swal.fire({
+        icon: "warning",
+        title: "Format File Tidak Sesuai",
+        text: uploadMediaResponse.message,
+        confirmButtonText: "Mengerti",
+      });
     } else {
       Swal.fire({
         icon: "warning",
@@ -162,7 +177,7 @@ const FileInput: React.FC<FileInputProps> = ({
       {outputFileUrl && (
         <div className="flex items-center gap-2 text-xs text-blue-500 font-semibold">
           <a
-            href={innerFileUrl?.toString() ?? fileUrl?.toString()}
+            href={mediaPreviewUrl(innerFileUrl ?? fileUrl)}
             target="_blank"
             rel="noopener noreferrer"
             className="truncate max-w-[130px] text-inherit no-underline"

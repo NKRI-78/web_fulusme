@@ -2,6 +2,7 @@ import { User } from "@/app/interfaces/user/IUser";
 import { formatRupiah } from "@/app/lib/utils";
 import { FileText } from "lucide-react";
 import Image from "next/image";
+import { mediaPreviewUrl } from "@/app/helper/mediaPreview";
 
 export default function ProfilePemodalPribadi({
   avatar,
@@ -129,7 +130,7 @@ export default function ProfilePemodalPribadi({
                 <td className="p-3">
                   {profile.investor.ktp?.path ? (
                     <a
-                      href={profile.investor.ktp.path}
+                      href={mediaPreviewUrl(profile.investor.ktp.path)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-x-2 px-3 py-1 bg-gray-100 rounded-md border border-gray-300 text-sm text-gray-600 hover:text-gray-800 hover:border-gray-400 hover:shadow transition-all duration-200"
@@ -326,7 +327,7 @@ export default function ProfilePemodalPribadi({
                 <td className="p-3">
                   {profile.investor.job.npwp_path ? (
                     <a
-                      href={profile.investor.job.npwp_path}
+                      href={mediaPreviewUrl(profile.investor.job.npwp_path)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-x-2 px-3 py-1 bg-gray-100 rounded-md border border-gray-300 text-sm text-gray-600 hover:text-gray-800 hover:border-gray-400 hover:shadow transition-all duration-200"

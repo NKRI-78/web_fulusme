@@ -3,11 +3,12 @@ import { compressImage } from "./CompressorImage";
 import { API_BACKEND_MEDIA } from "../utils/constant";
 import { getUser } from "../lib/auth";
 import api_media from "@/utils/axios_media";
+import { validateUploadFile } from "./fileValidation";
 
 export interface MediaServiceResponse<T extends object> {
   ok: boolean;
   message: string;
-  error_code?: "unauthorized";
+  error_code?: "unauthorized" | "unsafe_file" | "type_mismatch";
   data?: T;
 }
 
@@ -22,6 +23,23 @@ export async function uploadMediaService(
   file: File,
   { timeout = 15000, onUploadProgress = () => {} }: UploadMediaOptions = {},
 ): Promise<MediaServiceResponse<UploadMediaData>> {
+  // Remediasi OAO Temuan 1: tolak file yang isinya (magic-number) tidak
+  // sesuai ekstensi atau mengandung konten aktif (HTML/SVG/script) sebelum
+  // dikirim ke media-server.
+  const validation = await validateUploadFile(file);
+  if (!validation.ok) {
+    return {
+      ok: false,
+      message: validation.message ?? "Tipe file tidak didukung.",
+      error_code:
+        validation.code === "unsafe_file"
+          ? "unsafe_file"
+          : validation.code === "type_mismatch"
+            ? "type_mismatch"
+            : undefined,
+    };
+  }
+
   const isImage = file.type.startsWith("image/");
   const compressedImage = await compressImage(file);
   const compressedFile = isImage ? compressedImage : file;

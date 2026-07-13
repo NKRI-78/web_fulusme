@@ -2,6 +2,7 @@ import React from "react";
 import { FileText } from "lucide-react";
 import Swal from "sweetalert2";
 import { uploadMediaService } from "@/app/helper/mediaService";
+import { mediaPreviewUrl } from "@/app/helper/mediaPreview";
 
 const IMAGE_MIME = ["image/png", "image/jpeg"];
 const DOC_MIME = [
@@ -99,8 +100,27 @@ const FileInput: React.FC<FileInputProps> = ({
           showConfirmButton: false,
           timer: 1000,
         });
+      } else if (uploadMediaResult.error_code === "unsafe_file") {
+        Swal.fire({
+          icon: "error",
+          title: "File Berbahaya Terdeteksi",
+          text: uploadMediaResult.message,
+          confirmButtonText: "Mengerti",
+        });
+      } else if (uploadMediaResult.error_code === "type_mismatch") {
+        Swal.fire({
+          icon: "warning",
+          title: "Format File Tidak Sesuai",
+          text: uploadMediaResult.message,
+          confirmButtonText: "Mengerti",
+        });
       } else {
-        alert("Upload gagal, tidak ada URL yang diterima.");
+        Swal.fire({
+          icon: "warning",
+          title: "Gagal",
+          text: uploadMediaResult.message || "Upload gagal. Silakan coba lagi.",
+          timer: 3000,
+        });
       }
     } catch {
       Swal.fire({
@@ -131,7 +151,7 @@ const FileInput: React.FC<FileInputProps> = ({
       {fileUrl && (
         <div className="flex items-center gap-2 text-xs text-blue-500 font-semibold">
           <a
-            href={fileUrl}
+            href={mediaPreviewUrl(fileUrl)}
             target="_blank"
             rel="noopener noreferrer"
             className="truncate max-w-[130px] text-inherit no-underline"

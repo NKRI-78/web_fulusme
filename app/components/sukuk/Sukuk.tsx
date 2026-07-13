@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { mediaPreviewUrl } from "@/app/helper/mediaPreview";
 
 import type { Swiper as SwiperType } from "swiper";
 
@@ -473,7 +474,7 @@ const Sukuk = ({ id }: Props) => {
             </button>
             <button
               className="bg-white text-xs text-black border px-4 py-2 rounded-md"
-              onClick={() => window.open(project?.doc.path, "_blank")}
+              onClick={() => window.open(mediaPreviewUrl(project?.doc.path), "_blank")}
             >
               Proposal
             </button>
