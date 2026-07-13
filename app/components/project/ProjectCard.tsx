@@ -11,6 +11,8 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
     : 0;
 
   const isCompleted = project.funding_status === "CLOSED";
+  const isExpired = project.remaining_days <= 0;
+  const isEnded = isCompleted || isExpired;
 
   return (
     <div
@@ -28,7 +30,7 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
           }
           alt={project.title}
           className={`object-cover w-full h-full ${
-            isCompleted ? "grayscale opacity-60" : ""
+            isEnded ? "grayscale opacity-60" : ""
           }`}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
@@ -40,10 +42,10 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
 
         {/* jenis proyek */}
         <div
-          className={`absolute z-10 ${isCompleted ? "bottom-0 left-0 right-0" : "bottom-2 left-2"}`}
+          className={`absolute z-10 ${isEnded ? "bottom-0 left-0 right-0" : "bottom-2 left-2"}`}
         >
           <div className="space-y-1">
-            {!isCompleted && (
+            {!isEnded && (
               <span
                 className={`text-[#10565C] text-xs font-semibold px-3 py-[2px] rounded-full bg-white/90`}
               >
@@ -51,9 +53,9 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
               </span>
             )}
 
-            {isCompleted && (
+            {isEnded && (
               <div className="w-full text-sm py-1 text-center bg-black/30 font-semibold text-white">
-                Selesai
+                {isCompleted ? "Selesai" : "Proyek Telah Berakhir"}
               </div>
             )}
           </div>
@@ -90,7 +92,11 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
 
         {/* sisa masa tayang */}
         <div className="w-full flex justify-end mt-3">
-          <p className="text-white text-xs font-semibold">{`${project.remaining_days} hari lagi`}</p>
+          <p className="text-white text-xs font-semibold">
+            {isExpired
+              ? "Proyek telah berakhir"
+              : `${project.remaining_days} hari lagi`}
+          </p>
         </div>
       </div>
     </div>

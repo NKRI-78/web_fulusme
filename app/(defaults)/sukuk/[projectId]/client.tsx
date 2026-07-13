@@ -109,6 +109,8 @@ const SukukClient = ({ projectId }: Props) => {
   const isOpen = project?.funding_status === "OPEN";
   const isCompleted = project?.funding_status === "CLOSED";
   const isCancelled = project?.funding_status === "CANCELLED";
+  const isExpired = (project?.remaining_days ?? 0) <= 0;
+  const canInvest = isOpen && !isExpired;
 
   return isNotFound ? (
     <>
@@ -223,6 +225,15 @@ const SukukClient = ({ projectId }: Props) => {
                         Unit Terpenuhi
                       </div>
                     )}
+
+                    {!isCompleted && isExpired && (
+                      <div className="flex items-center gap-2 bg-gray-500 text-white px-3 py-[4px] rounded-full text-[11px] font-semibold">
+                        <div className="flex items-center justify-center w-4 h-4">
+                          <X className="w-3.5 h-3.5 stroke-[3]" />
+                        </div>
+                        Proyek Telah Berakhir
+                      </div>
+                    )}
                   </div>
 
                   <div className="h-1"></div>
@@ -267,9 +278,11 @@ const SukukClient = ({ projectId }: Props) => {
                     <p className="text-xs font-bold text-[#677AB9]">
                       Sisa Masa Tayang
                     </p>
-                    <p className="text-xs font-bold">{`${
-                      project?.remaining_days ?? "-"
-                    } Hari lagi`}</p>
+                    <p className="text-xs font-bold">
+                      {isExpired
+                        ? "Proyek telah berakhir"
+                        : `${project?.remaining_days ?? "-"} Hari lagi`}
+                    </p>
                   </div>
                 </div>
 
@@ -350,12 +363,16 @@ const SukukClient = ({ projectId }: Props) => {
                   hydrated && userData !== null ? (
                     <button
                       onClick={() => {
-                        if (!isOpen) return;
+                        if (!canInvest) return;
                         return setShowModal(true);
                       }}
-                      className={`w-full text-white font-semibold py-2 rounded-md mt-4 ${!isOpen ? "bg-[#10565c]/30 cursor-not-allowed" : "bg-[#10565c] hover:bg-[#104348] cursor-pointer"}`}
+                      className={`w-full text-white font-semibold py-2 rounded-md mt-4 ${!canInvest ? "bg-[#10565c]/30 cursor-not-allowed" : "bg-[#10565c] hover:bg-[#104348] cursor-pointer"}`}
                     >
-                      {isCompleted ? "Project sudah terpenuhi" : "Beli Efek"}
+                      {isCompleted
+                        ? "Project sudah terpenuhi"
+                        : isExpired
+                          ? "Proyek telah berakhir"
+                          : "Beli Efek"}
                     </button>
                   ) : (
                     // quotaData?.verified_investor ? (
