@@ -35,10 +35,20 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           command_timeout: 20m
           script: |
+            # Load Node/npm/pm2 into PATH. SSH runs a non-interactive, non-login
+            # shell, so ~/.bashrc / nvm are NOT sourced automatically (itu sebabnya
+            # `npm: command not found` walau flow manual berhasil).
+            # Source nvm SEBELUM `set -u` karena nvm.sh memakai unbound variables.
+            export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use default >/dev/null 2>&1 || true
+
             set -euo pipefail
 
             APP_PATH="${{ secrets.VPS_APP_PATH }}"
             PM2_APP="web-fulusme"
+
+            command -v npm >/dev/null 2>&1 || { echo "ERROR: npm tidak ditemukan di PATH"; exit 127; }
 
             cd "$APP_PATH"
 
