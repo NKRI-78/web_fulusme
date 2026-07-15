@@ -28,15 +28,21 @@ export async function uploadMediaService(
   // dikirim ke media-server.
   const validation = await validateUploadFile(file);
   if (!validation.ok) {
+    const isUnsafe = validation.code === "unsafe_file";
+    const baseMessage = validation.message ?? "Tipe file tidak didukung.";
+    // Arahan agar pengguna mengganti dengan dokumen yang sesuai saat file
+    // berbahaya terdeteksi. Ditaruh terpusat di sini agar semua pemanggil
+    // media service yang menampilkan `message` ikut menampilkan arahan ini.
+    const replacementGuidance =
+      " Silakan ganti dengan dokumen yang sesuai dan aman, lalu unggah kembali.";
     return {
       ok: false,
-      message: validation.message ?? "Tipe file tidak didukung.",
-      error_code:
-        validation.code === "unsafe_file"
-          ? "unsafe_file"
-          : validation.code === "type_mismatch"
-            ? "type_mismatch"
-            : undefined,
+      message: isUnsafe ? `${baseMessage}${replacementGuidance}` : baseMessage,
+      error_code: isUnsafe
+        ? "unsafe_file"
+        : validation.code === "type_mismatch"
+          ? "type_mismatch"
+          : undefined,
     };
   }
 

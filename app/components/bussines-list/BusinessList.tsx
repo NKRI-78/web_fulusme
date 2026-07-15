@@ -16,6 +16,17 @@ const BussinesList: React.FC = () => {
   const [project, seProject] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Default menampilkan proyek yang sedang berjalan (sisa masa tayang belum
+  // habis). Proyek yang sudah berakhir diakses lewat filter "Proyek yang sudah
+  // berakhir".
+  const [filterStatus, setFilterStatus] = useState<"running" | "ended">(
+    "running",
+  );
+
+  const filteredProject = project.filter((p) =>
+    filterStatus === "running" ? p.remaining_days > 0 : p.remaining_days <= 0,
+  );
+
   useEffect(() => {
     const fetchTopVideos = async () => {
       setLoading(true);
@@ -66,19 +77,24 @@ const BussinesList: React.FC = () => {
         </div>
 
         {/* Project Cards */}
-        {project.length > 0 ? (
+        {filteredProject.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-14">
-            {project.map((project: Project, index) => (
+            {filteredProject.map((project: Project, index) => (
               <ProjectCard key={index} project={project} />
             ))}
           </div>
         ) : (
           <div className="w-full py-32 flex flex-col items-center justify-center text-gray-600">
             <Building size={64} className="mb-4 text-gray-400" />
-            <h3 className="text-xl font-semibold mb-2">Belum Ada Proyek</h3>
+            <h3 className="text-xl font-semibold mb-2">
+              {filterStatus === "running"
+                ? "Belum Ada Proyek Berjalan"
+                : "Belum Ada Proyek yang Berakhir"}
+            </h3>
             <p className="text-center max-w-md text-sm text-gray-500">
-              Saat ini belum ada proyek yang tersedia di platform. Silakan
-              kunjungi kembali nanti untuk melihat update terbaru.
+              {filterStatus === "running"
+                ? "Saat ini belum ada proyek yang sedang berjalan. Silakan kunjungi kembali nanti untuk melihat update terbaru."
+                : "Belum ada proyek yang sudah berakhir untuk ditampilkan."}
             </p>
           </div>
         )}
@@ -97,6 +113,38 @@ const BussinesList: React.FC = () => {
           >
             <X size={20} />
           </button>
+          <div className="text-center text-black font-bold text-lg mb-4">
+            Tampilkan
+          </div>
+          <div className="flex flex-col gap-3 mb-6">
+            <button
+              onClick={() => {
+                setFilterStatus("running");
+                closeModal();
+              }}
+              className={`py-2 rounded-md ${
+                filterStatus === "running"
+                  ? "bg-[#10565C] text-white"
+                  : "bg-gray-100 text-black"
+              }`}
+            >
+              Proyek yang sedang berjalan
+            </button>
+            <button
+              onClick={() => {
+                setFilterStatus("ended");
+                closeModal();
+              }}
+              className={`py-2 rounded-md ${
+                filterStatus === "ended"
+                  ? "bg-[#10565C] text-white"
+                  : "bg-gray-100 text-black"
+              }`}
+            >
+              Proyek yang sudah berakhir
+            </button>
+          </div>
+
           <div className="text-center text-black font-bold text-lg mb-4">
             Urutkan
           </div>

@@ -7,6 +7,7 @@ interface CustomCheckBoxProps {
   selected: string[];
   onChange: (selectedValues: string[]) => void;
   errorText?: string;
+  note?: string;
 }
 
 const CustomCheckBox: React.FC<CustomCheckBoxProps> = ({
@@ -15,6 +16,7 @@ const CustomCheckBox: React.FC<CustomCheckBoxProps> = ({
   selected,
   onChange,
   errorText,
+  note,
 }) => {
   const handleCheckboxChange = (value: string) => {
     if (selected.includes(value)) {
@@ -26,7 +28,7 @@ const CustomCheckBox: React.FC<CustomCheckBoxProps> = ({
 
   return (
     <div className="w-full mb-6">
-      <SectionPoint text={label} className="mb-1" />
+      <SectionPoint text={label} className="mb-1" note={note} />
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-y-2 gap-x-4">
         {options.map((option) => (

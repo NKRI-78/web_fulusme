@@ -120,7 +120,7 @@ export const createProjectPenerbitSchema = z
     dokumenKontrak: z.string().min(1, "Dokumen Kontrak wajib diupload"),
     rekeningKoran: z.string().min(1, "Rekening Koran wajib diupload"),
     laporanKeuangan: z.string().min(1, "Laporan Keuangan wajib diupload"),
-    prospektus: z.string().optional(),
+    prospektus: z.string().min(1, "Prospektus wajib diupload"),
 
     lokasiProyek: mapsResultSchema.nullable(),
 

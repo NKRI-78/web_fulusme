@@ -55,7 +55,7 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
 
             {isEnded && (
               <div className="w-full text-sm py-1 text-center bg-black/30 font-semibold text-white">
-                {isCompleted ? "Selesai" : "Proyek Telah Berakhir"}
+                {isCompleted ? "Investasi Tercapai" : "Proyek Telah Berakhir"}
               </div>
             )}
           </div>
@@ -84,8 +84,12 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
         <ProgressBar percentage={percentage} />
 
         <div className="w-full flex justify-between mt-3">
-          <p className="text-white text-xs">Tersisa {project?.stok_lot} Lot</p>
-          <p className="text-white/50 text-xs">
+          {!isCompleted && (
+            <p className="text-white text-xs">
+              Tersisa {project?.stok_lot} Lot
+            </p>
+          )}
+          <p className="text-white/50 text-xs ml-auto">
             {project.investor_paid} investor
           </p>
         </div>
@@ -93,9 +97,11 @@ export const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
         {/* sisa masa tayang */}
         <div className="w-full flex justify-end mt-3">
           <p className="text-white text-xs font-semibold">
-            {isExpired
-              ? "Proyek telah berakhir"
-              : `${project.remaining_days} hari lagi`}
+            {isCompleted
+              ? "Investasi Tercapai"
+              : isExpired
+                ? "Proyek telah berakhir"
+                : `${project.remaining_days} hari lagi`}
           </p>
         </div>
       </div>

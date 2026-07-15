@@ -444,6 +444,7 @@ const CreateProjectPenerbit: React.FC = () => {
               return (
                 <CustomCheckBox
                   label="Jaminan Kolateral"
+                  note="Kisaran nilai jaminan paling sedikit 125% dari nilai pinjaman."
                   options={[
                     "Tanah Bangunan",
                     "Kendaraan Bermotor",
@@ -705,6 +706,9 @@ const CreateProjectPenerbit: React.FC = () => {
                   );
                 }}
               />
+              <p className="text-xs text-gray-700 mt-1">
+                Rekening koran 6 bulan terakhir
+              </p>
             </div>
           </div>
 
@@ -730,10 +734,13 @@ const CreateProjectPenerbit: React.FC = () => {
                   );
                 }}
               />
+              <p className="text-xs text-gray-700 mt-1">
+                Dokumen laporan keuangan 1 tahun terakhir
+              </p>
             </div>
 
             <div>
-              <SectionPoint text="Prospektus" optional />
+              <SectionPoint text="Prospektus" />
               <Subtitle text="File maksimal berukuran 10mb" className="my-1" />
 
               <Controller

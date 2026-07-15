@@ -4,12 +4,14 @@ interface SectionPointProps {
   text: string;
   className?: string;
   optional?: boolean;
+  note?: string;
 }
 
 const SectionPoint: React.FC<SectionPointProps> = ({
   text,
   className,
   optional = false,
+  note,
 }) => {
   return (
     <div className={className}>
@@ -20,6 +22,7 @@ const SectionPoint: React.FC<SectionPointProps> = ({
         ) : (
           <p className="text-red-500">*</p>
         )}
+        {note && <p className="text-xs text-gray-700">{note}</p>}
       </div>
     </div>
   );

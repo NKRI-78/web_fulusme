@@ -61,11 +61,6 @@ const Footer: React.FC = () => {
               </a>
             </li>
             <li>
-              <a href="/pasar-sekunder" className="hover:underline">
-                Pasar Sekunder
-              </a>
-            </li>
-            <li>
               <a href="#" className="hover:underline">
                 Penerbit
               </a>
@@ -103,10 +98,10 @@ const Footer: React.FC = () => {
           <div className="space-y-1">
             <p className="text-white">Email</p>
             <a
-              href="mailto:info@FuLusme"
+              href="mailto:info@fulusme.id"
               className="text-white cursor-pointer hover:underline"
             >
-              info@fuLusme
+              info@fulusme.id
             </a>
           </div>
         </div>

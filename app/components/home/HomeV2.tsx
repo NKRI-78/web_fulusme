@@ -246,6 +246,10 @@ const HomeV2: React.FC = () => {
 
   const userToken = getUserToken();
 
+  // Hanya tampilkan proyek yang masih berjalan (sisa masa tayang belum habis).
+  // Proyek yang sudah berakhir dapat diakses via Daftar Bisnis.
+  const runningProjects = projects.filter((p) => p.remaining_days > 0);
+
   return (
     <div>
       {/* Hero Section */}
@@ -284,6 +288,32 @@ const HomeV2: React.FC = () => {
               className="h-12"
             />
             <img src="/images/ksei.png" alt="ksei Logo" className="h-12 w-28" />
+          </div>
+
+          {/* App Store & Play Store */}
+          <div className="flex justify-center  md:justify-start gap-4 items-center">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.fintekandalansolusiteknologi.fulusme"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/images/download-playstore.png"
+                alt="Get it on Google Play"
+                className="h-14"
+              />
+            </a>
+            <a
+              href="https://apps.apple.com/id/app/fulusme/id6783603872"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/images/download-appstore.png"
+                alt="Available on the App Store"
+                className="h-14"
+              />
+            </a>
           </div>
         </div>
 
@@ -383,7 +413,7 @@ const HomeV2: React.FC = () => {
         </p>
 
         {/* EMPTY STATE */}
-        {projects.length === 0 ? (
+        {runningProjects.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-[#10565C]/10">
               <svg
@@ -412,7 +442,7 @@ const HomeV2: React.FC = () => {
           </div>
         ) : (
           <GridView
-            items={projects}
+            items={runningProjects}
             gapClass="gap-4"
             breakpointCols={{ sm: 2, md: 3, lg: 4 }}
             itemKey={(p) => p.id}
@@ -420,7 +450,7 @@ const HomeV2: React.FC = () => {
           />
         )}
 
-        {projects.length > 1 && (
+        {runningProjects.length > 1 && (
           <button
             onClick={() => {
               router.push("/business-list");
