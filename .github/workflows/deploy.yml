@@ -1,0 +1,75 @@
+name: Deploy to Production (VPS)
+
+# Deploy strategy:
+# - Build happens ON the VPS (env sudah tersedia di server, sama seperti flow manual).
+# - Build ke direktori terpisah (.next-build) lalu di-swap atomik ke `.next`,
+#   supaya `.next` yang sedang dilayani `next start` tidak pernah kosong/korup
+#   (mencegah incident chunk-500 / blank page).
+# - Deploy prod perlu approval manual lewat GitHub Environment `production`.
+
+# Deploy prod hanya via trigger manual (tombol "Run workflow" di tab Actions).
+# Ini pengganti "Required reviewers" yang tidak tersedia di repo private plan Free.
+# Kalau nanti upgrade plan / repo dijadikan public, bisa tambahkan kembali:
+#   push:
+#     branches: [main]
+# lalu aktifkan Required reviewers di Environment `production`.
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false # jangan batalkan deploy yang sedang jalan
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production # aktifkan required reviewer di Settings > Environments
+
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          command_timeout: 20m
+          script: |
+            set -euo pipefail
+
+            APP_PATH="${{ secrets.VPS_APP_PATH }}"
+            PM2_APP="web-fulusme"
+
+            cd "$APP_PATH"
+
+            echo "==> Sync source (main)"
+            git fetch --prune origin
+            git reset --hard origin/main
+
+            echo "==> Install dependencies"
+            npm ci
+
+            echo "==> Build to .next-build (live .next tetap dilayani)"
+            rm -rf .next-build
+            NEXT_DIST_DIR=.next-build npm run build
+
+            echo "==> Atomic swap .next"
+            rm -rf .next-old
+            if [ -d .next ]; then mv .next .next-old; fi
+            mv .next-build .next
+
+            echo "==> Restart PM2"
+            pm2 restart "$PM2_APP" --update-env
+
+            echo "==> Health check"
+            sleep 5
+            if curl -fsS -o /dev/null "http://127.0.0.1:3336"; then
+              echo "OK: app responding"
+              rm -rf .next-old
+            else
+              echo "FAIL: rolling back .next"
+              rm -rf .next
+              mv .next-old .next
+              pm2 restart "$PM2_APP" --update-env
+              exit 1
+            fi

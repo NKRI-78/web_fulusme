@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Allow building to a separate directory (e.g. .next-build) so CI never
+  // clears the live `.next` that `next start` is serving. Runtime `next start`
+  // has no NEXT_DIST_DIR set, so it keeps reading the default `.next`.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   reactStrictMode: false,
   images: {
     remotePatterns: [
