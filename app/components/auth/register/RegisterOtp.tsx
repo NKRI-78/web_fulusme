@@ -1,7 +1,9 @@
 import api from "@/utils/axios";
+import GeneralDialog from "@app/components/GeneralDialog";
 import { getCookie, setCookie } from "@app/helper/cookie";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Countdown from "react-countdown";
+import ReCAPTCHA from "react-google-recaptcha";
 import OTPInput from "react-otp-input";
 import Swal from "sweetalert2";
 
@@ -34,16 +36,64 @@ export default function RegisterOtp({
   const [otp, setOtp] = useState("");
   const [expiry, setExpiry] = useState<number | null>(null); // deadline yang stabil
 
-  const handleResendOTP = async () => {
-    try {
-      setIsDisableResendOTP(true);
-      setExpiry(Date.now() + 60_000); // mulai countdown 60 detik
+  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
-      await api.post(`/api/v1/resend-otp`, { val: user?.email });
+  // OTP pertama sudah dikirim oleh langkah register (RegisterV2) saat masuk ke
+  // halaman ini, jadi mulai countdown 60 detik & nonaktifkan "Kirim Ulang".
+  useEffect(() => {
+    setIsDisableResendOTP(true);
+    setExpiry(Date.now() + 60_000);
+  }, []);
+
+  // Klik "Kirim Ulang" hanya membuka dialog captcha; request dikirim
+  // setelah user menyelesaikan captcha (lihat submitResend).
+  const handleResendOTP = () => {
+    if (!siteKey) {
+      Swal.fire({
+        title: "Konfigurasi Bermasalah",
+        text: "reCAPTCHA belum dikonfigurasi. Hubungi administrator.",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+      return;
+    }
+    setShowCaptcha(true);
+  };
+
+  const closeCaptcha = () => {
+    recaptchaRef.current?.reset();
+    setShowCaptcha(false);
+    setResendLoading(false);
+  };
+
+  // Dipanggil otomatis saat captcha selesai (onChange memberi token).
+  const submitResend = async (token: string | null) => {
+    if (!token) return; // token expired / kosong
+
+    try {
+      setResendLoading(true);
+
+      console.log("captcha token", token);
+
+      // await api.post(`/api/v1/resend-otp`, {
+      //   val: user?.email,
+      //   captcha_token: token,
+      // });
+
+      // Sukses: tutup dialog & mulai countdown 60 detik
+      setShowCaptcha(false);
+      setResendLoading(false);
+      recaptchaRef.current?.reset();
+      setIsDisableResendOTP(true);
+      setExpiry(Date.now() + 60_000);
     } catch (err: any) {
-      // Jika gagal, kembalikan state supaya user bisa coba lagi
-      setIsDisableResendOTP(false);
-      setExpiry(null);
+      // Gagal: reset captcha supaya user bisa mengulang di dialog
+      setResendLoading(false);
+      setShowCaptcha(false);
+      recaptchaRef.current?.reset();
       Swal.fire({
         title: "Permintaan Gagal!",
         text: err?.response?.data?.message ?? "Terjadi kesalahan",
@@ -207,6 +257,43 @@ export default function RegisterOtp({
           className="w-full h-full object-cover"
         />
       </div>
+
+      {/* Dialog verifikasi captcha untuk kirim ulang OTP */}
+      <GeneralDialog isOpen={showCaptcha} onClose={closeCaptcha}>
+        <div className="flex flex-col items-center gap-y-4">
+          <div className="text-lg font-bold text-center">
+            Verifikasi Keamanan
+          </div>
+          <p className="text-sm text-center text-gray-600">
+            Selesaikan verifikasi di bawah untuk mengirim ulang kode OTP.
+          </p>
+
+          <div className="flex justify-center">
+            {siteKey && (
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={siteKey}
+                onChange={submitResend}
+                onExpired={() => recaptchaRef.current?.reset()}
+                onErrored={() => recaptchaRef.current?.reset()}
+              />
+            )}
+          </div>
+
+          {resendLoading && (
+            <div className="text-sm text-gray-500">Mengirim ulang OTP...</div>
+          )}
+
+          <button
+            type="button"
+            onClick={closeCaptcha}
+            disabled={resendLoading}
+            className="text-sm font-medium text-gray-500 hover:text-gray-700 disabled:opacity-50"
+          >
+            Batal
+          </button>
+        </div>
+      </GeneralDialog>
     </div>
   );
 }
