@@ -76,12 +76,10 @@ export default function RegisterOtp({
     try {
       setResendLoading(true);
 
-      console.log("captcha token", token);
-
-      // await api.post(`/api/v1/resend-otp`, {
-      //   val: user?.email,
-      //   captcha_token: token,
-      // });
+      await api.post(`/api/v1/resend-otp`, {
+        val: user?.email,
+        captcha_token: token,
+      });
 
       // Sukses: tutup dialog & mulai countdown 60 detik
       setShowCaptcha(false);
