@@ -1,4 +1,4 @@
-# FuLusme — Web Crowdfunding Sukuk
+# FuLusme — Web Crowdfunding
 
 FuLusme adalah platform crowdfunding investasi yang mempertemukan **Pemodal** (investor) dengan **Penerbit** (pelaku usaha). Melalui platform ini, pengguna dapat menjelajahi proyek yang tersedia, melakukan proses verifikasi identitas (KYC), menandatangani akad investasi secara digital, melakukan pembayaran, serta memantau portofolio dan riwayat transaksi mereka.
 
